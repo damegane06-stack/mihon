@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BAR LILAS | 宵町リラ - Spoon配信</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;700;900&family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#14101d;
+  --lacquer:#1e1728;
+  --neon:#ff5fa2;
+  --amber:#e8b04b;
+  --cream:#f2e9dc;
+  --mauve:#9c8fae;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--night);
+  color:var(--cream);
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-weight:300;
+  line-height:1.9;
+  letter-spacing:.04em;
+  overflow-x:hidden;
+}
+body::before{/* 紫煙のグラデーション */
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(60% 40% at 20% 0%, rgba(255,95,162,.07), transparent 70%),
+    radial-gradient(50% 35% at 85% 20%, rgba(232,176,75,.06), transparent 70%);
+}
+main{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:0 22px 90px}
+
+/* ---------- 開幕: 暗転 → ネオン点灯 ---------- */
+#curtain{
+  position:fixed;inset:0;background:#0a0812;z-index:50;
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity 1.2s ease .2s,visibility 1.2s .2s;
+}
+#curtain.open{opacity:0;visibility:hidden}
+#curtain p{font-family:'Zen Old Mincho',serif;color:#3a3050;letter-spacing:.5em;font-size:12px}
+
+.hero{min-height:88vh;display:flex;flex-direction:column;justify-content:center;text-align:center;padding-top:40px}
+.neon-sign{
+  font-family:'Zen Old Mincho',serif;font-weight:900;
+  font-size:clamp(44px,13vw,84px);letter-spacing:.08em;
+  color:var(--neon);
+  text-shadow:0 0 6px rgba(255,95,162,.9),0 0 24px rgba(255,95,162,.55),0 0 70px rgba(255,95,162,.35);
+  opacity:0;
+}
+.neon-sign.lit{animation:flickerOn 2.2s steps(1,end) forwards}
+@keyframes flickerOn{
+  0%{opacity:0}8%{opacity:1}10%{opacity:.2}14%{opacity:1}
+  18%{opacity:.1}22%{opacity:1}34%{opacity:.4}38%{opacity:1}100%{opacity:1}
+}
+.neon-sub{
+  font-family:'Zen Old Mincho',serif;color:var(--amber);
+  font-size:14px;letter-spacing:.55em;margin-top:18px;text-indent:.55em;
+  opacity:0;transition:opacity 1.6s ease 2.2s;
+}
+.hero.lit .neon-sub{opacity:.95}
+.hero-copy{
+  margin-top:46px;color:var(--mauve);font-size:14px;
+  opacity:0;transform:translateY(10px);transition:all 1.4s ease 2.9s;
+}
+.hero.lit .hero-copy{opacity:1;transform:none}
+.open-hours{
+  margin-top:26px;display:inline-block;align-self:center;
+  border:1px solid rgba(232,176,75,.45);border-radius:2px;
+  padding:8px 26px;font-size:12px;letter-spacing:.3em;color:var(--amber);
+  opacity:0;transition:opacity 1.4s ease 3.4s;
+}
+.hero.lit .open-hours{opacity:1}
+
+/* ---------- BGMトグル ---------- */
+#bgmBtn{
+  position:fixed;top:18px;right:18px;z-index:40;
+  background:rgba(20,16,29,.75);backdrop-filter:blur(6px);
+  border:1px solid rgba(255,95,162,.5);color:var(--cream);
+  border-radius:999px;padding:9px 18px;font-size:12px;letter-spacing:.15em;
+  font-family:'Zen Kaku Gothic New',sans-serif;cursor:pointer;
+  transition:box-shadow .3s,border-color .3s;
+}
+#bgmBtn[aria-pressed="true"]{border-color:var(--amber);box-shadow:0 0 14px rgba(232,176,75,.35)}
+#bgmBtn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+/* ---------- セクション共通: メニューブック仕立て ---------- */
+section{margin-top:96px}
+.eyebrow{
+  font-size:11px;letter-spacing:.5em;color:var(--amber);
+  text-transform:uppercase;margin-bottom:10px;
+}
+h2{
+  font-family:'Zen Old Mincho',serif;font-weight:700;
+  font-size:26px;letter-spacing:.14em;margin-bottom:34px;
+}
+h2::after{content:"";display:block;width:52px;height:1px;background:linear-gradient(90deg,var(--neon),transparent);margin-top:14px}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 1s ease,transform 1s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* ママ紹介 */
+.mama{display:flex;gap:22px;align-items:center}
+.mama-icon{
+  width:92px;height:92px;flex-shrink:0;border-radius:50%;
+  background:radial-gradient(circle at 32% 28%, #4a3560, #241a35 70%);
+  border:1px solid rgba(232,176,75,.5);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Zen Old Mincho',serif;font-size:30px;color:var(--amber);
+}
+.mama p{font-size:14px;color:#d8cfc2}
+.mama strong{color:var(--cream);font-weight:500}
+
+/* メニュー(配信内容) */
+.menu-book{
+  border:1px solid rgba(232,176,75,.4);border-radius:3px;
+  padding:34px 26px;background:linear-gradient(180deg,rgba(30,23,40,.9),rgba(20,16,29,.6));
+}
+.menu-item{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:16px 0;border-bottom:1px dashed rgba(156,143,174,.3)}
+.menu-item:last-child{border-bottom:none}
+.menu-name{font-family:'Zen Old Mincho',serif;font-size:17px;letter-spacing:.08em}
+.menu-name small{display:block;font-family:'Zen Kaku Gothic New',sans-serif;font-size:12px;color:var(--mauve);letter-spacing:.06em;margin-top:4px}
+.menu-price{font-size:12px;color:var(--amber);letter-spacing:.14em;white-space:nowrap}
+
+/* 営業時間(スケジュール) */
+.hours-table{width:100%;font-size:14px;border-collapse:collapse}
+.hours-table td{padding:13px 4px;border-bottom:1px solid rgba(156,143,174,.18)}
+.hours-table td:first-child{color:var(--amber);font-family:'Zen Old Mincho',serif;letter-spacing:.2em;width:6.5em}
+.closed{color:var(--mauve)}
+
+/* お便り */
+.letter-box textarea{
+  width:100%;min-height:110px;resize:vertical;
+  background:rgba(30,23,40,.85);border:1px solid rgba(156,143,174,.4);border-radius:3px;
+  color:var(--cream);font-family:inherit;font-size:14px;line-height:1.8;padding:14px;
+}
+.letter-box textarea:focus-visible{outline:2px solid var(--neon);outline-offset:1px}
+.send-btn{
+  margin-top:14px;width:100%;padding:14px;cursor:pointer;border-radius:3px;
+  background:transparent;border:1px solid var(--neon);color:var(--neon);
+  font-family:'Zen Old Mincho',serif;font-size:15px;letter-spacing:.3em;
+  transition:background .3s,color .3s,box-shadow .3s;
+}
+.send-btn:hover{background:var(--neon);color:var(--night);box-shadow:0 0 22px rgba(255,95,162,.45)}
+.send-btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.note{font-size:11px;color:var(--mauve);margin-top:10px;letter-spacing:.08em}
+
+/* SNSコースター */
+.coasters{display:flex;gap:16px;flex-wrap:wrap}
+.coaster{
+  flex:1;min-width:130px;text-align:center;text-decoration:none;
+  border:1px solid rgba(232,176,75,.45);border-radius:50%;
+  aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  color:var(--cream);background:rgba(30,23,40,.6);
+  transition:border-color .3s,box-shadow .3s,transform .3s;
+}
+.coaster span{font-family:'Zen Old Mincho',serif;font-size:16px;letter-spacing:.2em}
+.coaster small{font-size:10px;color:var(--mauve);letter-spacing:.2em}
+.coaster:hover{border-color:var(--neon);box-shadow:0 0 18px rgba(255,95,162,.35);transform:translateY(-4px)}
+.coaster:focus-visible{outline:2px solid var(--neon);outline-offset:3px}
+
+footer{margin-top:110px;text-align:center;font-size:11px;color:var(--mauve);letter-spacing:.3em}
+footer .last-order{font-family:'Zen Old Mincho',serif;color:var(--amber);font-size:13px;margin-bottom:12px}
+
+#toast{
+  position:fixed;left:50%;bottom:30px;transform:translate(-50%,20px);
+  background:var(--lacquer);border:1px solid var(--amber);color:var(--cream);
+  padding:12px 26px;border-radius:3px;font-size:13px;letter-spacing:.1em;
+  opacity:0;pointer-events:none;transition:all .5s;z-index:60;white-space:nowrap;
+}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .neon-sign,.neon-sub,.hero-copy,.open-hours,.reveal{opacity:1!important;transform:none!important}
+  #curtain{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="curtain"><p>ようこそ</p></div>
+
+<button id="bgmBtn" aria-pressed="false" aria-label="店内BGMを再生">♪ BGM OFF</button>
+
+<main>
+  <header class="hero" id="hero">
+    <h1 class="neon-sign" id="neon">BAR LILAS</h1>
+    <p class="neon-sub">宵町リラ の 止まり木</p>
+    <p class="hero-copy">
+      看板のない路地の、いちばん奥。<br>
+      声だけのバーへ、いらっしゃいませ。
+    </p>
+    <p class="open-hours">OPEN 22:00 — CLOSE 25:00</p>
+  </header>
+
+  <section class="reveal">
+    <p class="eyebrow">Owner</p>
+    <h2>ママのこと</h2>
+    <div class="mama">
+      <div class="mama-icon" aria-hidden="true">凛</div>
+      <p>
+        <strong>宵町リラ(よいまち・りら)</strong>です。Spoonの片隅で、小さなバーを開いています。
+        自慢できるのはお酒の知識と、聞き上手なこと。今夜も、あなたの一日の栓を抜きにきました。
+      </p>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <p class="eyebrow">Menu</p>
+    <h2>本日のメニュー</h2>
+    <div class="menu-book">
+      <div class="menu-item">
+        <p class="menu-name">宵の雑談<small>その日あったこと、ぽつぽつと。初めての方もカウンターへどうぞ</small></p>
+        <p class="menu-price">チャージ無料</p>
+      </div>
+      <div class="menu-item">
+        <p class="menu-name">リクエスト歌枠<small>ジャズからバラードまで。ボトルキープ(常連)さん優先</small></p>
+        <p class="menu-price">金曜限定</p>
+      </div>
+      <div class="menu-item">
+        <p class="menu-name">深夜のお悩み相談<small>ここで聞いた話は、ここに置いていってください</small></p>
+        <p class="menu-price">月末の夜</p>
+      </div>
+      <div class="menu-item">
+        <p class="menu-name">ママの気まぐれ<small>ゲリラ配信。開店はXでお知らせします</small></p>
+        <p class="menu-price">時価</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <p class="eyebrow">Open Hours</p>
+    <h2>営業時間</h2>
+    <table class="hours-table">
+      <tr><td>月・火</td><td>22:00 — 24:00 宵の雑談</td></tr>
+      <tr><td>水</td><td class="closed">定休日(ママの充電日)</td></tr>
+      <tr><td>木</td><td>22:00 — 24:00 宵の雑談</td></tr>
+      <tr><td>金</td><td>22:00 — 25:00 リクエスト歌枠</td></tr>
+      <tr><td>土・日</td><td class="closed">不定期 — Xの開店札をご確認ください</td></tr>
+    </table>
+  </section>
+
+  <section class="reveal">
+    <p class="eyebrow">Letter</p>
+    <h2>ママへのお便り</h2>
+    <div class="letter-box">
+      <textarea placeholder="匿名で届きます。愚痴でも、のろけでも。" aria-label="お便り本文"></textarea>
+      <button class="send-btn" id="sendBtn">グラスに沈める</button>
+      <p class="note">※ これはデモサイトのため、実際には送信されません。</p>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <p class="eyebrow">Link</p>
+    <h2>お店のご案内</h2>
+    <div class="coasters">
+      <a class="coaster" href="#" onclick="return demo()"><span>Spoon</span><small>LIVE</small></a>
+      <a class="coaster" href="#" onclick="return demo()"><span>X</span><small>開店のお知らせ</small></a>
+      <a class="coaster" href="#" onclick="return demo()"><span>BOOTH</span><small>ボイス</small></a>
+    </div>
+  </section>
+
+  <footer>
+    <p class="last-order">— Last Order —</p>
+    <p>© BAR LILAS / 宵町リラ<br>このサイトは制作サービスのデモです。架空の配信者です。</p>
+  </footer>
+</main>
+
+<div id="toast" role="status"></div>
+
+<script>
+/* ---------- 開幕演出 ---------- */
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+window.addEventListener('load', () => {
+  const curtain = document.getElementById('curtain');
+  const neon = document.getElementById('neon');
+  const hero = document.getElementById('hero');
+  if (reduced) { curtain.classList.add('open'); hero.classList.add('lit'); return; }
+  setTimeout(() => {
+    curtain.classList.add('open');
+    neon.classList.add('lit');
+    hero.classList.add('lit');
+  }, 700);
+});
+
+/* ---------- スクロールで浮かび上がる ---------- */
+const io = new IntersectionObserver(es => {
+  es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: .15 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* ---------- 店内BGM (WebAudioで生成するジャズ風コード) ---------- */
+let ctx = null, playing = false, timer = null, master = null;
+const chords = [ // 静かな4コード進行 (Am9 → Dm9 → Gmaj7 → Cmaj7 風)
+  [220.0, 261.63, 329.63, 493.88],
+  [146.83, 220.0, 261.63, 349.23],
+  [196.0, 246.94, 293.66, 369.99],
+  [130.81, 196.0, 246.94, 329.63]
+];
+let step = 0;
+
+function playChord(freqs) {
+  const now = ctx.currentTime;
+  freqs.forEach((f, i) => {
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = i === 0 ? 'sine' : 'triangle';
+    o.frequency.value = f;
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(i === 0 ? 0.05 : 0.028, now + 0.6);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 3.6);
+    o.connect(g).connect(master);
+    o.start(now + i * 0.06); // ほんの少しずつずらしてバーピアノ風に
+    o.stop(now + 4);
+  });
+}
+
+function startBGM() {
+  if (!ctx) {
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    master = ctx.createGain();
+    master.gain.value = 0.7;
+    // レコードノイズ
+    const buf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * 0.012;
+    const noise = ctx.createBufferSource();
+    noise.buffer = buf; noise.loop = true;
+    const nf = ctx.createBiquadFilter();
+    nf.type = 'lowpass'; nf.frequency.value = 900;
+    noise.connect(nf).connect(master);
+    noise.start();
+    master.connect(ctx.destination);
+  }
+  ctx.resume();
+  playChord(chords[step % 4]); step++;
+  timer = setInterval(() => { playChord(chords[step % 4]); step++; }, 3800);
+}
+
+document.getElementById('bgmBtn').addEventListener('click', function () {
+  playing = !playing;
+  this.setAttribute('aria-pressed', playing);
+  this.textContent = playing ? '♪ BGM ON' : '♪ BGM OFF';
+  if (playing) startBGM();
+  else { clearInterval(timer); if (ctx) ctx.suspend(); }
+});
+
+/* ---------- デモ用トースト ---------- */
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+function demo() { toast('デモサイトのためリンク先はありません'); return false; }
+document.getElementById('sendBtn').addEventListener('click', () => toast('デモのため送信されません 🍸'));
+</script>
+</body>
+</html>

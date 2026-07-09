@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>星野ぽむ | まいにちがシール帳!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#fffaf2;
+  --ink:#4a4059;
+  --pink:#ff8fb1;
+  --yellow:#ffd166;
+  --mint:#7fd8be;
+  --sky:#7cc7ff;
+  --grape:#b79ce8;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;background:#fffaf2;color-scheme:light only;overflow-x:clip}
+body{
+  background-color:#fffaf2;
+  color:var(--ink);
+  font-family:'M PLUS Rounded 1c',sans-serif;
+  font-weight:400;line-height:1.95;letter-spacing:.03em;
+  overflow-x:hidden;
+  cursor:default;
+}
+/* 背景レイヤー: body背景を無視するビューワ対策として要素で敷く */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-color:#fffaf2;
+  background-image:radial-gradient(rgba(74,64,89,.07) 1px,transparent 1px);
+  background-size:22px 22px;
+}
+main{position:relative;z-index:2;max-width:600px;margin:0 auto;padding:0 20px 100px}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:30}
+
+/* ---------- HERO ---------- */
+.hero{min-height:88vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative}
+.hero-badge{
+  font-size:12px;font-weight:700;letter-spacing:.2em;color:#fff;
+  background:var(--grape);border-radius:999px;padding:6px 20px;
+  transform:rotate(-3deg);margin-bottom:26px;
+  box-shadow:0 3px 0 rgba(74,64,89,.2);
+  opacity:0;animation:popIn .6s cubic-bezier(.34,1.56,.64,1) .3s forwards;
+}
+.hero h1{
+  font-family:'Mochiy Pop One',sans-serif;font-weight:400;
+  font-size:clamp(42px,12vw,68px);line-height:1.25;
+}
+.hero h1 .ch{display:inline-block;opacity:0;animation:bounceIn .7s cubic-bezier(.34,1.56,.64,1) forwards}
+.hero h1 .ch:nth-child(1){color:var(--pink);animation-delay:.5s}
+.hero h1 .ch:nth-child(2){color:var(--yellow);animation-delay:.62s}
+.hero h1 .ch:nth-child(3){color:var(--mint);animation-delay:.74s}
+.hero h1 .ch:nth-child(4){color:var(--sky);animation-delay:.86s}
+.hero h1 .ch:nth-child(5){color:var(--grape);animation-delay:.98s}
+@keyframes bounceIn{
+  0%{opacity:0;transform:translateY(40px) scale(.4)}
+  70%{opacity:1;transform:translateY(-8px) scale(1.08)}
+  100%{opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes popIn{
+  0%{opacity:0;transform:rotate(-3deg) scale(.5)}
+  100%{opacity:1;transform:rotate(-3deg) scale(1)}
+}
+.hero .sub{
+  margin-top:22px;font-size:15px;font-weight:500;color:#6d6380;
+  opacity:0;animation:fadeUp .8s ease 1.3s forwards;
+}
+.hero .tap-hint{
+  margin-top:44px;font-size:12px;font-weight:700;color:var(--pink);
+  background:#fff;border:2px dashed var(--pink);border-radius:999px;padding:9px 22px;
+  opacity:0;animation:fadeUp .8s ease 1.7s forwards;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.float-deco{position:absolute;font-size:26px;opacity:.85;animation:floaty 4.5s ease-in-out infinite}
+.float-deco:nth-child(1){top:14%;left:8%;animation-delay:0s}
+.float-deco:nth-child(2){top:20%;right:10%;animation-delay:1.2s}
+.float-deco:nth-child(3){bottom:22%;left:12%;animation-delay:2.1s}
+.float-deco:nth-child(4){bottom:16%;right:8%;animation-delay:.6s}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-14px) rotate(6deg)}}
+
+/* ---------- BGM ---------- */
+#bgmBtn{
+  position:fixed;top:16px;right:16px;z-index:40;
+  background:#fff;border:2px solid var(--ink);color:var(--ink);
+  border-radius:999px;padding:9px 18px;font-size:12px;font-weight:700;letter-spacing:.08em;
+  font-family:'M PLUS Rounded 1c',sans-serif;cursor:pointer;
+  box-shadow:0 3px 0 var(--ink);transition:transform .15s,box-shadow .15s;
+}
+#bgmBtn:active{transform:translateY(3px);box-shadow:0 0 0 var(--ink)}
+#bgmBtn[aria-pressed="true"]{background:var(--yellow)}
+#bgmBtn:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+
+/* ---------- シールカード共通 ---------- */
+section{margin-top:90px;position:relative}
+.card{
+  background:#fff;border:2.5px solid var(--ink);border-radius:22px;
+  padding:34px 24px 30px;position:relative;
+  box-shadow:0 6px 0 rgba(74,64,89,.18);
+}
+.card.tilt-l{transform:rotate(-1.2deg)}
+.card.tilt-r{transform:rotate(1.1deg)}
+.tape{
+  position:absolute;top:-16px;left:50%;transform:translateX(-50%) rotate(-2deg);
+  width:110px;height:30px;border-radius:3px;opacity:.9;
+  box-shadow:0 2px 4px rgba(74,64,89,.12);
+}
+.tape.p{background:repeating-linear-gradient(45deg,var(--pink),var(--pink) 8px,#ffb3cb 8px,#ffb3cb 16px)}
+.tape.y{background:repeating-linear-gradient(45deg,var(--yellow),var(--yellow) 8px,#ffe0a1 8px,#ffe0a1 16px)}
+.tape.m{background:repeating-linear-gradient(45deg,var(--mint),var(--mint) 8px,#aae8d6 8px,#aae8d6 16px)}
+.tape.s{background:repeating-linear-gradient(45deg,var(--sky),var(--sky) 8px,#b0ddff 8px,#b0ddff 16px)}
+.tape.g{background:repeating-linear-gradient(45deg,var(--grape),var(--grape) 8px,#d2c1f2 8px,#d2c1f2 16px)}
+h2{
+  font-family:'Mochiy Pop One',sans-serif;font-weight:400;font-size:21px;
+  margin-bottom:22px;display:flex;align-items:center;gap:10px;
+}
+h2 .emoji{font-size:24px}
+.reveal{opacity:0;transform:translateY(30px) scale(.97);transition:opacity .8s ease,transform .8s cubic-bezier(.34,1.4,.64,1)}
+.reveal.in{opacity:1;transform:translateY(0) scale(1)}
+.card.tilt-l.reveal.in{transform:rotate(-1.2deg)}
+.card.tilt-r.reveal.in{transform:rotate(1.1deg)}
+
+/* 自己紹介 */
+.intro{display:flex;gap:18px;align-items:flex-start}
+.intro-icon{
+  width:84px;height:84px;flex-shrink:0;border-radius:50%;
+  background:linear-gradient(135deg,var(--pink),var(--yellow));
+  border:2.5px solid var(--ink);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Mochiy Pop One',sans-serif;font-size:34px;color:#fff;
+}
+.intro p{font-size:14px}
+.sticker-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.sticker{
+  font-size:11px;font-weight:700;padding:4px 13px;border-radius:999px;
+  border:2px solid var(--ink);background:#fff;
+}
+.sticker:nth-child(1){background:#ffe3ec}
+.sticker:nth-child(2){background:#fff3d6}
+.sticker:nth-child(3){background:#e0f7ef}
+.sticker:nth-child(4){background:#e3f2ff}
+
+/* あそびのメニュー */
+.play-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.play-item{
+  border:2px solid var(--ink);border-radius:16px;padding:18px 14px;text-align:center;
+  font-weight:700;font-size:13.5px;
+  transition:transform .2s cubic-bezier(.34,1.56,.64,1);
+}
+.play-item:hover{transform:scale(1.05) rotate(-1deg)}
+.play-item .big{display:block;font-size:30px;margin-bottom:8px}
+.play-item small{display:block;font-weight:500;font-size:11px;color:#6d6380;margin-top:4px}
+.play-item:nth-child(1){background:#ffe3ec}
+.play-item:nth-child(2){background:#fff3d6}
+.play-item:nth-child(3){background:#e0f7ef}
+.play-item:nth-child(4){background:#e3f2ff}
+
+/* カレンダー風スケジュール */
+.week{display:flex;gap:6px;justify-content:space-between}
+.day{
+  flex:1;text-align:center;border:2px solid var(--ink);border-radius:12px;
+  padding:12px 2px 10px;font-size:11px;font-weight:700;background:#fff;
+}
+.day .d{font-family:'Mochiy Pop One',sans-serif;font-size:14px;display:block;margin-bottom:6px}
+.day.on{background:var(--yellow)}
+.day.on::after{content:"★";display:block;color:var(--pink);font-size:13px;margin-top:2px}
+.day.off::after{content:"zzz";display:block;color:#b7aec7;font-size:10px;margin-top:2px}
+.week-note{margin-top:16px;font-size:12.5px;text-align:center;color:#6d6380}
+
+/* お手紙ポスト */
+.letter textarea{
+  width:100%;min-height:110px;resize:vertical;
+  background:#fffdf8;border:2px solid var(--ink);border-radius:14px;
+  color:var(--ink);font-family:inherit;font-size:14px;line-height:1.9;padding:15px;
+}
+.letter textarea:focus-visible{outline:3px solid var(--sky);outline-offset:1px}
+.send-btn{
+  margin-top:14px;width:100%;padding:15px;cursor:pointer;
+  background:var(--pink);border:2.5px solid var(--ink);border-radius:999px;color:#fff;
+  font-family:'Mochiy Pop One',sans-serif;font-size:15px;letter-spacing:.14em;
+  box-shadow:0 4px 0 var(--ink);transition:transform .15s,box-shadow .15s;
+}
+.send-btn:active{transform:translateY(4px);box-shadow:0 0 0 var(--ink)}
+.send-btn:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.note{font-size:11px;color:#9a90ab;margin-top:10px;text-align:center}
+
+/* リンクボタン */
+.links{display:flex;flex-direction:column;gap:14px}
+.links a{
+  display:flex;justify-content:space-between;align-items:center;
+  text-decoration:none;color:var(--ink);
+  border:2.5px solid var(--ink);border-radius:999px;padding:16px 26px;
+  font-weight:700;font-size:15px;background:#fff;
+  box-shadow:0 4px 0 var(--ink);
+  transition:transform .15s,box-shadow .15s,background .2s;
+}
+.links a:nth-child(1):hover{background:#ffe3ec}
+.links a:nth-child(2):hover{background:#e3f2ff}
+.links a:nth-child(3):hover{background:#fff3d6}
+.links a:active{transform:translateY(4px);box-shadow:0 0 0 var(--ink)}
+.links a small{font-size:11px;font-weight:500;color:#9a90ab}
+.links a:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+
+footer{margin-top:100px;text-align:center;font-size:11px;color:#9a90ab;line-height:2.2}
+footer .mark{font-family:'Mochiy Pop One',sans-serif;font-size:15px;color:var(--pink);display:block;margin-bottom:8px}
+
+#toast{
+  position:fixed;left:50%;bottom:30px;transform:translate(-50%,20px);
+  background:var(--ink);color:#fff;
+  padding:12px 26px;border-radius:999px;font-size:13px;font-weight:700;
+  opacity:0;pointer-events:none;transition:all .5s;z-index:60;white-space:nowrap;
+}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .hero h1 .ch,.hero-badge,.hero .sub,.hero .tap-hint,.reveal{opacity:1!important;transform:none!important}
+}
+</style>
+</head>
+<body>
+
+<canvas id="confetti" aria-hidden="true"></canvas>
+<button id="bgmBtn" aria-pressed="false" aria-label="ぽむソングを再生">♪ ぽむソング OFF</button>
+
+<main>
+  <header class="hero">
+    <span class="float-deco" aria-hidden="true">🍓</span>
+    <span class="float-deco" aria-hidden="true">⭐</span>
+    <span class="float-deco" aria-hidden="true">🍬</span>
+    <span class="float-deco" aria-hidden="true">🎀</span>
+    <p class="hero-badge">まいにち たのしい ラジオ</p>
+    <h1 aria-label="星野ぽむ">
+      <span class="ch">星</span><span class="ch">野</span><span class="ch">ぽ</span><span class="ch">む</span><span class="ch">☆</span>
+    </h1>
+    <p class="sub">きょうも、あしたも、あさっても!<br>げんきをおすそわけする配信、やってます🌈</p>
+    <p class="tap-hint">💡 画面をタップすると、いいことあるよ</p>
+  </header>
+
+  <section class="reveal">
+    <div class="card tilt-l">
+      <div class="tape p" aria-hidden="true"></div>
+      <h2><span class="emoji">🍓</span>ぽむって、こんなこ</h2>
+      <div class="intro">
+        <div class="intro-icon" aria-hidden="true">ぽ</div>
+        <p>
+          <b>星野ぽむ(ほしの・ぽむ)</b>です! 好きなものは、いちごと、ねこと、みんなの「きょうあったいいこと」。
+          しゃべりだしたら止まらないタイプ。よろしくね!
+        </p>
+      </div>
+      <div class="sticker-row">
+        <span class="sticker">🍓 いちご星人</span>
+        <span class="sticker">🐱 ねこ吸い</span>
+        <span class="sticker">🎤 早口</span>
+        <span class="sticker">💤 朝よわい</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="card tilt-r">
+      <div class="tape m" aria-hidden="true"></div>
+      <h2><span class="emoji">🎪</span>あそびのメニュー</h2>
+      <div class="play-grid">
+        <div class="play-item"><span class="big">🗣</span>げんき雑談<small>いつもの</small></div>
+        <div class="play-item"><span class="big">🎵</span>うたってみた<small>音程は気分</small></div>
+        <div class="play-item"><span class="big">🎮</span>ゲームさんぽ<small>下手の横好き</small></div>
+        <div class="play-item"><span class="big">📮</span>お便り回<small>月イチ</small></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="card tilt-l">
+      <div class="tape s" aria-hidden="true"></div>
+      <h2><span class="emoji">🗓</span>こんしゅうのぽむ</h2>
+      <div class="week">
+        <div class="day on"><span class="d">月</span>21時</div>
+        <div class="day off"><span class="d">火</span>—</div>
+        <div class="day on"><span class="d">水</span>21時</div>
+        <div class="day off"><span class="d">木</span>—</div>
+        <div class="day on"><span class="d">金</span>22時</div>
+        <div class="day off"><span class="d">土</span>—</div>
+        <div class="day on"><span class="d">日</span>ひる</div>
+      </div>
+      <p class="week-note">★の日にあえるよ! 変更があったらXでお知らせ📢</p>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="card tilt-r">
+      <div class="tape y" aria-hidden="true"></div>
+      <h2><span class="emoji">📮</span>ぽむポスト</h2>
+      <div class="letter">
+        <textarea placeholder="きょうあったいいこと、おしえて!(匿名でとどくよ)" aria-label="お便り本文"></textarea>
+        <button class="send-btn" id="sendBtn">ポストにいれる!</button>
+        <p class="note">※ これはデモサイトのため、実際には送信されません。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="card tilt-l">
+      <div class="tape g" aria-hidden="true"></div>
+      <h2><span class="emoji">🌈</span>あそびにきてね</h2>
+      <div class="links">
+        <a href="#" onclick="return demo()">Spoon<small>配信はここ!</small></a>
+        <a href="#" onclick="return demo()">X<small>らくがきと告知</small></a>
+        <a href="#" onclick="return demo()">BOOTH<small>ぽむグッズ</small></a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="mark">☆ pom! ☆</span>
+    © 星野ぽむ / このサイトは制作サービスのデモです。架空の配信者です。
+  </footer>
+</main>
+
+<div id="toast" role="status"></div>
+
+<script>
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- スクロールで現れる ---------- */
+const io = new IntersectionObserver(es => {
+  es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: .12 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* ---------- タップで紙吹雪 ---------- */
+const cv = document.getElementById('confetti');
+const cx = cv.getContext('2d');
+let W, H, parts = [];
+function resize() { W = cv.width = innerWidth; H = cv.height = innerHeight; }
+resize(); addEventListener('resize', resize);
+const colors = ['#ff8fb1', '#ffd166', '#7fd8be', '#7cc7ff', '#b79ce8'];
+function burst(x, y) {
+  if (reduced) return;
+  for (let i = 0; i < 26; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const v = Math.random() * 5 + 2.5;
+    parts.push({
+      x, y,
+      vx: Math.cos(a) * v, vy: Math.sin(a) * v - 3,
+      w: Math.random() * 7 + 4, h: Math.random() * 5 + 3,
+      c: colors[Math.floor(Math.random() * colors.length)],
+      rot: Math.random() * Math.PI, vr: Math.random() * 0.3 - 0.15,
+      life: 1
+    });
+  }
+}
+(function loop() {
+  cx.clearRect(0, 0, W, H);
+  parts = parts.filter(p => p.life > 0);
+  for (const p of parts) {
+    p.vy += 0.16; p.x += p.vx; p.y += p.vy;
+    p.rot += p.vr; p.life -= 0.012;
+    cx.save();
+    cx.translate(p.x, p.y); cx.rotate(p.rot);
+    cx.globalAlpha = Math.max(p.life, 0);
+    cx.fillStyle = p.c;
+    cx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+    cx.restore();
+  }
+  requestAnimationFrame(loop);
+})();
+document.addEventListener('pointerdown', e => {
+  if (e.target.closest('a,button,textarea')) return;
+  burst(e.clientX, e.clientY);
+});
+
+/* ---------- ぽむソング (チップチューン風メジャーアルペジオ) ---------- */
+let ctx = null, playing = false, timer = null, master = null, step = 0;
+const melody = [ // Cメジャーのはずむアルペジオ2小節ぶん
+  523.25, 659.25, 783.99, 659.25, 523.25, 659.25, 880.0, 783.99,
+  587.33, 698.46, 880.0, 698.46, 523.25, 659.25, 783.99, 1046.5
+];
+function playStep() {
+  const now = ctx.currentTime;
+  const f = melody[step % melody.length];
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.type = 'square'; o.frequency.value = f;
+  g.gain.setValueAtTime(0.035, now);
+  g.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+  o.connect(g).connect(master);
+  o.start(now); o.stop(now + 0.25);
+  if (step % 4 === 0) { // ぽこぽこベース
+    const b = ctx.createOscillator();
+    const bg = ctx.createGain();
+    b.type = 'triangle'; b.frequency.value = f / 4;
+    bg.gain.setValueAtTime(0.05, now);
+    bg.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
+    b.connect(bg).connect(master);
+    b.start(now); b.stop(now + 0.32);
+  }
+  step++;
+}
+document.getElementById('bgmBtn').addEventListener('click', function () {
+  playing = !playing;
+  this.setAttribute('aria-pressed', playing);
+  this.textContent = playing ? '♪ ぽむソング ON' : '♪ ぽむソング OFF';
+  if (playing) {
+    if (!ctx) {
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      master = ctx.createGain(); master.gain.value = 0.75;
+      master.connect(ctx.destination);
+    }
+    ctx.resume();
+    playStep();
+    timer = setInterval(playStep, 240);
+  } else { clearInterval(timer); if (ctx) ctx.suspend(); }
+});
+
+/* ---------- デモ用トースト ---------- */
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+function demo() { toast('デモサイトのためリンク先はないよ〜'); return false; }
+document.getElementById('sendBtn').addEventListener('click', e => {
+  burst(innerWidth / 2, innerHeight / 2);
+  toast('ポストにはいったよ! 🎉 (デモのため送信されません)');
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>デザイン見本帳 | 配信者さんのプロフィールサイト制作</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600&family=Zen+Kaku+Gothic+New:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#edeae4;
+  --ink:#2c2a26;
+  --sub:#7c7770;
+  --line:#d7d2c9;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--paper);color-scheme:light only;overflow-x:clip}
+body{
+  color:var(--ink);
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-weight:400;line-height:1.9;letter-spacing:.04em;
+  overflow-x:hidden;
+}
+/* 背景シート(body背景を無視するビューワ対策) */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    linear-gradient(rgba(44,42,38,.03) 1px,transparent 1px) 0 0/100% 34px,
+    var(--paper);
+}
+main{position:relative;z-index:2;max-width:600px;margin:0 auto;padding:0 22px 90px}
+
+/* ---------- 表紙 ---------- */
+header{padding:76px 0 54px;text-align:center}
+.en{
+  font-size:10px;letter-spacing:.55em;text-indent:.55em;color:var(--sub);
+  text-transform:uppercase;margin-bottom:16px;
+}
+h1{
+  font-family:'Shippori Mincho',serif;font-weight:600;
+  font-size:clamp(30px,8.4vw,40px);letter-spacing:.22em;
+}
+.lead{margin-top:26px;font-size:13.5px;color:#55514b}
+.lead b{font-weight:500;color:var(--ink)}
+.how{
+  margin-top:22px;display:inline-block;
+  border:1px solid var(--line);border-radius:999px;background:#fff;
+  padding:8px 22px;font-size:12px;color:var(--sub);letter-spacing:.1em;
+}
+
+/* ---------- 見本カード ---------- */
+.swatches{display:flex;flex-direction:column;gap:30px;margin-top:14px}
+.swatch{
+  display:block;text-decoration:none;color:var(--ink);
+  background:#fff;border:1px solid var(--line);border-radius:6px;
+  overflow:hidden;position:relative;
+  box-shadow:0 2px 3px rgba(44,42,38,.06),0 12px 26px rgba(44,42,38,.08);
+  transition:transform .3s ease,box-shadow .3s ease;
+}
+.swatch:hover{transform:translateY(-5px);box-shadow:0 4px 6px rgba(44,42,38,.08),0 20px 38px rgba(44,42,38,.13)}
+.swatch:focus-visible{outline:2.5px solid var(--ink);outline-offset:3px}
+/* 見本帳の綴じ穴 */
+.swatch::after{
+  content:"";position:absolute;top:14px;left:14px;width:13px;height:13px;border-radius:50%;
+  background:var(--paper);border:1.5px solid var(--line);
+  box-shadow:inset 0 1px 2px rgba(44,42,38,.2);z-index:3;
+}
+.preview{height:190px;position:relative;overflow:hidden}
+.meta{padding:20px 22px 22px;border-top:1px solid var(--line)}
+.meta .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.style-name{font-family:'Shippori Mincho',serif;font-weight:600;font-size:18px;letter-spacing:.14em}
+.model{font-size:11px;color:var(--sub);letter-spacing:.08em;white-space:nowrap}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.tag{
+  font-size:10.5px;letter-spacing:.06em;color:#55514b;
+  border:1px solid var(--line);border-radius:999px;padding:3px 12px;background:#faf9f6;
+}
+.open{
+  margin-top:16px;font-size:11.5px;letter-spacing:.28em;color:var(--sub);
+  display:flex;align-items:center;gap:10px;
+}
+.open::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* ---------- ミニプレビュー: A 夜のバー ---------- */
+.pv-a{background:radial-gradient(80% 90% at 30% 10%,#241a35,#14101d 70%)}
+.pv-a .neon{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+}
+.pv-a .neon b{
+  font-family:'Shippori Mincho',serif;font-weight:600;font-size:30px;letter-spacing:.12em;color:#ff5fa2;
+  text-shadow:0 0 8px rgba(255,95,162,.9),0 0 26px rgba(255,95,162,.5);
+}
+.pv-a .neon span{font-size:9px;letter-spacing:.5em;text-indent:.5em;color:#e8b04b}
+.pv-a .counter{position:absolute;left:0;right:0;bottom:0;height:34px;background:linear-gradient(180deg,transparent,rgba(232,176,75,.18));border-top:1px solid rgba(232,176,75,.4)}
+
+/* ---------- ミニプレビュー: B 雪と静寂 ---------- */
+.pv-b{background:linear-gradient(180deg,#f6f8fb,#dfe8f2)}
+.pv-b .name{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+}
+.pv-b .name b{font-family:'Shippori Mincho',serif;font-weight:500;font-size:23px;letter-spacing:.4em;text-indent:.4em;color:#2b3a52}
+.pv-b .name span{font-size:8.5px;letter-spacing:.55em;text-indent:.55em;color:#93a4ba}
+.pv-b i{position:absolute;border-radius:50%;background:#b8c9de;opacity:.7}
+.pv-b i:nth-child(1){width:4px;height:4px;top:18%;left:16%}
+.pv-b i:nth-child(2){width:3px;height:3px;top:34%;left:74%}
+.pv-b i:nth-child(3){width:5px;height:5px;top:62%;left:28%}
+.pv-b i:nth-child(4){width:3px;height:3px;top:14%;left:56%}
+.pv-b i:nth-child(5){width:4px;height:4px;top:72%;left:82%}
+.pv-b i:nth-child(6){width:3px;height:3px;top:52%;left:8%}
+
+/* ---------- ミニプレビュー: C 硬質クール ---------- */
+.pv-c{
+  background:
+    linear-gradient(rgba(141,151,166,.14) 1px,transparent 1px) 0 0/28px 28px,
+    linear-gradient(90deg,rgba(141,151,166,.14) 1px,transparent 1px) 0 0/28px 28px,
+    #0e0f12;
+}
+.pv-c .chrome{
+  position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding-left:26px;
+}
+.pv-c .chrome b{
+  font-family:'Zen Kaku Gothic New',sans-serif;font-weight:700;font-size:38px;letter-spacing:.02em;line-height:1;
+  background:linear-gradient(175deg,#f4f6f9 30%,#8d97a6 65%,#4d5560);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.pv-c .chrome span{font-size:8.5px;letter-spacing:.4em;color:#3457ff;margin-top:10px}
+.pv-c .slash{position:absolute;left:-10px;right:-10px;bottom:26px;height:1px;background:linear-gradient(90deg,transparent,#3457ff,transparent);transform:rotate(-4deg)}
+
+/* ---------- ミニプレビュー: D ポップかわいい ---------- */
+.pv-d{background:#fffaf2;background-image:radial-gradient(rgba(74,64,89,.08) 1px,transparent 1px);background-size:16px 16px}
+.pv-d .pop{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+}
+.pv-d .pop b{font-weight:700;font-size:24px;letter-spacing:.06em}
+.pv-d .pop b em{font-style:normal}
+.pv-d .pop b em:nth-child(1){color:#ff8fb1}
+.pv-d .pop b em:nth-child(2){color:#ffd166}
+.pv-d .pop b em:nth-child(3){color:#7fd8be}
+.pv-d .pop b em:nth-child(4){color:#7cc7ff}
+.pv-d .pop b em:nth-child(5){color:#b79ce8}
+.pv-d .pop span{
+  font-size:9.5px;font-weight:700;color:#fff;background:#b79ce8;border-radius:999px;padding:4px 14px;transform:rotate(-2deg);
+}
+.pv-d i{position:absolute;font-style:normal;font-size:17px}
+.pv-d i:nth-child(1){top:14%;left:12%;transform:rotate(-10deg)}
+.pv-d i:nth-child(2){top:20%;right:12%;transform:rotate(12deg)}
+.pv-d i:nth-child(3){bottom:16%;left:18%;transform:rotate(8deg)}
+.pv-d i:nth-child(4){bottom:20%;right:16%;transform:rotate(-8deg)}
+
+/* ---------- ご案内 ---------- */
+.order{
+  margin-top:64px;background:#fff;border:1px solid var(--line);border-radius:6px;
+  padding:34px 26px;text-align:center;
+}
+.order h2{font-family:'Shippori Mincho',serif;font-weight:600;font-size:19px;letter-spacing:.24em;margin-bottom:18px}
+.order p{font-size:13px;color:#55514b}
+.order .cta{
+  display:inline-block;margin-top:22px;text-decoration:none;
+  background:var(--ink);color:#f5f3ee;border-radius:999px;
+  padding:14px 44px;font-size:13.5px;letter-spacing:.24em;text-indent:.24em;
+  transition:opacity .25s;
+}
+.order .cta:hover{opacity:.82}
+.order .cta:focus-visible{outline:2.5px solid var(--ink);outline-offset:3px}
+.order small{display:block;margin-top:14px;font-size:11px;color:var(--sub)}
+
+footer{margin-top:64px;text-align:center;font-size:10.5px;color:var(--sub);letter-spacing:.14em;line-height:2.3}
+
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .9s ease,transform .9s ease}
+.reveal.in{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important}
+  .reveal{opacity:1!important;transform:none!important}
+}
+</style>
+</head>
+<body>
+
+<main>
+  <header>
+    <p class="en">Design Swatch Book</p>
+    <h1>デザイン見本帳</h1>
+    <p class="lead">
+      配信者さんの<b>プロフィールサイト</b>、こんな雰囲気で作れます。<br>
+      気になる一枚を、めくってみてください。
+    </p>
+    <p class="how">👇 カードをタップすると実物が開きます(音が出るボタン付き)</p>
+  </header>
+
+  <div class="swatches">
+
+    <a class="swatch reveal" href="demo_a_bar_lilas.html">
+      <div class="preview pv-a">
+        <div class="neon"><b>BAR LILAS</b><span>宵町リラ の 止まり木</span></div>
+        <div class="counter"></div>
+      </div>
+      <div class="meta">
+        <div class="row"><span class="style-name">夜のバー</span><span class="model">デモ: 宵町リラ(架空)</span></div>
+        <div class="tags">
+          <span class="tag">ネオン点灯の開幕</span><span class="tag">店内BGM</span><span class="tag">お品書き仕立て</span>
+        </div>
+        <p class="open">見本を開く</p>
+      </div>
+    </a>
+
+    <a class="swatch reveal" href="demo_b_yukiura_towa.html">
+      <div class="preview pv-b">
+        <i></i><i></i><i></i><i></i><i></i><i></i>
+        <div class="name"><b>雪浦とわ</b><span>しんしんと、うたう</span></div>
+      </div>
+      <div class="meta">
+        <div class="row"><span class="style-name">雪と静寂</span><span class="model">デモ: 雪浦とわ(架空)</span></div>
+        <div class="tags">
+          <span class="tag">降りつづける雪</span><span class="tag">ピアノの単音</span><span class="tag">縦書きの章</span>
+        </div>
+        <p class="open">見本を開く</p>
+      </div>
+    </a>
+
+    <a class="swatch reveal" href="demo_c_reiji.html">
+      <div class="preview pv-c">
+        <div class="chrome"><b>REIJI</b><span>MIDNIGHT TALK</span></div>
+        <div class="slash"></div>
+      </div>
+      <div class="meta">
+        <div class="row"><span class="style-name">硬質クール</span><span class="model">デモ: 零士(架空)</span></div>
+        <div class="tags">
+          <span class="tag">グリッチ演出</span><span class="tag">深夜の環境音</span><span class="tag">ログ風アーカイブ</span>
+        </div>
+        <p class="open">見本を開く</p>
+      </div>
+    </a>
+
+    <a class="swatch reveal" href="demo_d_hoshino_pom.html">
+      <div class="preview pv-d">
+        <i>🍓</i><i>⭐</i><i>🍬</i><i>🎀</i>
+        <div class="pop">
+          <span>まいにち たのしい ラジオ</span>
+          <b><em>星</em><em>野</em><em>ぽ</em><em>む</em><em>☆</em></b>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="row"><span class="style-name">ポップかわいい</span><span class="model">デモ: 星野ぽむ(架空)</span></div>
+        <div class="tags">
+          <span class="tag">タップで紙吹雪</span><span class="tag">チップチューン</span><span class="tag">シール帳仕立て</span>
+        </div>
+        <p class="open">見本を開く</p>
+      </div>
+    </a>
+
+  </div>
+
+  <section class="order reveal">
+    <h2>ご依頼はこちら</h2>
+    <p>
+      この見本帳はあくまで「方向性のサンプル」です。<br>
+      あなたの世界観に合わせて、一からお仕立てします。
+    </p>
+    <a class="cta" href="《BOOTHの商品ページURL》">BOOTHで詳細を見る</a>
+    <small>ご相談だけでもお気軽に(XのDMでも受け付けています)</small>
+  </section>
+
+  <footer>
+    掲載の配信者はすべて架空のデモです。<br>
+    © 《あなたの屋号/名前》
+  </footer>
+</main>
+
+<script>
+const io = new IntersectionObserver(es => {
+  es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: .12 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
