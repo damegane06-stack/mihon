@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>ヒアリングシート | 配信者さんのプロフィールサイト制作</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#edeae4;
+  --ink:#2c2a26;
+  --sub:#7c7770;
+  --line:#d7d2c9;
+  --accent:#c8553d;
+  --on:#2c2a26;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{background:var(--paper);color-scheme:light only;overflow-x:clip}
+body{
+  color:var(--ink);background:var(--paper);
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  line-height:1.85;letter-spacing:.04em;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(rgba(44,42,38,.03) 1px,transparent 1px) 0 0/100% 34px,var(--paper);
+}
+main{position:relative;z-index:2;max-width:600px;margin:0 auto;padding:0 16px 120px}
+
+header{padding:60px 4px 30px;text-align:center}
+.en{font-size:10px;letter-spacing:.55em;text-indent:.55em;color:var(--sub);margin-bottom:14px}
+h1{font-family:'Shippori Mincho',serif;font-weight:600;font-size:clamp(26px,7.4vw,34px);letter-spacing:.18em}
+.lead{margin-top:20px;font-size:13.5px;color:#55514b}
+.badge{
+  display:inline-block;margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:999px;
+  padding:7px 18px;font-size:12px;color:var(--sub);
+}
+
+/* 進み具合 */
+.progress{
+  position:sticky;top:0;z-index:10;margin:0 -16px;padding:10px 16px;
+  background:rgba(237,234,228,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);
+  font-size:11.5px;color:var(--sub);display:flex;align-items:center;gap:10px;
+}
+.bar{flex:1;height:4px;background:var(--line);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+
+section.q{
+  background:#fff;border:1px solid var(--line);border-radius:8px;
+  padding:24px 18px 22px;margin-top:20px;
+  box-shadow:0 2px 3px rgba(44,42,38,.05);
+}
+.qno{font-size:10.5px;letter-spacing:.3em;color:var(--accent);font-weight:700}
+h2{font-family:'Shippori Mincho',serif;font-weight:600;font-size:18px;letter-spacing:.08em;margin:4px 0 4px}
+.hint{font-size:12px;color:var(--sub);margin-bottom:14px}
+.req{font-size:10px;color:#fff;background:var(--accent);border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:2px;letter-spacing:.1em}
+.opt{font-size:10px;color:var(--sub);border:1px solid var(--line);border-radius:4px;padding:0 6px;margin-left:6px;vertical-align:2px}
+h3{font-size:13px;font-weight:700;margin:18px 0 8px}
+h3:first-of-type{margin-top:4px}
+
+/* 選択チップ */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  font-family:inherit;font-size:13px;color:var(--ink);cursor:pointer;
+  background:#faf9f6;border:1.5px solid var(--line);border-radius:999px;padding:7px 15px;
+  min-height:40px;transition:background .15s,border-color .15s,color .15s;
+}
+.chip[aria-pressed="true"]{background:var(--on);border-color:var(--on);color:#fff}
+.chip:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
+.chip .sw{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px;border:1px solid rgba(0,0,0,.15)}
+
+/* 大きめ選択カード */
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{
+  font-family:inherit;text-align:left;cursor:pointer;color:var(--ink);
+  background:#faf9f6;border:1.5px solid var(--line);border-radius:8px;padding:12px 12px 11px;
+  transition:background .15s,border-color .15s;
+}
+.card b{display:block;font-size:13.5px;margin-bottom:2px}
+.card small{display:block;font-size:11px;color:var(--sub);line-height:1.6}
+.card[aria-pressed="true"]{border-color:var(--on);background:#fff;box-shadow:inset 0 0 0 1.5px var(--on)}
+.card[aria-pressed="true"] b::after{content:" ✓";color:var(--accent)}
+.card:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
+
+input[type=text],input[type=url],textarea{
+  width:100%;font-family:inherit;font-size:15px;color:var(--ink);
+  background:#faf9f6;border:1.5px solid var(--line);border-radius:8px;padding:11px 12px;
+}
+textarea{min-height:92px;resize:vertical;line-height:1.7}
+input:focus-visible,textarea:focus-visible{outline:2.5px solid var(--accent);outline-offset:1px;background:#fff}
+.field + .field{margin-top:12px}
+.field label{display:block;font-size:12px;color:var(--sub);margin-bottom:4px}
+
+.sample-link{font-size:12px;color:var(--accent)}
+.note{font-size:11.5px;color:var(--sub);margin-top:10px}
+
+/* 仕上げ */
+.done{text-align:center;margin-top:34px}
+.make{
+  width:100%;padding:16px;border:none;border-radius:999px;cursor:pointer;
+  background:var(--ink);color:#fff;font-family:inherit;font-size:15px;font-weight:700;letter-spacing:.14em;
+}
+.make:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.err{color:var(--accent);font-size:12.5px;margin-top:10px;min-height:1em}
+.out{display:none;margin-top:22px;text-align:left}
+.out.show{display:block}
+.out pre{
+  white-space:pre-wrap;word-break:break-word;font-family:inherit;font-size:13px;line-height:1.75;
+  background:#fff;border:1px solid var(--line);border-radius:8px;padding:16px;max-height:420px;overflow:auto;
+}
+.copy{
+  margin-top:12px;width:100%;padding:14px;border-radius:999px;cursor:pointer;
+  background:var(--accent);border:none;color:#fff;font-family:inherit;font-size:14px;font-weight:700;letter-spacing:.1em;
+}
+.copy:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.after{font-size:12.5px;color:#55514b;margin-top:12px;text-align:center}
+.reset{margin-top:26px;background:none;border:none;font-family:inherit;font-size:11.5px;color:var(--sub);text-decoration:underline;cursor:pointer}
+footer{margin-top:60px;text-align:center;font-size:11px;color:var(--sub)}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="en">HEARING SHEET</p>
+    <h1>ヒアリングシート</h1>
+    <p class="lead">ぴったりの言葉が浮かばなくても大丈夫。<br>近いものを選ぶだけで、こちらで形にします。<br>迷ったら「おまかせ」でOKです。</p>
+    <p class="badge">⏱ だいたい3〜5分 / 入力は自動で一時保存されます</p>
+  </header>
+
+  <div class="progress" aria-hidden="true"><span id="pText">0 / 7</span><div class="bar"><i id="pBar"></i></div></div>
+
+  <!-- 1 -->
+  <section class="q" data-q>
+    <p class="qno">Q1</p>
+    <h2>あなたのこと<span class="req">必須</span></h2>
+    <p class="hint">活動名だけ必須です。ほかはわかる範囲で。</p>
+    <div class="field">
+      <label for="name">活動名(サイトに載せるお名前)</label>
+      <input type="text" id="name" autocomplete="nickname" placeholder="例: 星野ぽむ">
+    </div>
+    <h3>配信しているところ<span class="opt">いくつでも</span></h3>
+    <div class="chips" data-group="platform" data-multi>
+      <button class="chip">YouTube</button><button class="chip">ツイキャス</button><button class="chip">Spoon</button>
+      <button class="chip">Twitch</button><button class="chip">TikTok LIVE</button><button class="chip">IRIAM</button>
+      <button class="chip">その他</button>
+    </div>
+    <h3>どんな配信が多い?<span class="opt">いくつでも</span></h3>
+    <div class="chips" data-group="genre" data-multi>
+      <button class="chip">歌</button><button class="chip">雑談</button><button class="chip">ゲーム</button>
+      <button class="chip">ASMR・朗読</button><button class="chip">作業・勉強</button><button class="chip">お悩み相談</button>
+      <button class="chip">その他</button>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="q" data-q>
+    <p class="qno">Q2</p>
+    <h2>あなたの配信を、場所にたとえると?</h2>
+    <p class="hint">いちばん近いものをひとつ。サイトの世界観のもとになります。</p>
+    <div class="cards" data-group="place">
+      <button class="card"><b>夜のバー</b><small>落ち着いて、ゆっくり話せる</small></button>
+      <button class="card"><b>カフェ</b><small>ふらっと寄れる、やさしい空気</small></button>
+      <button class="card"><b>部室・たまり場</b><small>ワイワイ、いつものメンバー</small></button>
+      <button class="card"><b>秘密基地</b><small>知る人ぞ知る、わくわく</small></button>
+      <button class="card"><b>ライブハウス</b><small>熱くて、にぎやか</small></button>
+      <button class="card"><b>深夜のラジオ局</b><small>静かな夜に、声だけで</small></button>
+      <button class="card"><b>遊園地</b><small>カラフルで、たのしい</small></button>
+      <button class="card"><b>図書館・書斎</b><small>静かで、ていねい</small></button>
+      <button class="card"><b>おまかせ</b><small>話しながら決めたい</small></button>
+      <button class="card"><b>ほかの場所</b><small>下に書いてください</small></button>
+    </div>
+    <div class="field" style="margin-top:12px">
+      <input type="text" id="placeOther" placeholder="ほかの場所なら、ここに(例: 駄菓子屋、夏祭り)">
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="q" data-q>
+    <p class="qno">Q3</p>
+    <h2>雰囲気と色</h2>
+    <h3>雰囲気<span class="opt">2つまで</span></h3>
+    <div class="chips" data-group="mood" data-multi data-max="2">
+      <button class="chip">かわいい</button><button class="chip">クール</button><button class="chip">元気・明るい</button>
+      <button class="chip">大人っぽい</button><button class="chip">しっとり・静か</button><button class="chip">ふんわり・やさしい</button>
+      <button class="chip">和風</button><button class="chip">ちょっと不思議</button><button class="chip">おまかせ</button>
+    </div>
+    <h3>好きな色<span class="opt">2つまで</span></h3>
+    <div class="chips" data-group="color" data-multi data-max="2">
+      <button class="chip"><span class="sw" style="background:#d9412e"></span>赤</button>
+      <button class="chip"><span class="sw" style="background:#ee8a2c"></span>オレンジ</button>
+      <button class="chip"><span class="sw" style="background:#f2c94c"></span>黄色</button>
+      <button class="chip"><span class="sw" style="background:#5fb88a"></span>緑</button>
+      <button class="chip"><span class="sw" style="background:#7cc7ff"></span>水色</button>
+      <button class="chip"><span class="sw" style="background:#3557b7"></span>青</button>
+      <button class="chip"><span class="sw" style="background:#9b7ad8"></span>紫</button>
+      <button class="chip"><span class="sw" style="background:#f08fb1"></span>ピンク</button>
+      <button class="chip"><span class="sw" style="background:#222"></span>白黒</button>
+      <button class="chip">おまかせ</button>
+    </div>
+    <h3>近い見本はある?<span class="opt">ひとつ</span></h3>
+    <p class="hint" style="margin-bottom:8px"><a class="sample-link" href="./" target="_blank" rel="noopener">デザイン見本帳をひらく ↗</a></p>
+    <div class="chips" data-group="sample">
+      <button class="chip">夜のバー(BAR LILAS)</button><button class="chip">雪と静寂(雪浦とわ)</button>
+      <button class="chip">硬質クール(REIJI)</button><button class="chip">ポップかわいい(星野ぽむ)</button>
+      <button class="chip">どれでもない</button>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="q" data-q>
+    <p class="qno">Q4</p>
+    <h2>これは、なしでお願い</h2>
+    <p class="hint">苦手な方向がわかると、仕上がりのズレがぐっと減ります。</p>
+    <div class="chips" data-group="ng" data-multi>
+      <button class="chip">キラキラしすぎ</button><button class="chip">子どもっぽい</button><button class="chip">暗すぎる</button>
+      <button class="chip">文字が多い</button><button class="chip">動きが多すぎる</button><button class="chip">音が勝手に鳴る</button>
+      <button class="chip">とくになし</button>
+    </div>
+    <div class="field" style="margin-top:12px">
+      <input type="text" id="ngOther" placeholder="ほかにあれば(例: ピンクは使わないで)">
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="q" data-q>
+    <p class="qno">Q5</p>
+    <h2>サイトに載せること</h2>
+    <p class="hint">箇条書きやメモのコピペでOK。文章はこちらで整えます。</p>
+    <div class="field">
+      <label for="intro">自己紹介(好きなもの、配信のこと、ひとことなど)</label>
+      <textarea id="intro" placeholder="例: 夜にまったり雑談 / ねこが好き"></textarea>
+    </div>
+    <div class="field">
+      <label for="links">載せたいリンク(1行に1つ)</label>
+      <textarea id="links" placeholder="X: https://...&#10;YouTube: https://..."></textarea>
+    </div>
+    <div class="field">
+      <label for="marshmallow">マシュマロのURL(あれば。お便りの入口ボタンをつくります)</label>
+      <input type="url" id="marshmallow" inputmode="url" placeholder="https://marshmallow-qa.com/...">
+    </div>
+    <h3>アイコン画像<span class="opt">ひとつ</span></h3>
+    <div class="chips" data-group="icon">
+      <button class="chip">あとで送る</button><button class="chip">なし(文字アイコンにして)</button><button class="chip">相談したい</button>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="q" data-q>
+    <p class="qno">Q6</p>
+    <h2>追加したいもの</h2>
+    <p class="hint">気になるものに。料金は、あとでまとめてお伝えします。</p>
+    <div class="cards" data-group="options" data-multi>
+      <button class="card"><b>🎤 歌リスト</b><small>検索・あいうえお絞り込み・ランダム1曲</small></button>
+      <button class="card"><b>🎰 ボイスおみくじ</b><small>1日1回、あなたの声でうらなう</small></button>
+      <button class="card"><b>🕰 配信時計</b><small>次の配信までカウントダウンなど</small></button>
+      <button class="card"><b>🎵 BGM</b><small>ボタンで流れる、サイトの音楽</small></button>
+      <button class="card"><b>✨ 開幕演出</b><small>ひらいた瞬間のアニメーション</small></button>
+      <button class="card"><b>👣 活動のあしあと</b><small>はじめた日からの年表</small></button>
+      <button class="card"><b>まだわからない</b><small>話しながら決めたい</small></button>
+    </div>
+    <h3>配信の時間は?<span class="opt">配信時計を選んだ方</span></h3>
+    <div class="chips" data-group="schedule">
+      <button class="chip">だいたい決まっている</button><button class="chip">不定期</button>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section class="q" data-q>
+    <p class="qno">Q7</p>
+    <h2>さいごに</h2>
+    <div class="field">
+      <label for="ref">参考にしたいサイトや配信者さん(あれば)</label>
+      <input type="text" id="ref" placeholder="URLやお名前">
+    </div>
+    <h3>いつごろ欲しい?<span class="opt">ひとつ</span></h3>
+    <div class="chips" data-group="when">
+      <button class="chip">いそがない</button><button class="chip">1か月以内</button><button class="chip">2週間以内</button><button class="chip">記念日に合わせたい</button>
+    </div>
+    <div class="field" style="margin-top:12px">
+      <label for="free">ほかに伝えたいこと</label>
+      <textarea id="free" placeholder="なんでもどうぞ"></textarea>
+    </div>
+  </section>
+
+  <div class="done">
+    <button class="make" id="make">回答をまとめる</button>
+    <p class="err" id="err" role="alert"></p>
+    <div class="out" id="out">
+      <pre id="summary"></pre>
+      <button class="copy" id="copy">コピーする</button>
+      <p class="after">コピーした文章を、DMにそのまま貼って送ってください。</p>
+    </div>
+    <button class="reset" id="reset">入力をすべて消す</button>
+  </div>
+
+  <footer>© 2026 damegane</footer>
+</main>
+
+<script>
+const KEY = 'mihon-hearing-v1';
+const groups = [...document.querySelectorAll('[data-group]')];
+const fields = ['name','placeOther','ngOther','intro','links','marshmallow','ref','free'].map(id => document.getElementById(id));
+
+/* 選択の仕組み */
+groups.forEach(g => {
+  const multi = g.hasAttribute('data-multi');
+  const max = +g.dataset.max || Infinity;
+  [...g.children].forEach(b => {
+    b.type = 'button';
+    b.setAttribute('aria-pressed', 'false');
+    b.addEventListener('click', () => {
+      const on = b.getAttribute('aria-pressed') === 'true';
+      if (!multi) [...g.children].forEach(x => x.setAttribute('aria-pressed', 'false'));
+      else if (!on && [...g.children].filter(x => x.getAttribute('aria-pressed') === 'true').length >= max) {
+        const first = [...g.children].find(x => x.getAttribute('aria-pressed') === 'true');
+        first.setAttribute('aria-pressed', 'false');
+      }
+      b.setAttribute('aria-pressed', on ? 'false' : 'true');
+      persist();
+    });
+  });
+});
+fields.forEach(f => f.addEventListener('input', persist));
+
+const label = b => (b.querySelector('b') ? b.querySelector('b').textContent : b.textContent).trim();
+const picked = g => [...g.children].filter(b => b.getAttribute('aria-pressed') === 'true').map(label);
+
+function state() {
+  const s = { f: {}, g: {} };
+  fields.forEach(f => s.f[f.id] = f.value);
+  groups.forEach(g => s.g[g.dataset.group] = picked(g));
+  return s;
+}
+function persist() {
+  try { localStorage.setItem(KEY, JSON.stringify(state())); } catch (e) {}
+  progress();
+}
+function restore() {
+  let s = null;
+  try { s = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+  if (!s) return;
+  fields.forEach(f => { if (s.f && s.f[f.id]) f.value = s.f[f.id]; });
+  groups.forEach(g => {
+    const want = (s.g && s.g[g.dataset.group]) || [];
+    [...g.children].forEach(b => b.setAttribute('aria-pressed', want.includes(label(b)) ? 'true' : 'false'));
+  });
+}
+function progress() {
+  const qs = [...document.querySelectorAll('[data-q]')];
+  const done = qs.filter(q =>
+    [...q.querySelectorAll('input,textarea')].some(i => i.value.trim()) ||
+    q.querySelector('[aria-pressed="true"]')
+  ).length;
+  document.getElementById('pText').textContent = done + ' / ' + qs.length;
+  document.getElementById('pBar').style.width = (done / qs.length * 100) + '%';
+}
+
+function summary() {
+  const s = state(), g = s.g, f = s.f;
+  const line = (k, v) => v && v.length ? `${k}: ${Array.isArray(v) ? v.join('、') : v}` : `${k}: -`;
+  const place = [...(g.place || [])].map(p => p === 'ほかの場所' ? (f.placeOther || 'ほかの場所') : p);
+  const ng = [...(g.ng || [])]; if (f.ngOther) ng.push(f.ngOther);
+  return [
+    '【プロフィールサイト ヒアリングシート】',
+    '',
+    line('活動名', f.name),
+    line('配信先', g.platform),
+    line('配信の内容', g.genre),
+    '',
+    line('たとえるなら', place),
+    line('雰囲気', g.mood),
+    line('好きな色', g.color),
+    line('近い見本', g.sample),
+    line('なしでお願い', ng),
+    '',
+    '■ 自己紹介',
+    f.intro || '-',
+    '',
+    '■ リンク',
+    f.links || '-',
+    line('マシュマロ', f.marshmallow),
+    line('アイコン', g.icon),
+    '',
+    line('追加したいもの', g.options),
+    line('配信の時間', g.schedule),
+    line('参考', f.ref),
+    line('希望時期', g.when),
+    '',
+    '■ そのほか',
+    f.free || '-'
+  ].join('\n');
+}
+
+document.getElementById('make').addEventListener('click', () => {
+  const err = document.getElementById('err');
+  const name = document.getElementById('name');
+  if (!name.value.trim()) {
+    err.textContent = '活動名だけ入力をお願いします(Q1)';
+    name.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    name.focus({ preventScroll: true });
+    return;
+  }
+  err.textContent = '';
+  document.getElementById('summary').textContent = summary();
+  const out = document.getElementById('out');
+  out.classList.add('show');
+  out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+document.getElementById('copy').addEventListener('click', async function () {
+  const text = document.getElementById('summary').textContent;
+  let ok = false;
+  try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {}
+  if (!ok) { // 古いブラウザ向け
+    const r = document.createRange(); r.selectNodeContents(document.getElementById('summary'));
+    const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    try { ok = document.execCommand('copy'); } catch (e) {}
+  }
+  this.textContent = ok ? 'コピーしました ✓' : '長押しでコピーしてください';
+  setTimeout(() => this.textContent = 'コピーする', 2400);
+});
+
+document.getElementById('reset').addEventListener('click', () => {
+  try { localStorage.removeItem(KEY); } catch (e) {}
+  fields.forEach(f => f.value = '');
+  groups.forEach(g => [...g.children].forEach(b => b.setAttribute('aria-pressed', 'false')));
+  document.getElementById('out').classList.remove('show');
+  progress();
+});
+
+restore();
+progress();
+</script>
+</body>
+</html>
