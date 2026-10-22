@@ -289,7 +289,7 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
 /* ---------- 年譜: Googleスプレッドシートから読み込む ---------- */
 /* スプレッドシートを「ウェブに公開(CSV)」したURLをここに貼る。空ならサンプルを表示 */
-const SHEET_CSV = '';
+const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ56-UaGnW3Kx68gEQPMy2szOO3sLZyE3gSLRO13YtUrIC_q0dnSHX-UE5ZTCC8E9gfsMzao_d5uMOc/pub?gid=0&single=true&output=csv';
 const SAMPLE_CSV = './damegane-sample.csv';
 
 function parseCSV(t) { // ダブルクォート・改行入りのセルにも対応
