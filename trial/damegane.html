@@ -153,29 +153,25 @@ section{margin-top:110px;position:relative}
 .note{font-size:11px;color:var(--sub);margin-top:14px}
 .demo-reset{margin-top:12px;background:none;border:none;font-family:inherit;font-size:11px;color:var(--sub);text-decoration:underline;cursor:pointer}
 
-/* 貸出票(配信時計・不定期) */
-.card-slip{
-  background:#fbf8f0;border:1px solid var(--line);
-  box-shadow:0 10px 24px rgba(31,43,36,.06);
-}
-.card-slip .head{
-  display:flex;justify-content:space-between;align-items:baseline;padding:14px 18px;border-bottom:1px solid var(--line);
-  font-family:'Shippori Mincho',serif;font-size:13px;letter-spacing:.25em;color:var(--green);
-}
-.card-slip .head small{font-family:'Zen Kaku Gothic New',sans-serif;font-size:10px;letter-spacing:.2em;color:var(--sub)}
-.since{padding:22px 18px 18px;text-align:center;border-bottom:1px solid var(--line)}
-.since .big{font-family:'Shippori Mincho',serif;font-size:44px;color:var(--green);line-height:1.2}
-.since .big small{font-size:14px;margin-left:4px}
-.since p{font-size:12px;color:var(--sub)}
-.rows{list-style:none}
-.rows li{display:grid;grid-template-columns:96px 1fr auto;gap:10px;align-items:center;padding:10px 18px;border-bottom:1px dashed var(--line);font-size:13px}
-.rows li:last-child{border-bottom:none}
-.rows .d{font-family:'Shippori Mincho',serif;color:#3a4a40;letter-spacing:.1em}
-.stamp{
-  font-size:10px;letter-spacing:.15em;color:#a54b3b;border:1.5px solid #a54b3b;border-radius:50%;
-  width:46px;height:46px;display:flex;align-items:center;justify-content:center;transform:rotate(-12deg);opacity:.85;
-}
-.rows li.next-row .stamp{color:var(--moss);border-color:var(--moss);border-style:dashed}
+/* 年譜(イベントの軌跡 + 動画) ― スプレッドシートから読み込む */
+.chronicle{border-left:1px solid var(--moss);margin-left:6px;padding-left:22px}
+.yr{font-family:'Shippori Mincho',serif;font-size:13px;letter-spacing:.3em;color:var(--brass);margin:30px 0 12px;position:relative}
+.yr:first-child{margin-top:0}
+.yr::before{content:"";position:absolute;left:-27px;top:50%;width:9px;height:9px;margin-top:-5px;border-radius:50%;background:var(--paper);border:1px solid var(--brass)}
+.ev{background:#fbf8f0;border:1px solid var(--line);padding:16px 16px 14px;margin-bottom:14px;position:relative;box-shadow:0 6px 16px rgba(31,43,36,.05)}
+.ev::before{content:"";position:absolute;left:-23px;top:22px;width:4px;height:4px;border-radius:50%;background:var(--moss)}
+.ev .meta{display:flex;gap:10px;align-items:center;font-size:11px;color:var(--sub);letter-spacing:.1em}
+.ev .kind{border:1px solid var(--moss);color:var(--green);padding:0 8px;border-radius:2px;font-size:10.5px}
+.ev .kind.大会{border-color:#a54b3b;color:#a54b3b}
+.ev .kind.周年{border-color:var(--brass);color:#8a6a33}
+.ev h3{font-family:'Shippori Mincho',serif;font-weight:500;font-size:16px;letter-spacing:.1em;margin:6px 0 2px;line-height:1.7}
+.ev p{font-size:12.5px;color:#3a4a40}
+.vid{position:relative;display:block;width:100%;aspect-ratio:16/9;margin-top:12px;border:none;padding:0;cursor:pointer;background:#1f2b24 center/cover no-repeat;overflow:hidden}
+.vid::after{content:"▶";position:absolute;left:50%;top:50%;width:56px;height:40px;margin:-20px 0 0 -28px;border-radius:8px;background:rgba(31,43,36,.82);color:#f3efe4;display:flex;align-items:center;justify-content:center;font-size:16px}
+.vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vid.on::after{display:none}
+.src{font-size:10.5px;color:var(--sub);margin-top:6px;text-align:right;letter-spacing:.05em}
+.empty{font-size:13px;color:var(--sub);text-align:center;padding:20px}
 
 /* 書架(リンク) */
 .shelf{display:flex;flex-direction:column;gap:12px}
@@ -254,16 +250,9 @@ footer .mark{font-family:'Shippori Mincho',serif;font-size:14px;color:var(--bras
   </section>
 
   <section class="reveal">
-    <div class="chapter"><span class="no">第三章</span><h2>貸出票</h2><span class="en">ON AIR LOG</span></div>
-    <div class="card-slip">
-      <div class="head">開館の記録<small>不定期開館</small></div>
-      <div class="since">
-        <p>前回の開館から</p>
-        <p class="big" id="sinceDays">-<small>日</small></p>
-        <p id="sinceText"></p>
-      </div>
-      <ul class="rows" id="rows"></ul>
-    </div>
+    <div class="chapter"><span class="no">第三章</span><h2>年譜</h2><span class="en">CHRONICLE</span></div>
+    <div class="chronicle" id="chronicle"><p class="empty">頁を読み込んでいます…</p></div>
+    <p class="src" id="src"></p>
   </section>
 
   <section class="reveal">
@@ -298,22 +287,73 @@ if (!reduced) { setTimeout(closeOpening, 3600); document.getElementById('skip').
 const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12 });
 document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-/* ---------- 貸出票: 不定期配信 ---------- */
-/* 配信したら、この一覧の先頭に日付を足すだけ(新しい順) */
-const LOG = [
-  { date: '2026-10-20', what: '雑談' },
-  { date: '2026-10-14', what: 'ゲーム' },
-  { date: '2026-10-09', what: '雑談' }
-];
-(function () {
-  const day = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
-  const now = new Date(); now.setHours(0, 0, 0, 0);
-  const n = Math.round((now - day(LOG[0].date)) / 86400000);
-  document.getElementById('sinceDays').innerHTML = n + '<small>日</small>';
-  document.getElementById('sinceText').textContent = n === 0 ? '今日、開館しました' : n <= 3 ? 'そろそろ、また灯りがつくかも' : 'しばし休館中。お知らせはXで';
-  const rows = document.getElementById('rows');
-  rows.innerHTML = '<li class="next-row"><span class="d">次回</span><span>未定 ― Xでお知らせ</span><span class="stamp">予定</span></li>' +
-    LOG.map(l => { const d = day(l.date); return `<li><span class="d">${d.getMonth() + 1}月${d.getDate()}日</span><span>${l.what}</span><span class="stamp">開館</span></li>`; }).join('');
+/* ---------- 年譜: Googleスプレッドシートから読み込む ---------- */
+/* スプレッドシートを「ウェブに公開(CSV)」したURLをここに貼る。空ならサンプルを表示 */
+const SHEET_CSV = '';
+const SAMPLE_CSV = './damegane-sample.csv';
+
+function parseCSV(t) { // ダブルクォート・改行入りのセルにも対応
+  const rows = []; let row = [], cell = '', q = false;
+  t = t.replace(/^﻿/, '');
+  for (let i = 0; i < t.length; i++) {
+    const c = t[i];
+    if (q) { if (c === '"') { if (t[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += c; }
+    else if (c === '"') q = true;
+    else if (c === ',') { row.push(cell); cell = ''; }
+    else if (c === '\n' || c === '\r') { if (c === '\r' && t[i + 1] === '\n') i++; row.push(cell); rows.push(row); row = []; cell = ''; }
+    else cell += c;
+  }
+  if (cell || row.length) { row.push(cell); rows.push(row); }
+  return rows.filter(r => r.some(x => x.trim()));
+}
+function ytId(u) {
+  const m = (u || '').match(/(?:youtu\.be\/|v=|\/shorts\/|\/live\/|\/embed\/)([\w-]{11})/);
+  return m ? m[1] : null;
+}
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function toDate(s) {
+  const m = (s || '').trim().match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
+  return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null;
+}
+function render(rows, fromSheet) {
+  const box = document.getElementById('chronicle');
+  const head = rows.shift() || [];
+  const col = name => head.findIndex(h => h.trim() === name);
+  const ci = { d: col('日付'), t: col('できごと'), k: col('種類'), v: col('動画URL'), c: col('ひとこと') };
+  const items = rows.map(r => ({ d: toDate(r[ci.d]), t: r[ci.t] || '', k: (r[ci.k] || '').trim(), v: r[ci.v] || '', c: r[ci.c] || '' }))
+    .filter(x => x.d && x.t.trim()).sort((a, b) => b.d - a.d);
+  if (!items.length) { box.innerHTML = '<p class="empty">まだ記録がありません</p>'; return; }
+  let html = '', yr = null;
+  for (const x of items) {
+    const y = x.d.getFullYear();
+    if (y !== yr) { html += `<p class="yr">${y}</p>`; yr = y; }
+    const id = ytId(x.v);
+    html += `<article class="ev">
+      <div class="meta"><span>${x.d.getMonth() + 1}月${x.d.getDate()}日</span>${x.k ? `<span class="kind ${esc(x.k)}">${esc(x.k)}</span>` : ''}</div>
+      <h3>${esc(x.t)}</h3>${x.c ? `<p>${esc(x.c)}</p>` : ''}
+      ${id ? `<button class="vid" data-id="${id}" style="background-image:url(https://i.ytimg.com/vi/${id}/hqdefault.jpg)" aria-label="動画を再生"></button>` : ''}
+    </article>`;
+  }
+  box.innerHTML = html;
+  document.getElementById('src').textContent = fromSheet ? '📗 スプレッドシートから読み込みました' : '※ サンプルのデータを表示しています';
+}
+document.addEventListener('click', e => { // タップした動画だけ読み込む(ページを軽く保つ)
+  const b = e.target.closest('.vid');
+  if (!b || b.classList.contains('on')) return;
+  b.classList.add('on');
+  b.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${b.dataset.id}?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="動画"></iframe>`;
+});
+(async function loadChronicle() {
+  const sheet = new URLSearchParams(location.search).get('sheet') || SHEET_CSV;
+  for (const [url, fromSheet] of [[sheet, true], [SAMPLE_CSV, false]]) {
+    if (!url) continue;
+    try {
+      const r = await fetch(url + (url.includes('?') ? '&' : '?') + 't=' + Date.now(), { cache: 'no-store' });
+      if (!r.ok) throw 0;
+      render(parseCSV(await r.text()), fromSheet); return;
+    } catch (e) {}
+  }
+  document.getElementById('chronicle').innerHTML = '<p class="empty">読み込めませんでした</p>';
 })();
 
 /* ---------- 本日の栞: ボイスおみくじ ---------- */
