@@ -192,7 +192,7 @@ a.item:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
 .item .ph{aspect-ratio:1;background:var(--green) center/cover no-repeat;position:relative;display:flex;align-items:center;justify-content:center}
 .item .ph span{font-family:'Shippori Mincho',serif;color:#e8d9b4;font-size:26px;opacity:.8}
 .item .ph::after{content:"";position:absolute;inset:8px;border:1px solid rgba(232,217,180,.35);pointer-events:none}
-.item .ph.img::after,.item .ph.img span{display:none}
+.item .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
 .item .body{padding:12px 12px 14px;display:flex;flex-direction:column;gap:2px;flex:1}
 .item .kind{font-size:10px;letter-spacing:.2em;color:var(--brass)}
 .item h3{font-family:'Shippori Mincho',serif;font-weight:500;font-size:14px;letter-spacing:.06em;line-height:1.6}
@@ -293,7 +293,7 @@ footer .mark{font-family:'Shippori Mincho',serif;font-size:14px;color:var(--bras
   <section class="reveal">
     <div class="chapter"><span class="no">終章</span><h2>書架</h2><span class="en">LINKS</span></div>
     <div class="shelf">
-      <a href="#" class="todo" style="--c:#3a4a40" onclick="return todo('XのアカウントURLが未確定です')"><b>X</b><small>開館のお知らせ</small></a>
+      <a href="https://x.com/spoonmegane" target="_blank" rel="noopener" style="--c:#3a4a40"><b>X</b><small>開館のお知らせ</small></a>
       <a href="https://spoon.onelink.me/Uuzo/vfjz78vy" target="_blank" rel="noopener" style="--c:#6f8f7a"><b>Spoon</b><small>声のアーカイブ</small></a>
       <a href="https://www.youtube.com/@noa_kirinuki_ch" target="_blank" rel="noopener" style="--c:#a54b3b"><b>YouTube</b><small>配信はこちら</small></a>
       <a href="https://marshmallow-qa.com/mpkb7fu7cjorers" target="_blank" rel="noopener" class="letter"><b>司書へのお便り</b><small>マシュマロで匿名で</small></a>
@@ -418,7 +418,7 @@ function renderGoods(rows, fromSheet) {
     const url = safe(x.u), img = safe(x.i);
     const tag = url ? `a class="item" href="${esc(url)}" target="_blank" rel="noopener"` : 'div class="item nolink"';
     return `<${tag}>
-      <div class="ph${img ? ' img' : ''}"${img ? ` style="background-image:url('${esc(img)}')"` : ''}><span>❦</span></div>
+      <div class="ph"><span>❦</span>${img ? `<img src="${esc(img)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}</div>
       <div class="body">${x.k ? `<span class="kind">${esc(x.k)}</span>` : ''}<h3>${esc(x.n)}</h3>${x.m ? `<p>${esc(x.m)}</p>` : ''}
       ${x.p ? `<span class="price">${Number(x.p).toLocaleString()}<small>円</small></span>` : ''}</div>
     </${url ? 'a' : 'div'}>`;

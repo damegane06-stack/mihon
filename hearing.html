@@ -234,14 +234,58 @@ footer{margin-top:60px;text-align:center;font-size:11px;color:var(--sub)}
   <section class="q" data-q>
     <p class="qno">Q5</p>
     <h2>サイトに載せること</h2>
-    <p class="hint">箇条書きやメモのコピペでOK。文章はこちらで整えます。</p>
+    <p class="hint">短いメモでOK。文章はこちらで整えます。</p>
+    <h3>自己紹介<span class="opt">わかるところだけ</span></h3>
     <div class="field">
-      <label for="intro">自己紹介(好きなもの、配信のこと、ひとことなど)</label>
-      <textarea id="intro" placeholder="例: 夜にまったり雑談 / ねこが好き"></textarea>
+      <label for="introLike">好きなもの・ハマっていること</label>
+      <input type="text" id="introLike" placeholder="例: ねこ、レトロゲーム、夜の散歩">
     </div>
     <div class="field">
-      <label for="links">載せたいリンク(1行に1つ)</label>
-      <textarea id="links" placeholder="X: https://...&#10;YouTube: https://..."></textarea>
+      <label for="introStream">どんな配信?(よくやること、雰囲気)</label>
+      <input type="text" id="introStream" placeholder="例: 夜にまったり雑談。たまにゲーム大会">
+    </div>
+    <div class="field">
+      <label for="introMsg">見に来てくれた人へ、ひとこと</label>
+      <input type="text" id="introMsg" placeholder="例: ふらっと寄ってくれたらうれしいです">
+    </div>
+
+    <h3>リンク</h3>
+    <div class="field">
+      <label for="xid">XのID(@から始まるもの)</label>
+      <input type="text" id="xid" autocapitalize="off" autocomplete="off" placeholder="@example">
+    </div>
+    <div class="field" data-when="platform|YouTube" hidden>
+      <label for="urlYouTube">YouTubeのURL</label>
+      <input type="url" id="urlYouTube" data-plat="YouTube" inputmode="url" placeholder="https://...">
+    </div>
+    <div class="field" data-when="platform|ツイキャス" hidden>
+      <label for="urlTwitcas">ツイキャスのURL</label>
+      <input type="url" id="urlTwitcas" data-plat="ツイキャス" inputmode="url" placeholder="https://...">
+    </div>
+    <div class="field" data-when="platform|Spoon" hidden>
+      <label for="urlSpoon">SpoonのURL</label>
+      <input type="url" id="urlSpoon" data-plat="Spoon" inputmode="url" placeholder="https://...">
+    </div>
+    <div class="field" data-when="platform|Twitch" hidden>
+      <label for="urlTwitch">TwitchのURL</label>
+      <input type="url" id="urlTwitch" data-plat="Twitch" inputmode="url" placeholder="https://...">
+    </div>
+    <div class="field" data-when="platform|TikTok LIVE" hidden>
+      <label for="urlTiktok">TikTok LIVEのURL</label>
+      <input type="url" id="urlTiktok" data-plat="TikTok LIVE" inputmode="url" placeholder="https://...">
+    </div>
+    <div class="field" data-when="platform|IRIAM" hidden>
+      <label for="urlIriam">IRIAMのURL</label>
+      <input type="url" id="urlIriam" data-plat="IRIAM" inputmode="url" placeholder="https://...">
+    </div>
+    <div class="field" data-when="platform|その他" hidden>
+      <label for="urlOther">その他の配信先のURL</label>
+      <input type="url" id="urlOther" data-plat="その他" inputmode="url" placeholder="https://...">
+    </div>
+    <p class="note" data-when-none="platform">Q1で配信先を選ぶと、ここにURLの入力欄が出ます。</p>
+    <div class="field" style="margin-top:12px">
+      <label for="links">そのほか載せたいリンク(1行に1つ)</label>
+      <textarea id="links" placeholder="例: BOOTH https://...&#10;Instagram https://..."></textarea>
     </div>
     <div class="field">
       <label for="marshmallow">マシュマロのURL(あれば。お便りの入口ボタンをつくります)</label>
@@ -258,23 +302,39 @@ footer{margin-top:60px;text-align:center;font-size:11px;color:var(--sub)}
   <section class="q" data-q>
     <p class="qno">Q6</p>
     <h2>追加したいもの</h2>
-    <p class="hint">気になるものに。料金は、あとでまとめてお伝えします。</p>
+    <p class="hint">気になるものに。料金は、あとでまとめてお伝えします。<br>📗 がついたものは、完成後もGoogleスプレッドシートでご自身で更新できます。</p>
     <div class="cards" data-group="options" data-multi>
-      <button class="card"><b>🎤 歌リスト</b><small>検索・あいうえお絞り込み・ランダム1曲</small></button>
-      <button class="card"><b>🎰 ボイスおみくじ</b><small>1日1回、あなたの声でうらなう</small></button>
-      <button class="card"><b>🕰 配信時計</b><small>次の配信までカウントダウンなど</small></button>
+      <button class="card"><b>🎤 歌リスト</b><small>検索・あいうえお絞り込み・ランダム1曲 📗</small></button>
+      <button class="card"><b>🎰 ボイスくじ</b><small>1日1回、あなたの声で。おみくじ型・ガチャ型</small></button>
+      <button class="card"><b>🕰 配信カウントダウン</b><small>次の配信まであと◯時間(定時配信の方向け)</small></button>
+      <button class="card"><b>📜 年譜</b><small>大会・周年・イベントの記録 📗</small></button>
+      <button class="card"><b>🎬 動画</b><small>YouTubeの動画を並べて、その場で再生 📗</small></button>
+      <button class="card"><b>🛍 グッズ・BOOTH</b><small>ボイスやグッズの商品を並べる 📗</small></button>
       <button class="card"><b>🎵 BGM</b><small>ボタンで流れる、サイトの音楽</small></button>
       <button class="card"><b>✨ 開幕演出</b><small>ひらいた瞬間のアニメーション</small></button>
-      <button class="card"><b>👣 活動のあしあと</b><small>はじめた日からの年表</small></button>
       <button class="card"><b>まだわからない</b><small>話しながら決めたい</small></button>
     </div>
+
+    <div data-when="options|🎰 ボイスくじ" hidden>
+      <h3>くじの型<span class="opt">ひとつ</span></h3>
+      <div class="chips" data-group="kujiType">
+        <button class="chip">おみくじ型(大吉〜末吉)</button><button class="chip">ガチャ型(★1〜★5)</button><button class="chip">おまかせ</button>
+      </div>
+      <h3>くじのセリフ<span class="opt">ひとつ</span></h3>
+      <div class="chips" data-group="kujiLines">
+        <button class="chip">自分で考える</button><button class="chip">テンプレから選びたい</button><button class="chip">相談したい</button>
+      </div>
+      <p class="note">🎙 声の<b>録音はご自身でお願いします</b>(スマホの録音でもOK)。セリフの数や長さは、相談して決めます。</p>
+    </div>
+
+    <div class="field" data-when="options|🕰 配信カウントダウン" hidden style="margin-top:12px">
+      <label for="schedTime">毎週の配信の曜日と時間</label>
+      <input type="text" id="schedTime" placeholder="例: 月・水・金の22時から">
+    </div>
+
     <div class="field" style="margin-top:12px">
       <label for="optOther">ほかに欲しい機能があれば(できるかどうか、確認してお返事します)</label>
       <textarea id="optOther" placeholder="例: 誕生日だけ表示が変わる、メンバー紹介ページ など"></textarea>
-    </div>
-    <h3>配信の時間は?<span class="opt">配信時計を選んだ方</span></h3>
-    <div class="chips" data-group="schedule">
-      <button class="chip">だいたい決まっている</button><button class="chip">不定期</button>
     </div>
   </section>
 
@@ -315,7 +375,19 @@ const KEY = 'mihon-hearing-v1';
 const groups = [...document.querySelectorAll('[data-group]')];
 const fields = [...document.querySelectorAll('main input[id], main textarea[id]')];
 /* 「その他」を選んだときだけ自由記入欄を出す */
+function syncWhen() {
+  const on = (grp, lab) => {
+    const g = document.querySelector(`[data-group="${grp}"]`);
+    return [...g.children].some(b => label(b) === lab && b.getAttribute('aria-pressed') === 'true');
+  };
+  document.querySelectorAll('[data-when]').forEach(el => { const [g, l] = el.dataset.when.split('|'); el.hidden = !on(g, l); });
+  document.querySelectorAll('[data-when-none]').forEach(el => {
+    const g = document.querySelector(`[data-group="${el.dataset.whenNone}"]`);
+    el.hidden = !!g.querySelector('[aria-pressed="true"]');
+  });
+}
 function syncOthers() {
+  syncWhen();
   document.querySelectorAll('.other[data-for]').forEach(inp => {
     const g = document.querySelector(`[data-group="${inp.dataset.for}"]`);
     const on = [...g.children].some(b => b.textContent.trim() === 'その他' && b.getAttribute('aria-pressed') === 'true');
@@ -398,16 +470,23 @@ function summary() {
     line('なしでお願い', ng),
     '',
     '■ 自己紹介',
-    f.intro || '-',
+    line('好きなもの', f.introLike),
+    line('どんな配信', f.introStream),
+    line('ひとこと', f.introMsg),
     '',
     '■ リンク',
-    f.links || '-',
+    line('X', f.xid ? '@' + f.xid.replace(/^[@＠]/, '') : ''),
+    ...[...document.querySelectorAll('[data-plat]')].filter(i => !i.closest('[hidden]') && i.value.trim())
+      .map(i => line(i.dataset.plat === 'その他' ? 'その他の配信先' : i.dataset.plat, i.value.trim())),
+    line('そのほか', f.links),
     line('マシュマロ', f.marshmallow),
     line('アイコン', g.icon),
     '',
-    line('追加したいもの', g.options),
+    line('追加したいもの', (g.options || []).map(v => v.replace(/^\S+\s/, ''))),
     line('ほかに欲しい機能', f.optOther),
-    line('配信の時間', g.schedule),
+    line('くじの型', g.kujiType),
+    line('くじのセリフ', g.kujiLines),
+    line('配信の曜日・時間', f.schedTime),
     line('参考', f.ref),
     line('希望時期', g.when),
     '',
