@@ -148,16 +148,17 @@ h2::after{content:"";display:block;width:52px;height:1px;background:linear-gradi
 .note{font-size:11px;color:var(--mauve);margin-top:10px;letter-spacing:.08em}
 
 /* SNSコースター */
-.coasters{display:flex;gap:16px;flex-wrap:wrap}
+.coasters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-width:600px}
 .coaster{
-  flex:1;min-width:130px;text-align:center;text-decoration:none;
+  min-width:0;text-align:center;text-decoration:none;
   border:1px solid rgba(232,176,75,.45);border-radius:50%;
   aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
   color:var(--cream);background:rgba(30,23,40,.6);
   transition:border-color .3s,box-shadow .3s,transform .3s;
 }
 .coaster span{font-family:'Zen Old Mincho',serif;font-size:16px;letter-spacing:.2em}
-.coaster small{font-size:10px;color:var(--mauve);letter-spacing:.2em}
+.coaster small{font-size:10px;color:var(--mauve);letter-spacing:.2em;white-space:nowrap}
+@media (max-width:400px){.coaster small{letter-spacing:.05em}.coaster span{font-size:14px;letter-spacing:.12em}}
 .coaster:hover{border-color:var(--neon);box-shadow:0 0 18px rgba(255,95,162,.35);transform:translateY(-4px)}
 .coaster:focus-visible{outline:2px solid var(--neon);outline-offset:3px}
 
