@@ -91,6 +91,8 @@ input[type=text],input[type=url],textarea{
 textarea{min-height:92px;resize:vertical;line-height:1.7}
 input:focus-visible,textarea:focus-visible{outline:2.5px solid var(--accent);outline-offset:1px;background:#fff}
 .field + .field{margin-top:12px}
+.other{margin-top:10px}
+.other[hidden]{display:none}
 .field label{display:block;font-size:12px;color:var(--sub);margin-bottom:4px}
 
 .sample-link{font-size:12px;color:var(--accent)}
@@ -146,12 +148,14 @@ footer{margin-top:60px;text-align:center;font-size:11px;color:var(--sub)}
       <button class="chip">Twitch</button><button class="chip">TikTok LIVE</button><button class="chip">IRIAM</button>
       <button class="chip">その他</button>
     </div>
+    <input type="text" class="other" data-for="platform" id="platformOther" placeholder="その他の配信先を書いてください">
     <h3>どんな配信が多い?<span class="opt">いくつでも</span></h3>
     <div class="chips" data-group="genre" data-multi>
       <button class="chip">歌</button><button class="chip">雑談</button><button class="chip">ゲーム</button>
       <button class="chip">ASMR・朗読</button><button class="chip">作業・勉強</button><button class="chip">お悩み相談</button>
       <button class="chip">その他</button>
     </div>
+    <input type="text" class="other" data-for="genre" id="genreOther" placeholder="その他の配信内容を書いてください">
   </section>
 
   <!-- 2 -->
@@ -184,8 +188,9 @@ footer{margin-top:60px;text-align:center;font-size:11px;color:var(--sub)}
     <div class="chips" data-group="mood" data-multi data-max="2">
       <button class="chip">かわいい</button><button class="chip">クール</button><button class="chip">元気・明るい</button>
       <button class="chip">大人っぽい</button><button class="chip">しっとり・静か</button><button class="chip">ふんわり・やさしい</button>
-      <button class="chip">和風</button><button class="chip">ちょっと不思議</button><button class="chip">おまかせ</button>
+      <button class="chip">和風</button><button class="chip">ちょっと不思議</button><button class="chip">その他</button><button class="chip">おまかせ</button>
     </div>
+    <input type="text" class="other" data-for="mood" id="moodOther" placeholder="ほかの雰囲気を書いてください(例: レトロ、ゆるい)">
     <h3>好きな色<span class="opt">2つまで</span></h3>
     <div class="chips" data-group="color" data-multi data-max="2">
       <button class="chip"><span class="sw" style="background:#d9412e"></span>赤</button>
@@ -197,8 +202,10 @@ footer{margin-top:60px;text-align:center;font-size:11px;color:var(--sub)}
       <button class="chip"><span class="sw" style="background:#9b7ad8"></span>紫</button>
       <button class="chip"><span class="sw" style="background:#f08fb1"></span>ピンク</button>
       <button class="chip"><span class="sw" style="background:#222"></span>白黒</button>
+      <button class="chip">その他</button>
       <button class="chip">おまかせ</button>
     </div>
+    <input type="text" class="other" data-for="color" id="colorOther" placeholder="使いたい色を書いてください(例: くすみ緑、金色)">
     <h3>近い見本はある?<span class="opt">ひとつ</span></h3>
     <p class="hint" style="margin-bottom:8px"><a class="sample-link" href="./" target="_blank" rel="noopener">デザイン見本帳をひらく ↗</a></p>
     <div class="chips" data-group="sample">
@@ -242,8 +249,9 @@ footer{margin-top:60px;text-align:center;font-size:11px;color:var(--sub)}
     </div>
     <h3>アイコン画像<span class="opt">ひとつ</span></h3>
     <div class="chips" data-group="icon">
-      <button class="chip">あとで送る</button><button class="chip">なし(文字アイコンにして)</button><button class="chip">相談したい</button>
+      <button class="chip">あり(DMで送ります)</button><button class="chip">なし(文字アイコンにして)</button>
     </div>
+    <p class="note">📎 画像はこのシートからは送れません。まとめた回答をDMで送るときに、<b>同じDMに画像を添付</b>してください。<br>アイコンの制作はおこなっていないため、お手持ちの画像をご用意ください。</p>
   </section>
 
   <!-- 6 -->
@@ -259,6 +267,10 @@ footer{margin-top:60px;text-align:center;font-size:11px;color:var(--sub)}
       <button class="card"><b>✨ 開幕演出</b><small>ひらいた瞬間のアニメーション</small></button>
       <button class="card"><b>👣 活動のあしあと</b><small>はじめた日からの年表</small></button>
       <button class="card"><b>まだわからない</b><small>話しながら決めたい</small></button>
+    </div>
+    <div class="field" style="margin-top:12px">
+      <label for="optOther">ほかに欲しい機能があれば(できるかどうか、確認してお返事します)</label>
+      <textarea id="optOther" placeholder="例: 誕生日だけ表示が変わる、メンバー紹介ページ など"></textarea>
     </div>
     <h3>配信の時間は?<span class="opt">配信時計を選んだ方</span></h3>
     <div class="chips" data-group="schedule">
@@ -301,7 +313,15 @@ footer{margin-top:60px;text-align:center;font-size:11px;color:var(--sub)}
 <script>
 const KEY = 'mihon-hearing-v1';
 const groups = [...document.querySelectorAll('[data-group]')];
-const fields = ['name','placeOther','ngOther','intro','links','marshmallow','ref','free'].map(id => document.getElementById(id));
+const fields = [...document.querySelectorAll('main input[id], main textarea[id]')];
+/* 「その他」を選んだときだけ自由記入欄を出す */
+function syncOthers() {
+  document.querySelectorAll('.other[data-for]').forEach(inp => {
+    const g = document.querySelector(`[data-group="${inp.dataset.for}"]`);
+    const on = [...g.children].some(b => b.textContent.trim() === 'その他' && b.getAttribute('aria-pressed') === 'true');
+    inp.hidden = !on;
+  });
+}
 
 /* 選択の仕組み */
 groups.forEach(g => {
@@ -335,6 +355,7 @@ function state() {
 }
 function persist() {
   try { localStorage.setItem(KEY, JSON.stringify(state())); } catch (e) {}
+  syncOthers();
   progress();
 }
 function restore() {
@@ -358,7 +379,8 @@ function progress() {
 }
 
 function summary() {
-  const s = state(), g = s.g, f = s.f;
+  const s = state(), f = s.f, g = {};
+  for (const k in s.g) g[k] = s.g[k].map(v => v === 'その他' && f[k + 'Other'] ? `その他(${f[k + 'Other']})` : v);
   const line = (k, v) => v && v.length ? `${k}: ${Array.isArray(v) ? v.join('、') : v}` : `${k}: -`;
   const place = [...(g.place || [])].map(p => p === 'ほかの場所' ? (f.placeOther || 'ほかの場所') : p);
   const ng = [...(g.ng || [])]; if (f.ngOther) ng.push(f.ngOther);
@@ -384,6 +406,7 @@ function summary() {
     line('アイコン', g.icon),
     '',
     line('追加したいもの', g.options),
+    line('ほかに欲しい機能', f.optOther),
     line('配信の時間', g.schedule),
     line('参考', f.ref),
     line('希望時期', g.when),
@@ -427,10 +450,12 @@ document.getElementById('reset').addEventListener('click', () => {
   fields.forEach(f => f.value = '');
   groups.forEach(g => [...g.children].forEach(b => b.setAttribute('aria-pressed', 'false')));
   document.getElementById('out').classList.remove('show');
+  syncOthers();
   progress();
 });
 
 restore();
+syncOthers();
 progress();
 </script>
 </body>
