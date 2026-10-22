@@ -207,6 +207,78 @@ h2 .emoji{font-size:24px}
 footer{margin-top:100px;text-align:center;font-size:11px;color:#9a90ab;line-height:2.2}
 footer .mark{font-family:'Mochiy Pop One',sans-serif;font-size:15px;color:var(--pink);display:block;margin-bottom:8px}
 
+/* ---------- ぽむくじ (1日1回ボイスおみくじ) ---------- */
+.kuji{text-align:center}
+.kuji-lead{font-size:13.5px;color:#6d6380;margin-bottom:18px}
+.machine{
+  position:relative;width:150px;height:150px;margin:0 auto 18px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff 0 18%,#fdeef4 19% 100%);
+  border:2.5px solid var(--ink);box-shadow:0 5px 0 rgba(74,64,89,.18);overflow:hidden;
+}
+.machine .ball{
+  position:absolute;width:34px;height:34px;border-radius:50%;border:2px solid var(--ink);
+  background:linear-gradient(180deg,var(--c) 0 50%,#fff 50% 100%);
+}
+.machine .ball:nth-child(1){--c:var(--pink);left:22px;bottom:16px}
+.machine .ball:nth-child(2){--c:var(--yellow);left:58px;bottom:10px}
+.machine .ball:nth-child(3){--c:var(--mint);left:94px;bottom:18px}
+.machine .ball:nth-child(4){--c:var(--sky);left:40px;bottom:46px}
+.machine .ball:nth-child(5){--c:var(--grape);left:78px;bottom:48px}
+.machine.shake{animation:shake .9s cubic-bezier(.36,.07,.19,.97)}
+.machine.shake .ball{animation:jumble .3s ease-in-out 3 alternate}
+@keyframes shake{
+  0%,100%{transform:rotate(0)}15%{transform:rotate(-9deg)}30%{transform:rotate(8deg)}
+  45%{transform:rotate(-7deg)}60%{transform:rotate(6deg)}75%{transform:rotate(-3deg)}
+}
+@keyframes jumble{to{transform:translateY(-26px) rotate(160deg)}}
+.kuji-btn{
+  width:100%;padding:15px;cursor:pointer;
+  background:var(--grape);border:2.5px solid var(--ink);border-radius:999px;color:#fff;
+  font-family:'Mochiy Pop One',sans-serif;font-size:15px;letter-spacing:.12em;
+  box-shadow:0 4px 0 var(--ink);transition:transform .15s,box-shadow .15s;
+}
+.kuji-btn:active{transform:translateY(4px);box-shadow:0 0 0 var(--ink)}
+.kuji-btn:disabled{background:#d9d2e6;color:#fff;cursor:default;box-shadow:0 4px 0 #b7aec7;border-color:#b7aec7}
+.kuji-btn:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.kuji-rate{font-size:11px;color:#9a90ab;margin-top:10px}
+.kuji-rate b{color:var(--pink)}
+.kuji-rate span,.kuji-rate b{white-space:nowrap}
+.result{display:none;margin-top:22px}
+.result.show{display:block;animation:popRes .6s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popRes{from{opacity:0;transform:scale(.6) rotate(-4deg)}to{opacity:1;transform:none}}
+.rank{
+  display:inline-block;font-family:'Mochiy Pop One',sans-serif;font-size:30px;line-height:1.3;
+  padding:6px 26px;border:2.5px solid var(--ink);border-radius:16px;background:var(--rc,#fff3d6);
+  box-shadow:0 4px 0 var(--ink);transform:rotate(-2deg);
+}
+.bubble{
+  position:relative;margin:22px auto 0;max-width:420px;text-align:left;
+  background:#fffdf8;border:2px solid var(--ink);border-radius:18px;padding:16px 18px;font-size:14px;font-weight:500;
+}
+.bubble::before{
+  content:"";position:absolute;top:-11px;left:50%;width:18px;height:18px;background:#fffdf8;
+  border-left:2px solid var(--ink);border-top:2px solid var(--ink);transform:translateX(-50%) rotate(45deg);
+}
+.bubble .who{display:block;font-size:11px;font-weight:700;color:var(--pink);margin-bottom:4px}
+.replay{
+  margin-top:14px;background:#fff;border:2px solid var(--ink);border-radius:999px;cursor:pointer;
+  padding:8px 18px;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--ink);
+  box-shadow:0 3px 0 var(--ink);
+}
+.replay:active{transform:translateY(3px);box-shadow:none}
+.replay:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.next-time{font-size:12px;color:#6d6380;margin-top:12px}
+.result.rare .rank{
+  color:#fff;background:linear-gradient(90deg,#ff8fb1,#ffd166,#7fd8be,#7cc7ff,#b79ce8,#ff8fb1);
+  background-size:300% 100%;animation:rainbow 2.4s linear infinite;
+}
+.result.rare .bubble{border-style:dashed;border-color:var(--grape)}
+@keyframes rainbow{to{background-position:300% 0}}
+.demo-reset{
+  margin-top:16px;background:none;border:none;cursor:pointer;
+  font-family:inherit;font-size:11px;color:#9a90ab;text-decoration:underline;
+}
+
 #toast{
   position:fixed;left:50%;bottom:30px;transform:translate(-50%,20px);
   background:var(--ink);color:#fff;
@@ -291,7 +363,28 @@ footer .mark{font-family:'Mochiy Pop One',sans-serif;font-size:15px;color:var(--
   </section>
 
   <section class="reveal">
-    <div class="card tilt-r">
+    <div class="card tilt-r kuji">
+      <div class="tape p" aria-hidden="true"></div>
+      <h2 style="justify-content:center"><span class="emoji">🎰</span>ぽむくじ</h2>
+      <p class="kuji-lead">1日1回、ぽむの声でうらなうよ。<br>ごくまれに「ひみつボイス」がでるかも…?</p>
+      <div class="machine" id="machine" aria-hidden="true">
+        <span class="ball"></span><span class="ball"></span><span class="ball"></span><span class="ball"></span><span class="ball"></span>
+      </div>
+      <button class="kuji-btn" id="kujiBtn">くじをひく!</button>
+      <p class="kuji-rate"><span>だいきち 20%</span> / <span>ちゅうきち 30%</span> / <span>しょうきち 30%</span> / <span>すえきち 17%</span> / <b>★ひみつ 3%</b></p>
+      <div class="result" id="kujiResult" aria-live="polite">
+        <span class="rank" id="kujiRank"></span>
+        <div class="bubble"><span class="who">🎙 ぽむのこえ</span><span id="kujiLine"></span></div>
+        <button class="replay" id="kujiReplay">▶ もういちど聞く</button>
+        <p class="next-time" id="kujiNext"></p>
+      </div>
+      <p class="note">※ デモでは声のかわりに文字と効果音です。実際のサイトではご本人の録音が流れます。</p>
+      <button class="demo-reset" id="kujiReset">(デモ用)もういちど引いてみる</button>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="card tilt-l">
       <div class="tape y" aria-hidden="true"></div>
       <h2><span class="emoji">📮</span>ぽむポスト</h2>
       <div class="letter">
@@ -303,7 +396,7 @@ footer .mark{font-family:'Mochiy Pop One',sans-serif;font-size:15px;color:var(--
   </section>
 
   <section class="reveal">
-    <div class="card tilt-l">
+    <div class="card tilt-r">
       <div class="tape g" aria-hidden="true"></div>
       <h2><span class="emoji">🌈</span>あそびにきてね</h2>
       <div class="links">
@@ -428,6 +521,86 @@ document.getElementById('sendBtn').addEventListener('click', e => {
   burst(innerWidth / 2, innerHeight / 2);
   toast('ポストにはいったよ! 🎉 (デモのため送信されません)');
 });
+
+/* ---------- ぽむくじ ---------- */
+/* 実際のサイトでは line の代わりに本人の録音ファイル(voice)を鳴らす */
+const KUJI = [
+  { id: 'dai',  rank: 'だいきち',  w: 20, rc: '#ffe3ec', notes: [523.25, 659.25, 783.99, 1046.5],
+    line: 'だいきち〜!! きょうのきみ、さいきょうだよ。ぽむが保証する!' },
+  { id: 'chu',  rank: 'ちゅうきち', w: 30, rc: '#fff3d6', notes: [523.25, 659.25, 783.99],
+    line: 'ちゅうきち! いいことあるよ。あったら配信でおしえてね〜' },
+  { id: 'sho',  rank: 'しょうきち', w: 30, rc: '#e0f7ef', notes: [587.33, 698.46, 880.0],
+    line: 'しょうきち〜。ちいさいしあわせ、いっぱいみつけよ🍓' },
+  { id: 'sue',  rank: 'すえきち',  w: 17, rc: '#e3f2ff', notes: [440.0, 523.25, 659.25],
+    line: 'すえきち! あとからぐーんとくるタイプ。ぽむとおなじだね!' },
+  { id: 'rare', rank: '★ひみつ★',  w: 3,  rare: true, notes: [783.99, 987.77, 1174.66, 1567.98, 1975.53, 2349.32],
+    line: '……えっ、これ引いたの? ぽむのひみつボイスだよ。だれにもないしょね、しーっ🤫' }
+];
+const KEY = 'pomkuji';
+const today = () => { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); };
+function load() { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; } }
+function save(v) { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) {} }
+function draw() {
+  let r = Math.random() * 100;
+  for (const k of KUJI) { if ((r -= k.w) < 0) return k; }
+  return KUJI[0];
+}
+function jingle(k) {
+  if (!ctx) {
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    master = ctx.createGain(); master.gain.value = 0.75; master.connect(ctx.destination);
+  }
+  ctx.resume();
+  const t0 = ctx.currentTime;
+  k.notes.forEach((f, i) => {
+    const o = ctx.createOscillator(), g = ctx.createGain(), t = t0 + i * (k.rare ? 0.09 : 0.12);
+    o.type = k.rare ? 'triangle' : 'square'; o.frequency.value = f;
+    g.gain.setValueAtTime(k.rare ? 0.08 : 0.04, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
+    o.connect(g).connect(master); o.start(t); o.stop(t + 0.4);
+  });
+}
+function untilTomorrow() {
+  const n = new Date(), m = new Date(n); m.setHours(24, 0, 0, 0);
+  const h = Math.floor((m - n) / 3600000), mm = Math.floor((m - n) / 60000) % 60;
+  return h > 0 ? `あと${h}時間${mm}分` : `あと${mm}分`;
+}
+const btn = document.getElementById('kujiBtn');
+const res = document.getElementById('kujiResult');
+let current = null;
+function show(k, fresh) {
+  current = k;
+  document.getElementById('kujiRank').textContent = k.rank;
+  document.getElementById('kujiRank').style.setProperty('--rc', k.rc || '#fff');
+  document.getElementById('kujiLine').textContent = k.line;
+  document.getElementById('kujiNext').textContent = `つぎのくじは あした(${untilTomorrow()})`;
+  res.classList.toggle('rare', !!k.rare);
+  res.classList.remove('show'); void res.offsetWidth; res.classList.add('show');
+  btn.disabled = true; btn.textContent = 'きょうはひいたよ!';
+  if (fresh) {
+    const rc = btn.getBoundingClientRect();
+    burst(innerWidth / 2, rc.top);
+    if (k.rare) { setTimeout(() => burst(innerWidth * .25, rc.top - 80), 200); setTimeout(() => burst(innerWidth * .75, rc.top - 80), 400); }
+  }
+}
+btn.addEventListener('click', () => {
+  if (btn.disabled) return;
+  btn.disabled = true; btn.textContent = 'ころころ…';
+  const k = draw();
+  const m = document.getElementById('machine');
+  m.classList.remove('shake'); void m.offsetWidth; m.classList.add('shake');
+  setTimeout(() => { save({ date: today(), id: k.id }); show(k, true); jingle(k); }, reduced ? 0 : 950);
+});
+document.getElementById('kujiReplay').addEventListener('click', () => { if (current) jingle(current); });
+document.getElementById('kujiReset').addEventListener('click', () => {
+  save(null); current = null;
+  res.classList.remove('show', 'rare');
+  btn.disabled = false; btn.textContent = 'くじをひく!';
+});
+(function init() {
+  const s = load();
+  if (s && s.date === today()) { const k = KUJI.find(x => x.id === s.id); if (k) show(k, false); }
+})();
 </script>
 </body>
 </html>
