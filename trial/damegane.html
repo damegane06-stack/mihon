@@ -154,18 +154,26 @@ section{margin-top:110px;position:relative}
 .demo-reset{margin-top:12px;background:none;border:none;font-family:inherit;font-size:11px;color:var(--sub);text-decoration:underline;cursor:pointer}
 
 /* 年譜(イベントの軌跡 + 動画) ― スプレッドシートから読み込む */
-.chronicle{border-left:1px solid var(--moss);margin-left:6px;padding-left:22px}
-.yr{font-family:'Shippori Mincho',serif;font-size:13px;letter-spacing:.3em;color:var(--brass);margin:30px 0 12px;position:relative}
-.yr:first-child{margin-top:0}
-.yr::before{content:"";position:absolute;left:-27px;top:50%;width:9px;height:9px;margin-top:-5px;border-radius:50%;background:var(--paper);border:1px solid var(--brass)}
-.ev{background:#fbf8f0;border:1px solid var(--line);padding:16px 16px 14px;margin-bottom:14px;position:relative;box-shadow:0 6px 16px rgba(31,43,36,.05)}
-.ev::before{content:"";position:absolute;left:-23px;top:22px;width:4px;height:4px;border-radius:50%;background:var(--moss)}
+.chronicle{
+  display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+  margin:0 -22px;padding:34px 22px 18px;scroll-padding:0 22px;position:relative;scrollbar-width:thin;
+  background:linear-gradient(var(--moss),var(--moss)) 0 26px/100% 1px no-repeat;
+}
+.chronicle .empty{flex:1}
+.ev{
+  flex:0 0 min(78%,280px);scroll-snap-align:start;position:relative;
+  background:#fbf8f0;border:1px solid var(--line);padding:16px 16px 14px;box-shadow:0 6px 16px rgba(31,43,36,.05);
+}
+.ev::before{content:"";position:absolute;left:16px;top:-12px;width:7px;height:7px;border-radius:50%;background:var(--paper);border:1px solid var(--moss)}
+.ev .yr{position:absolute;left:30px;top:-24px;font-family:'Shippori Mincho',serif;font-size:12px;letter-spacing:.25em;color:var(--brass);background:var(--paper);padding:0 6px}
+.ev.first-of-year::before{background:var(--brass);border-color:var(--brass)}
 .ev .meta{display:flex;gap:10px;align-items:center;font-size:11px;color:var(--sub);letter-spacing:.1em}
 .ev .kind{border:1px solid var(--moss);color:var(--green);padding:0 8px;border-radius:2px;font-size:10.5px}
 .ev .kind.大会{border-color:#a54b3b;color:#a54b3b}
 .ev .kind.周年{border-color:var(--brass);color:#8a6a33}
 .ev h3{font-family:'Shippori Mincho',serif;font-weight:500;font-size:16px;letter-spacing:.1em;margin:6px 0 2px;line-height:1.7}
 .ev p{font-size:12.5px;color:#3a4a40}
+.swipe{font-size:10.5px;color:var(--sub);letter-spacing:.2em;text-align:right;margin-top:-4px}
 .vid{position:relative;display:block;width:100%;aspect-ratio:16/9;margin-top:12px;border:none;padding:0;cursor:pointer;background:#1f2b24 center/cover no-repeat;overflow:hidden}
 .vid::after{content:"▶";position:absolute;left:50%;top:50%;width:56px;height:40px;margin:-20px 0 0 -28px;border-radius:8px;background:rgba(31,43,36,.82);color:#f3efe4;display:flex;align-items:center;justify-content:center;font-size:16px}
 .vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
@@ -272,6 +280,7 @@ footer .mark{font-family:'Shippori Mincho',serif;font-size:14px;color:var(--bras
   <section class="reveal">
     <div class="chapter"><span class="no">第三章</span><h2>年譜</h2><span class="en">CHRONICLE</span></div>
     <div class="chronicle" id="chronicle"><p class="empty">頁を読み込んでいます…</p></div>
+    <p class="swipe">← むかしへ　横にめくれます</p>
     <p class="src" id="src"></p>
   </section>
 
@@ -350,20 +359,21 @@ function render(rows, fromSheet) {
   const col = name => head.findIndex(h => h.trim() === name);
   const ci = { d: col('日付'), t: col('できごと'), k: col('種類'), v: col('動画URL'), c: col('ひとこと') };
   const items = rows.map(r => ({ d: toDate(r[ci.d]), t: r[ci.t] || '', k: (r[ci.k] || '').trim(), v: r[ci.v] || '', c: r[ci.c] || '' }))
-    .filter(x => x.d && x.t.trim()).sort((a, b) => b.d - a.d);
+    .filter(x => x.d && x.t.trim()).sort((a, b) => a.d - b.d); // 古い順に左から
   if (!items.length) { box.innerHTML = '<p class="empty">まだ記録がありません</p>'; return; }
   let html = '', yr = null;
   for (const x of items) {
     const y = x.d.getFullYear();
-    if (y !== yr) { html += `<p class="yr">${y}</p>`; yr = y; }
+    const first = y !== yr; yr = y;
     const id = ytId(x.v);
-    html += `<article class="ev">
+    html += `<article class="ev${first ? ' first-of-year' : ''}">${first ? `<span class="yr">${y}</span>` : ''}
       <div class="meta"><span>${x.d.getMonth() + 1}月${x.d.getDate()}日</span>${x.k ? `<span class="kind ${esc(x.k)}">${esc(x.k)}</span>` : ''}</div>
       <h3>${esc(x.t)}</h3>${x.c ? `<p>${esc(x.c)}</p>` : ''}
       ${id ? `<button class="vid" data-id="${id}" style="background-image:url(https://i.ytimg.com/vi/${id}/hqdefault.jpg)" aria-label="動画を再生"></button>` : ''}
     </article>`;
   }
   box.innerHTML = html;
+  requestAnimationFrame(() => { box.scrollLeft = box.scrollWidth; }); // 最新のできごとから見せる
   document.getElementById('src').textContent = fromSheet ? '' : '※ サンプルのデータを表示しています';
 }
 document.addEventListener('click', e => { // タップした動画だけ読み込む(ページを軽く保つ)
