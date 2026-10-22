@@ -335,7 +335,7 @@ function render(rows, fromSheet) {
     </article>`;
   }
   box.innerHTML = html;
-  document.getElementById('src').textContent = fromSheet ? '📗 スプレッドシートから読み込みました' : '※ サンプルのデータを表示しています';
+  document.getElementById('src').textContent = fromSheet ? '' : '※ サンプルのデータを表示しています';
 }
 document.addEventListener('click', e => { // タップした動画だけ読み込む(ページを軽く保つ)
   const b = e.target.closest('.vid');
