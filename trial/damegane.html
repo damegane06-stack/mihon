@@ -173,6 +173,26 @@ section{margin-top:110px;position:relative}
 .src{font-size:10.5px;color:var(--sub);margin-top:6px;text-align:right;letter-spacing:.05em}
 .empty{font-size:13px;color:var(--sub);text-align:center;padding:20px}
 
+/* 売店(グッズ・BOOTH) ― スプレッドシートから読み込む */
+.goods{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.item{
+  display:flex;flex-direction:column;text-decoration:none;color:var(--ink);background:#fbf8f0;border:1px solid var(--line);
+  box-shadow:0 6px 16px rgba(31,43,36,.05);transition:transform .25s,box-shadow .25s;
+}
+a.item:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(31,43,36,.1)}
+a.item:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
+.item .ph{aspect-ratio:1;background:var(--green) center/cover no-repeat;position:relative;display:flex;align-items:center;justify-content:center}
+.item .ph span{font-family:'Shippori Mincho',serif;color:#e8d9b4;font-size:26px;opacity:.8}
+.item .ph::after{content:"";position:absolute;inset:8px;border:1px solid rgba(232,217,180,.35);pointer-events:none}
+.item .ph.img::after,.item .ph.img span{display:none}
+.item .body{padding:12px 12px 14px;display:flex;flex-direction:column;gap:2px;flex:1}
+.item .kind{font-size:10px;letter-spacing:.2em;color:var(--brass)}
+.item h3{font-family:'Shippori Mincho',serif;font-weight:500;font-size:14px;letter-spacing:.06em;line-height:1.6}
+.item p{font-size:11.5px;color:var(--sub);line-height:1.7}
+.item .price{margin-top:auto;padding-top:8px;font-family:'Shippori Mincho',serif;font-size:15px;color:var(--green)}
+.item .price small{font-size:10px;margin-left:2px}
+.item.nolink{cursor:default}
+
 /* 書架(リンク) */
 .shelf{display:flex;flex-direction:column;gap:12px}
 .shelf a{
@@ -256,6 +276,12 @@ footer .mark{font-family:'Shippori Mincho',serif;font-size:14px;color:var(--bras
   </section>
 
   <section class="reveal">
+    <div class="chapter"><span class="no">第四章</span><h2>売店</h2><span class="en">GOODS</span></div>
+    <div class="goods" id="goods"><p class="empty">棚を整えています…</p></div>
+    <p class="src" id="goodsSrc"></p>
+  </section>
+
+  <section class="reveal">
     <div class="chapter"><span class="no">終章</span><h2>書架</h2><span class="en">LINKS</span></div>
     <div class="shelf">
       <a href="#" class="todo" style="--c:#3a4a40" onclick="return todo('XのアカウントURLが未確定です')"><b>X</b><small>開館のお知らせ</small></a>
@@ -291,6 +317,9 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 /* スプレッドシートを「ウェブに公開(CSV)」したURLをここに貼る。空ならサンプルを表示 */
 const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ56-UaGnW3Kx68gEQPMy2szOO3sLZyE3gSLRO13YtUrIC_q0dnSHX-UE5ZTCC8E9gfsMzao_d5uMOc/pub?gid=0&single=true&output=csv';
 const SAMPLE_CSV = './damegane-sample.csv';
+/* グッズ用: 同じスプレッドシートの「グッズ」タブを公開したURL */
+const GOODS_CSV = '';
+const GOODS_SAMPLE = './damegane-goods-sample.csv';
 
 function parseCSV(t) { // ダブルクォート・改行入りのセルにも対応
   const rows = []; let row = [], cell = '', q = false;
@@ -343,18 +372,49 @@ document.addEventListener('click', e => { // タップした動画だけ読み�
   b.classList.add('on');
   b.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${b.dataset.id}?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="動画"></iframe>`;
 });
-(async function loadChronicle() {
-  const sheet = new URLSearchParams(location.search).get('sheet') || SHEET_CSV;
-  for (const [url, fromSheet] of [[sheet, true], [SAMPLE_CSV, false]]) {
+async function loadCSV(sheetUrl, sampleUrl) { // 戻り値: [行, シートから読めたか]
+  for (const [url, fromSheet] of [[sheetUrl, true], [sampleUrl, false]]) {
     if (!url) continue;
     try {
       const r = await fetch(url + (url.includes('?') ? '&' : '?') + 't=' + Date.now(), { cache: 'no-store' });
       if (!r.ok) throw 0;
-      render(parseCSV(await r.text()), fromSheet); return;
+      return [parseCSV(await r.text()), fromSheet];
     } catch (e) {}
   }
-  document.getElementById('chronicle').innerHTML = '<p class="empty">読み込めませんでした</p>';
+  return [null, false];
+}
+(async function () {
+  const q = new URLSearchParams(location.search);
+  const [rows, fromSheet] = await loadCSV(q.get('sheet') || SHEET_CSV, SAMPLE_CSV);
+  if (rows) render(rows, fromSheet);
+  else document.getElementById('chronicle').innerHTML = '<p class="empty">読み込めませんでした</p>';
+
+  const [g, gFrom] = await loadCSV(q.get('goods') || GOODS_CSV, GOODS_SAMPLE);
+  if (g) renderGoods(g, gFrom);
+  else document.getElementById('goods').innerHTML = '<p class="empty">読み込めませんでした</p>';
 })();
+
+/* ---------- 売店: グッズ・BOOTH ---------- */
+function renderGoods(rows, fromSheet) {
+  const box = document.getElementById('goods');
+  const head = rows.shift() || [];
+  const col = n => head.findIndex(h => h.trim() === n);
+  const c = { n: col('商品名'), p: col('価格'), u: col('URL'), i: col('画像URL'), k: col('種類'), m: col('ひとこと') };
+  const items = rows.map(r => ({ n: r[c.n] || '', p: (r[c.p] || '').replace(/[^\d]/g, ''), u: (r[c.u] || '').trim(), i: (r[c.i] || '').trim(), k: r[c.k] || '', m: r[c.m] || '' }))
+    .filter(x => x.n.trim());
+  if (!items.length) { box.innerHTML = '<p class="empty">ただいま準備中です</p>'; return; }
+  const safe = u => /^https:\/\//.test(u) ? u : '';
+  box.innerHTML = items.map(x => {
+    const url = safe(x.u), img = safe(x.i);
+    const tag = url ? `a class="item" href="${esc(url)}" target="_blank" rel="noopener"` : 'div class="item nolink"';
+    return `<${tag}>
+      <div class="ph${img ? ' img' : ''}"${img ? ` style="background-image:url('${esc(img)}')"` : ''}><span>❦</span></div>
+      <div class="body">${x.k ? `<span class="kind">${esc(x.k)}</span>` : ''}<h3>${esc(x.n)}</h3>${x.m ? `<p>${esc(x.m)}</p>` : ''}
+      ${x.p ? `<span class="price">${Number(x.p).toLocaleString()}<small>円</small></span>` : ''}</div>
+    </${url ? 'a' : 'div'}>`;
+  }).join('');
+  document.getElementById('goodsSrc').textContent = fromSheet ? '' : '※ サンプルのデータを表示しています';
+}
 
 /* ---------- 本日の栞: ボイスおみくじ ---------- */
 const SHIORI = [
