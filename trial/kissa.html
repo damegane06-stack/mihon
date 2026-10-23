@@ -310,6 +310,66 @@ html[data-time="night"] .window{--light:rgba(120,130,220,.35)}
 .cat.d{animation:breathe 3.6s ease-in-out infinite;transform-origin:180px 176px}
 @keyframes breathe{50%{transform:scaleY(1.04)}}
 
+/* ---------- 天気(窓の外) ---------- */
+.wx>g,.wx>rect{display:none}
+html[data-wx="cloudy"] .wx .cloud,html[data-wx="rain"] .wx .cloud,html[data-wx="thunder"] .wx .cloud,html[data-wx="snow"] .wx .cloud,
+html[data-wx="fog"] .wx .fog,
+html[data-wx="rain"] .wx .rain,html[data-wx="thunder"] .wx .rain,
+html[data-wx="snow"] .wx .snow,
+html[data-wx="thunder"] .wx .flash{display:inline}
+.wx .rain line{animation:rainfall .85s linear infinite}
+@keyframes rainfall{from{transform:translate(0,-30px)}to{transform:translate(-10px,200px)}}
+.wx .snow circle{animation:snowfall 6s linear infinite}
+@keyframes snowfall{0%{transform:translate(0,-20px)}50%{transform:translate(8px,90px)}100%{transform:translate(-4px,200px)}}
+.wx .flash{opacity:0;animation:flash 7s infinite}
+@keyframes flash{0%,88%,92%,96%,100%{opacity:0}90%,94%{opacity:.85}}
+.wx-label{margin:-6px 0 14px;font-size:11.5px;font-weight:700;letter-spacing:.08em;color:var(--sub)}
+html[data-time="night"] .wx-label{color:#d9b99c}
+.bunting{display:none}
+html.anniv .bunting{display:inline}
+.anniv-ribbon{
+  margin:0 0 12px;font-weight:700;font-size:13px;letter-spacing:.08em;color:#fff;background:var(--red);
+  border:2px solid var(--ink);border-radius:999px;padding:4px 16px;animation:pop .5s cubic-bezier(.3,2,.5,1);
+}
+.lead .mini{
+  margin-left:8px;width:24px;height:24px;border-radius:50%;border:2px solid currentColor;background:none;color:inherit;
+  font-size:9px;cursor:pointer;vertical-align:2px;
+}
+.onair{
+  margin-top:22px;display:inline-flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;
+  background:var(--red);color:#fff;border:2px solid var(--ink);border-radius:14px;padding:8px 20px;font-size:12.5px;font-weight:700;
+  box-shadow:0 4px 0 var(--ink);
+}
+.onair b{font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:18px;letter-spacing:.12em;animation:blink 1.4s ease-in-out infinite}
+@keyframes blink{50%{opacity:.45}}
+.onair[hidden],.open[hidden]{display:none}
+
+/* ---------- 常連さんカード ---------- */
+.pointcard,.dex{margin-bottom:16px}
+.pc-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.pc-head b{font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:17px;letter-spacing:.08em}
+.pc-head span{font-size:12px;font-weight:700;color:var(--red)}
+.stamps{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.stamps i{
+  aspect-ratio:1;border:2px dashed rgba(58,34,25,.35);border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-style:normal;font-size:11px;color:rgba(58,34,25,.35);font-weight:700;
+}
+.stamps i.on{border:2.5px solid var(--red);color:var(--red);font-size:22px;transform:rotate(-12deg);background:rgba(200,55,45,.06)}
+.stamps i.new{animation:stampIn .5s cubic-bezier(.3,2,.5,1)}
+@keyframes stampIn{from{transform:scale(2.2) rotate(-30deg);opacity:0}to{transform:scale(1) rotate(-12deg);opacity:1}}
+.pc-note{font-size:11.5px;color:var(--sub);margin-top:12px}
+.secret{margin-top:14px;background:var(--ink);color:var(--cream);border-radius:12px;padding:12px 14px}
+.secret small{display:block;font-size:10.5px;font-weight:700;color:var(--mustard);letter-spacing:.2em}
+.secret b{font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:18px}
+.secret span{display:block;font-size:12.5px;margin-top:4px}
+.dex-list{list-style:none;display:grid;gap:6px}
+.dex-list li{display:flex;align-items:center;gap:10px;border:1.5px solid var(--ink);border-radius:8px;padding:6px 10px;font-size:13px;font-weight:700;background:#fffdf7}
+.dex-list li .st{color:var(--mustard);letter-spacing:.02em;font-size:12px;min-width:58px}
+.dex-list li.locked{color:#b9a395;border-style:dashed;background:none}
+.dex-list li.locked .st{color:#d8c3b5}
+.dex-done{margin-top:12px;font-size:13px;font-weight:700;color:var(--red);text-align:center}
+.replay.share{margin-left:6px}
+
 /* ---------- 時間帯で変わる(朝・昼・夕方・夜) ---------- */
 body::before{transition:background .8s}
 html[data-time="morning"] body::before{
@@ -340,6 +400,7 @@ html[data-time="night"] .links a:not(.letter),html[data-time="night"] .slip{colo
 html[data-time="night"] .since,html[data-time="night"] .swipe,html[data-time="night"] .src,
 html[data-time="night"] footer,html[data-time="night"] .ev .yr{color:#d9b99c}
 html[data-time="night"] .ev .yr{background:#22140f}
+html[data-time="night"] .demo-reset{color:#d9b99c}
 html[data-time="night"] .menu-head::after{border-color:var(--cream)}
 html[data-time="night"] .chronicle{background-image:linear-gradient(var(--cream),var(--cream))}
 html[data-time="night"] .signboard{background:#120a07;box-shadow:0 0 0 2px #5a3426,0 0 40px rgba(232,131,42,.35)}
@@ -403,12 +464,30 @@ html[data-time="night"] .hero .open i{background:var(--red);box-shadow:0 0 10px 
             <path d="M40 176v-26h22v-14h18v40zM172 176v-34h16v-10h22v44z" fill="#0b0e22"/>
             <g fill="#ffcf6a"><rect x="66" y="146" width="5" height="5"/><rect x="190" y="140" width="5" height="5"/><rect x="178" y="154" width="5" height="5"/></g></g>
         </g>
+        <g clip-path="url(#arch)" class="wx" aria-hidden="true">
+          <g class="cloud"><rect x="0" y="0" width="260" height="236" fill="#5b6475" opacity=".42"/>
+            <path d="M36 70h70a18 18 0 0 0-18-18a26 26 0 0 0-46 6a12 12 0 0 0-6 12z" fill="#c9ced8"/>
+            <path d="M128 52h90a20 20 0 0 0-20-20a30 30 0 0 0-54 6a14 14 0 0 0-16 14z" fill="#b4bac6"/>
+            <path d="M90 104h64a14 14 0 0 0-14-14a22 22 0 0 0-40 4a10 10 0 0 0-10 10z" fill="#d6dae2" opacity=".9"/></g>
+          <g class="fog"><rect x="0" y="0" width="260" height="236" fill="#eef1f5" opacity=".55"/>
+            <path d="M30 120h200M50 136h170M30 152h190" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".7"/></g>
+          <g class="rain" stroke="#e4f0ff" stroke-width="1.6" stroke-linecap="round" opacity=".85"><line x1="122" y1="18" x2="118" y2="31" style="animation-delay:-0.36s"/><line x1="52" y1="-2" x2="48" y2="11" style="animation-delay:-0.74s"/><line x1="64" y1="73" x2="60" y2="86" style="animation-delay:-0.52s"/><line x1="169" y1="34" x2="165" y2="47" style="animation-delay:-0.03s"/><line x1="151" y1="87" x2="147" y2="100" style="animation-delay:-0.06s"/><line x1="63" y1="121" x2="59" y2="134" style="animation-delay:-0.38s"/><line x1="184" y1="11" x2="180" y2="24" style="animation-delay:-0.85s"/><line x1="201" y1="140" x2="197" y2="153" style="animation-delay:-0.52s"/><line x1="55" y1="127" x2="51" y2="140" style="animation-delay:-0.53s"/><line x1="52" y1="36" x2="48" y2="49" style="animation-delay:-0.04s"/><line x1="74" y1="54" x2="70" y2="67" style="animation-delay:-0.38s"/><line x1="178" y1="10" x2="174" y2="23" style="animation-delay:-0.51s"/><line x1="183" y1="26" x2="179" y2="39" style="animation-delay:-0.09s"/><line x1="186" y1="143" x2="182" y2="156" style="animation-delay:-0.17s"/><line x1="64" y1="120" x2="60" y2="133" style="animation-delay:-0.64s"/><line x1="184" y1="-5" x2="180" y2="8" style="animation-delay:-0.56s"/><line x1="167" y1="116" x2="163" y2="129" style="animation-delay:-0.38s"/><line x1="120" y1="99" x2="116" y2="112" style="animation-delay:-0.53s"/><line x1="156" y1="72" x2="152" y2="85" style="animation-delay:-0.27s"/><line x1="86" y1="42" x2="82" y2="55" style="animation-delay:-0.07s"/><line x1="116" y1="114" x2="112" y2="127" style="animation-delay:-0.45s"/><line x1="127" y1="94" x2="123" y2="107" style="animation-delay:-0.26s"/><line x1="58" y1="10" x2="54" y2="23" style="animation-delay:-0.46s"/><line x1="82" y1="67" x2="78" y2="80" style="animation-delay:-0.14s"/><line x1="165" y1="87" x2="161" y2="100" style="animation-delay:-0.04s"/><line x1="211" y1="-1" x2="207" y2="12" style="animation-delay:-0.69s"/><line x1="186" y1="60" x2="182" y2="73" style="animation-delay:-0.31s"/><line x1="129" y1="132" x2="125" y2="145" style="animation-delay:-0.45s"/><line x1="156" y1="-3" x2="152" y2="10" style="animation-delay:-0.76s"/><line x1="109" y1="101" x2="105" y2="114" style="animation-delay:-0.63s"/><line x1="56" y1="-5" x2="52" y2="8" style="animation-delay:-0.66s"/><line x1="119" y1="145" x2="115" y2="158" style="animation-delay:-0.52s"/><line x1="214" y1="94" x2="210" y2="107" style="animation-delay:-0.26s"/><line x1="138" y1="68" x2="134" y2="81" style="animation-delay:-0.02s"/></g>
+          <g class="snow" fill="#fff"><circle cx="160" cy="80" r="2" style="animation-delay:-3.67s;animation-duration:6.0s"/><circle cx="97" cy="63" r="2" style="animation-delay:-4.43s;animation-duration:5.7s"/><circle cx="169" cy="10" r="2" style="animation-delay:-2.70s;animation-duration:6.1s"/><circle cx="77" cy="100" r="2.4" style="animation-delay:-4.24s;animation-duration:7.5s"/><circle cx="216" cy="87" r="2" style="animation-delay:-0.91s;animation-duration:5.0s"/><circle cx="101" cy="49" r="1.6" style="animation-delay:-2.91s;animation-duration:6.3s"/><circle cx="109" cy="62" r="1.6" style="animation-delay:-0.87s;animation-duration:6.1s"/><circle cx="198" cy="71" r="2" style="animation-delay:-4.14s;animation-duration:6.0s"/><circle cx="200" cy="3" r="2.8" style="animation-delay:-5.40s;animation-duration:6.8s"/><circle cx="216" cy="90" r="2.8" style="animation-delay:-2.39s;animation-duration:4.8s"/><circle cx="204" cy="92" r="1.6" style="animation-delay:-1.14s;animation-duration:7.5s"/><circle cx="154" cy="31" r="1.6" style="animation-delay:-2.04s;animation-duration:4.7s"/><circle cx="42" cy="28" r="1.6" style="animation-delay:-5.69s;animation-duration:6.3s"/><circle cx="60" cy="43" r="2.8" style="animation-delay:-0.89s;animation-duration:5.3s"/><circle cx="130" cy="83" r="2.8" style="animation-delay:-0.74s;animation-duration:7.0s"/><circle cx="161" cy="112" r="2.8" style="animation-delay:-1.87s;animation-duration:4.9s"/><circle cx="129" cy="57" r="2.8" style="animation-delay:-4.97s;animation-duration:5.0s"/><circle cx="47" cy="42" r="2.4" style="animation-delay:-0.88s;animation-duration:6.1s"/><circle cx="48" cy="66" r="1.6" style="animation-delay:-4.18s;animation-duration:5.3s"/><circle cx="135" cy="32" r="2.4" style="animation-delay:-4.63s;animation-duration:6.1s"/><circle cx="170" cy="74" r="2" style="animation-delay:-3.68s;animation-duration:6.9s"/><circle cx="91" cy="51" r="2.8" style="animation-delay:-4.44s;animation-duration:5.2s"/><circle cx="174" cy="116" r="2.4" style="animation-delay:-4.39s;animation-duration:7.5s"/><circle cx="113" cy="110" r="2.4" style="animation-delay:-1.16s;animation-duration:6.3s"/><circle cx="130" cy="104" r="2.4" style="animation-delay:-5.73s;animation-duration:5.6s"/><circle cx="98" cy="16" r="2" style="animation-delay:-2.82s;animation-duration:5.5s"/></g>
+          <rect class="flash" x="0" y="0" width="260" height="236" fill="#fff"/>
+        </g>
         <path d="M40 176V90a90 80 0 0 1 180 0v86z" fill="none" stroke="#3a2219" stroke-width="6"/>
         <path d="M130 12v164M40 120h180" stroke="#3a2219" stroke-width="4"/>
         <!-- カーテン -->
         <path d="M22 6h44c-6 40-2 120 8 172h-52z" fill="#c8372d" stroke="#3a2219" stroke-width="3" stroke-linejoin="round"/>
         <path d="M238 6h-44c6 40 2 120-8 172h52z" fill="#c8372d" stroke="#3a2219" stroke-width="3" stroke-linejoin="round"/>
         <path d="M14 4h232" stroke="#3a2219" stroke-width="5" stroke-linecap="round"/>
+        <!-- 記念日の旗 -->
+        <g class="bunting" aria-hidden="true">
+          <path d="M18 10q112 30 224 0" fill="none" stroke="#3a2219" stroke-width="2"/>
+          <path d="M34 14l8 18l8-16z" fill="#e9b44c" stroke="#3a2219" stroke-width="1.5"/><path d="M62 20l8 18l8-16z" fill="#4fae93" stroke="#3a2219" stroke-width="1.5"/>
+          <path d="M92 24l8 18l8-16z" fill="#fff" stroke="#3a2219" stroke-width="1.5"/><path d="M122 25l8 18l8-17z" fill="#e8832a" stroke="#3a2219" stroke-width="1.5"/>
+          <path d="M152 24l8 18l8-17z" fill="#e9b44c" stroke="#3a2219" stroke-width="1.5"/><path d="M182 20l8 18l8-17z" fill="#4fae93" stroke="#3a2219" stroke-width="1.5"/>
+          <path d="M210 14l8 18l8-17z" fill="#fff" stroke="#3a2219" stroke-width="1.5"/></g>
         <!-- 窓台 -->
         <rect x="18" y="176" width="224" height="14" rx="3" fill="#8a5a3c" stroke="#3a2219" stroke-width="3"/>
         <!-- 店主(猫): 時間帯で姿が変わる -->
@@ -445,12 +524,15 @@ html[data-time="night"] .hero .open i{background:var(--red);box-shadow:0 0 10px 
           <text x="198" y="132" font-size="12" font-weight="700" fill="#fff3c2">z</text><text x="208" y="120" font-size="14" font-weight="700" fill="#fff3c2">z</text><text x="220" y="106" font-size="16" font-weight="700" fill="#fff3c2">Z</text></g>
       </svg>
     </div>
+    <p class="wx-label" id="wxLabel" hidden></p>
+    <p class="anniv-ribbon" id="anniv" hidden></p>
     <div class="signboard">
       <span class="kind">甘やかし喫茶</span>
       <h1>だめ<span class="g">が</span>ね</h1>
     </div>
-    <p class="lead" id="greet">甘やかし、おかわり自由です。</p>
-    <p class="open"><i></i><span id="openText">きまぐれ営業中</span></p>
+    <p class="lead"><span id="greet">甘やかし、おかわり自由です。</span><button class="mini" id="greetVoice" aria-label="あいさつを聞く">▶</button></p>
+    <p class="open" id="openSign"><i></i><span id="openText">きまぐれ営業中</span></p>
+    <a class="onair" id="onair" href="#" target="_blank" rel="noopener" hidden><b>● ON AIR</b>いま配信中! のぞきにいく</a>
   </header>
 
   <section class="reveal">
@@ -499,11 +581,31 @@ html[data-time="night"] .hero .open i{background:var(--red);box-shadow:0 0 10px 
       <p class="overflow">甘やかしメーター 天元突破!!</p>
       <div class="after" id="after">
         <button class="replay" id="replay">▶ もういちど聞く</button>
+        <button class="replay share" id="share">📤 結果をシェア</button>
         <p class="next" id="next"></p>
       </div>
       <p class="note">※ 試作のため、声のかわりに文字と効果音です。</p>
       <button class="demo-reset" id="reset">(試作用)もういちど注文する</button>
     </div>
+  </section>
+
+  <section class="reveal">
+    <div class="menu-head"><span class="en">REGULAR</span><h2>常連さんカード</h2></div>
+    <div class="card pointcard">
+      <p class="pc-head"><b>来店スタンプ</b><span id="stampCount">0 / 10</span></p>
+      <div class="stamps" id="stamps"></div>
+      <p class="pc-note">1日1回、来てくれるたびにスタンプ。10個たまると、ひみつのメニューが出ます。</p>
+      <div class="secret" id="secret" hidden>
+        <small>ひみつのメニュー</small><b>店主のまかない</b>
+        <span>……10回も来てくれたの? じゃあ、これはお客さんにはまだ出してないやつ。特別ね。</span>
+      </div>
+    </div>
+    <div class="card dex">
+      <p class="pc-head"><b>注文の記録</b><span id="dexCount">0 / 5</span></p>
+      <ul class="dex-list" id="dexList"></ul>
+      <p class="dex-done" id="dexDone" hidden>全メニュー制覇。……もう立派な常連だね。ずっといていいよ。</p>
+    </div>
+    <button class="demo-reset" id="stampTest">(試作用)スタンプを1つ押す</button>
   </section>
 
   <section class="reveal">
@@ -577,10 +679,11 @@ const TIMES = {
 };
 const nowSlot = () => { const h = new Date().getHours(); return h >= 5 && h < 10 ? 'morning' : h < 16 && h >= 10 ? 'noon' : h >= 16 && h < 19 ? 'evening' : 'night'; };
 let pinned = null;
+let annivToday = null;
 function applyTime(t) {
   const slot = t || nowSlot();
   document.documentElement.dataset.time = slot;
-  document.getElementById('greet').textContent = TIMES[slot].greet;
+  document.getElementById('greet').textContent = annivToday && annivToday.m ? annivToday.m : TIMES[slot].greet;
   document.getElementById('openText').textContent = TIMES[slot].open;
   document.querySelectorAll('#timebar button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === (t || 'auto'))));
 }
@@ -591,6 +694,41 @@ document.getElementById('timebar').addEventListener('click', e => {
 applyTime(null);
 setInterval(() => { if (!pinned) applyTime(null); }, 60000); // 開いたまま時間がまたいでも切り替わる
 
+/* ---------- 声(録音ファイルを置けば鳴る。空なら効果音) ---------- */
+const VOICES = {
+  greet: { morning: '', noon: '', evening: '', night: '' }, // 例: './voice/greet_morning.m4a'
+  kuji: { 1: '', 2: '', 3: '', 4: '', 5: '' },               // 例: './voice/star5.m4a'
+  secret: ''
+};
+let voicePlayer = null;
+function playVoice(src, fallback) {
+  if (voicePlayer) { voicePlayer.pause(); voicePlayer = null; }
+  if (src) { voicePlayer = new Audio(src); voicePlayer.play().catch(() => fallback && fallback()); }
+  else if (fallback) fallback();
+}
+document.getElementById('greetVoice').addEventListener('click', () => {
+  const slot = document.documentElement.dataset.time || nowSlot();
+  playVoice(VOICES.greet[slot], () => { try { const t = audio().currentTime; [880, 1175].forEach((f, i) => tone(f, t + i * .14, .7, .07)); } catch (e) {} });
+});
+
+/* ---------- 窓の外: 本当の天気(Open-Meteo・無料・キー不要) ---------- */
+const WX_PLACE = { lat: 34.69, lon: 135.50 };
+const WX_TYPES = { clear: '晴れ', cloudy: 'くもり', fog: '霧', rain: '雨', snow: '雪', thunder: '雷雨' };
+const wxOf = c => c === 0 || c === 1 ? 'clear' : c <= 3 ? 'cloudy' : c <= 48 ? 'fog' : (c >= 71 && c <= 77) || c === 85 || c === 86 ? 'snow' : c >= 95 ? 'thunder' : 'rain';
+async function loadWeather() {
+  const force = new URLSearchParams(location.search).get('wx');
+  const label = document.getElementById('wxLabel');
+  if (force) { document.documentElement.dataset.wx = force; label.textContent = `いまの${WX_PLACE.name}:${WX_TYPES[force] || force}(試作)`; label.hidden = false; return; }
+  try {
+    const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${WX_PLACE.lat}&longitude=${WX_PLACE.lon}&current=weather_code,temperature_2m&timezone=Asia%2FTokyo`);
+    const j = await r.json(), k = wxOf(j.current.weather_code);
+    document.documentElement.dataset.wx = k;
+    label.textContent = `いまの${WX_PLACE.name}:${WX_TYPES[k]} ${Math.round(j.current.temperature_2m)}℃`;
+    label.hidden = false;
+  } catch (e) { label.hidden = true; }
+}
+loadWeather(); setInterval(loadWeather, 15 * 60 * 1000);
+
 /* ---------- 開幕: 扉 ---------- */
 const door = document.getElementById('door');
 let opened = false;
@@ -598,6 +736,7 @@ function openDoor(withSound) {
   if (opened) return; opened = true;
   if (withSound) { try { doorbell(); } catch (e) {} }
   door.classList.add('open');
+  if (annivToday) setTimeout(() => { burst(innerWidth / 2, innerHeight * .35, 70); }, 900);
 }
 door.addEventListener('click', () => openDoor(true));
 if (reduced) openDoor(false); else setTimeout(() => openDoor(false), 4500);
@@ -661,7 +800,7 @@ function show(m, animate) {
     slip.classList.add('done');
     if (m.s === 5) { slip.classList.add('ss'); const r = slip.getBoundingClientRect(); if (animate) { burst(innerWidth / 2, r.top, 60); setTimeout(() => burst(innerWidth * .2, r.top + 40, 40), 250); setTimeout(() => burst(innerWidth * .8, r.top + 40, 40), 450); } }
     after.classList.add('show');
-    if (animate) chime(m.s);
+    if (animate) playVoice(VOICES.kuji[m.s], () => chime(m.s));
   };
   for (let i = 0; i < 5; i++) {
     const sp = document.createElement('span'); sp.textContent = '★';
@@ -675,9 +814,73 @@ btn.addEventListener('click', () => {
   try { doorbell(); } catch (e) {}
   const m = draw();
   save({ date: today(), s: m.s });
+  addDex(m.s);
   show(m, true);
 });
-document.getElementById('replay').onclick = () => current && chime(current.s);
+document.getElementById('replay').onclick = () => current && playVoice(VOICES.kuji[current.s], () => chime(current.s));
+
+/* ---------- 結果をシェア(画像つき。対応していなければ投稿画面) ---------- */
+function slipImage(m) {
+  const c = document.createElement('canvas'); c.width = c.height = 1080;
+  const g = c.getContext('2d');
+  g.fillStyle = '#fbf3e6'; g.fillRect(0, 0, 1080, 1080);
+  for (let x = 0; x < 1080; x += 72) { g.fillStyle = (x / 72) % 2 ? '#fbf3e6' : '#c8372d'; g.fillRect(x, 0, 72, 70); }
+  g.fillStyle = m.s === 5 ? '#fff4e6' : '#fffdf7'; g.strokeStyle = m.s === 5 ? '#c8372d' : '#3a2219'; g.lineWidth = 8;
+  g.beginPath(); g.roundRect(150, 170, 780, 720, 18); g.fill(); g.stroke();
+  g.strokeStyle = 'rgba(200,55,45,.14)'; g.lineWidth = 2;
+  for (let y = 300; y < 860; y += 60) { g.beginPath(); g.moveTo(190, y); g.lineTo(890, y); g.stroke(); }
+  g.textAlign = 'center'; g.fillStyle = '#7a5a48'; g.font = '700 34px sans-serif';
+  const d = new Date(); g.fillText(`本日の甘やかし ${d.getMonth() + 1}/${d.getDate()}`, 540, 250);
+  g.font = '90px sans-serif';
+  for (let i = 0; i < 5; i++) { g.fillStyle = i < m.s ? (m.s === 5 ? '#c8372d' : '#e9b44c') : '#e6d6c5'; g.fillText('★', 340 + i * 100, 400); }
+  g.fillStyle = '#3a2219'; g.font = '900 76px sans-serif'; g.fillText(m.item, 540, 540);
+  g.font = '500 34px sans-serif'; g.fillStyle = '#3a2219';
+  const words = m.line; let line = '', y = 640;
+  for (const ch of words) { if (g.measureText(line + ch).width > 640) { g.fillText(line, 540, y); line = ''; y += 54; } line += ch; }
+  g.fillText(line, 540, y);
+  g.fillStyle = '#c8372d'; g.font = '900 44px sans-serif'; g.fillText('甘やかし喫茶 だめがね', 540, 980);
+  return new Promise(res => c.toBlob(res, 'image/png'));
+}
+document.getElementById('share').addEventListener('click', async () => {
+  if (!current) return;
+  const url = location.origin + location.pathname;
+  const text = `今日の甘やかしは★${current.s}「${current.item}」でした☕ #甘やかし喫茶だめがね`;
+  try {
+    const blob = await slipImage(current);
+    const file = new File([blob], 'amayakashi.png', { type: 'image/png' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], text: text + ' ' + url }); return; }
+  } catch (e) { if (e && e.name === 'AbortError') return; }
+  window.open('https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url), '_blank', 'noopener');
+});
+
+/* ---------- 常連さんカード: 来店スタンプ + 注文の記録 ---------- */
+const SKEY = 'kissa-damegane-stamps', DKEY = 'kissa-damegane-dex';
+const getJ = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || 'null') || d; } catch (e) { return d; } };
+const setJ = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+function drawStamps(fresh) {
+  const n = getJ(SKEY, { days: [] }).days.length, on = n === 0 ? 0 : (n % 10 || 10);
+  const box = document.getElementById('stamps'); box.innerHTML = '';
+  for (let i = 1; i <= 10; i++) { const el = document.createElement('i'); el.textContent = i <= on ? '🐾' : i; if (i <= on) el.className = 'on' + (fresh && i === on ? ' new' : ''); box.appendChild(el); }
+  document.getElementById('stampCount').textContent = `${on} / 10` + (n > 10 ? `(通算${n}回)` : '');
+  document.getElementById('secret').hidden = n < 10;
+}
+function stampToday(force) {
+  const st = getJ(SKEY, { days: [] }), t = today();
+  if (!force && st.days.includes(t)) { drawStamps(false); return; }
+  st.days.push(force ? t + '#' + st.days.length : t); setJ(SKEY, st); drawStamps(true);
+}
+document.getElementById('stampTest').onclick = () => stampToday(true);
+stampToday(false);
+function addDex(s) { const d = getJ(DKEY, []); if (!d.includes(s)) { d.push(s); setJ(DKEY, d); } drawDex(); }
+function drawDex() {
+  const d = getJ(DKEY, []);
+  document.getElementById('dexList').innerHTML = MENU.map(m => d.includes(m.s)
+    ? `<li><span class="st">${'★'.repeat(m.s)}</span>${m.item}</li>`
+    : `<li class="locked"><span class="st">${'★'.repeat(m.s)}</span>？？？</li>`).join('');
+  document.getElementById('dexCount').textContent = `${d.length} / ${MENU.length}`;
+  document.getElementById('dexDone').hidden = d.length < MENU.length;
+}
+drawDex();
 document.getElementById('reset').onclick = () => {
   save(null); current = null; slip.classList.remove('show', 'done', 'ss'); after.classList.remove('show');
   btn.disabled = false; btn.textContent = '🔔 注文する';
@@ -691,6 +894,9 @@ const SAMPLE_CSV = './damegane-sample.csv', GOODS_SAMPLE = './damegane-goods-sam
 /* 歌リスト: スプレッドシートの「歌リスト」タブを公開したURL(空ならサンプル) */
 const SONGS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ56-UaGnW3Kx68gEQPMy2szOO3sLZyE3gSLRO13YtUrIC_q0dnSHX-UE5ZTCC8E9gfsMzao_d5uMOc/pub?gid=3093179&single=true&output=csv';
 const SONGS_SAMPLE = './damegane-songs-sample.csv';
+/* 設定(配信中・配信先URL)と記念日: それぞれのタブを公開したURL(空ならサンプル) */
+const SETTINGS_CSV = '', SETTINGS_SAMPLE = './damegane-settings-sample.csv';
+const ANNIV_CSV = '', ANNIV_SAMPLE = './damegane-anniv-sample.csv';
 function parseCSV(t) {
   const rows = []; let row = [], cell = '', q = false;
   t = t.replace(/^﻿/, '');
@@ -794,6 +1000,32 @@ document.addEventListener('click', e => {
   b.classList.add('on');
   b.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${b.dataset.id}?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="動画"></iframe>`;
 });
+async function loadSettings() {
+  const q = new URLSearchParams(location.search);
+  const [rows] = await loadCSV(q.get('settings') || SETTINGS_CSV, SETTINGS_SAMPLE);
+  const kv = {}; (rows || []).slice(1).forEach(r => { if (r[0]) kv[r[0].trim()] = (r[1] || '').trim(); });
+  const on = q.has('onair') || /^(する|on|はい|配信中)$/i.test(kv['配信中'] || '');
+  const a = document.getElementById('onair');
+  a.hidden = !on; document.getElementById('openSign').hidden = on;
+  const u = kv['配信先URL'] || ''; a.href = /^https:\/\//.test(u) ? u : '#';
+}
+async function loadAnniv() {
+  const q = new URLSearchParams(location.search);
+  const [rows] = await loadCSV(q.get('anniv') || ANNIV_CSV, ANNIV_SAMPLE);
+  const d = new Date(), md = q.get('date') || `${d.getMonth() + 1}/${d.getDate()}`;
+  const norm = x => (x || '').trim().replace(/[-.月]/g, '/').replace(/日/, '').split('/').map(n => String(Number(n))).join('/');
+  const hit = (rows || []).slice(1).find(r => r[0] && norm(r[0]) === norm(md));
+  if (!hit) return;
+  annivToday = { n: (hit[1] || '').trim(), k: (hit[2] || '').trim(), m: (hit[3] || '').trim() };
+  document.documentElement.classList.add('anniv');
+  const el = document.getElementById('anniv');
+  el.textContent = (annivToday.k === '誕生日' ? '🎂 ' : '🎉 ') + `今日は${annivToday.n}` + (annivToday.k === '誕生日' ? 'の誕生日!' : '!');
+  el.hidden = false;
+  applyTime(pinned);
+  if (opened) burst(innerWidth / 2, innerHeight * .35, 70);
+}
+loadAnniv(); loadSettings(); setInterval(loadSettings, 2 * 60 * 1000);
+
 (async () => {
   const q = new URLSearchParams(location.search);
   const [h, hs] = await loadCSV(q.get('sheet') || SHEET_CSV, SAMPLE_CSV);
