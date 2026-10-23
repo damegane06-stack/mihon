@@ -658,9 +658,9 @@ async function loadCSV(sheetUrl, sampleUrl) {
 }
 function colIndex(head) { return n => head.findIndex(h => h.trim() === n); }
 function renderHistory(rows, fromSheet) {
-  const box = document.getElementById('chronicle'), col = colIndex(rows.shift() || []);
+  const box = document.getElementById('chronicle'), head = rows.shift() || [], col = colIndex(head), head0 = () => col('表示');
   const c = { d: col('日付'), t: col('できごと'), k: col('種類'), v: col('動画URL'), m: col('ひとこと') };
-  const items = rows.map(r => ({ d: toDate(r[c.d]), t: r[c.t] || '', k: (r[c.k] || '').trim(), v: r[c.v] || '', m: r[c.m] || '' })).filter(x => x.d && x.t.trim()).sort((a, b) => a.d - b.d);
+  const hideCol = head0(rows); const items = rows.filter(r => !(hideCol >= 0 && (r[hideCol] || '').trim() === 'しない')).map(r => ({ d: toDate(r[c.d]), t: r[c.t] || '', k: (r[c.k] || '').trim(), v: r[c.v] || '', m: r[c.m] || '' })).filter(x => x.d && x.t.trim()).sort((a, b) => a.d - b.d);
   if (!items.length) { box.innerHTML = '<p class="empty">まだ記録がありません</p>'; return; }
   let html = '', yr = null;
   for (const x of items) {
@@ -675,9 +675,9 @@ function renderHistory(rows, fromSheet) {
   document.getElementById('src').textContent = fromSheet ? '' : '※ サンプルのデータを表示しています';
 }
 function renderGoods(rows, fromSheet) {
-  const box = document.getElementById('goods'), col = colIndex(rows.shift() || []);
+  const box = document.getElementById('goods'), head = rows.shift() || [], col = colIndex(head), head0 = () => col('表示');
   const c = { n: col('商品名'), p: col('価格'), u: col('URL'), i: col('画像URL'), k: col('種類'), m: col('ひとこと') };
-  const items = rows.map(r => ({ n: r[c.n] || '', p: (r[c.p] || '').replace(/[^\d]/g, ''), u: safe((r[c.u] || '').trim()), i: safe((r[c.i] || '').trim()), k: r[c.k] || '', m: r[c.m] || '' })).filter(x => x.n.trim());
+  const hideCol = head0(rows); const items = rows.filter(r => !(hideCol >= 0 && (r[hideCol] || '').trim() === 'しない')).map(r => ({ n: r[c.n] || '', p: (r[c.p] || '').replace(/[^\d]/g, ''), u: safe((r[c.u] || '').trim()), i: safe((r[c.i] || '').trim()), k: r[c.k] || '', m: r[c.m] || '' })).filter(x => x.n.trim());
   if (!items.length) { box.innerHTML = '<p class="empty">ただいま準備中です</p>'; return; }
   box.innerHTML = items.map(x => {
     const tag = x.u ? `a class="item-card" href="${esc(x.u)}" target="_blank" rel="noopener"` : 'div class="item-card"';

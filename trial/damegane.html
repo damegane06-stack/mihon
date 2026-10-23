@@ -356,9 +356,9 @@ function toDate(s) {
 function render(rows, fromSheet) {
   const box = document.getElementById('chronicle');
   const head = rows.shift() || [];
-  const col = name => head.findIndex(h => h.trim() === name);
+  const col = name => head.findIndex(h => h.trim() === name), head0 = () => col('表示');
   const ci = { d: col('日付'), t: col('できごと'), k: col('種類'), v: col('動画URL'), c: col('ひとこと') };
-  const items = rows.map(r => ({ d: toDate(r[ci.d]), t: r[ci.t] || '', k: (r[ci.k] || '').trim(), v: r[ci.v] || '', c: r[ci.c] || '' }))
+  const hideCol = head0(rows); const items = rows.filter(r => !(hideCol >= 0 && (r[hideCol] || '').trim() === 'しない')).map(r => ({ d: toDate(r[ci.d]), t: r[ci.t] || '', k: (r[ci.k] || '').trim(), v: r[ci.v] || '', c: r[ci.c] || '' }))
     .filter(x => x.d && x.t.trim()).sort((a, b) => a.d - b.d); // 古い順に左から
   if (!items.length) { box.innerHTML = '<p class="empty">まだ記録がありません</p>'; return; }
   let html = '', yr = null;
@@ -408,9 +408,9 @@ async function loadCSV(sheetUrl, sampleUrl) { // 戻り値: [行, シートか�
 function renderGoods(rows, fromSheet) {
   const box = document.getElementById('goods');
   const head = rows.shift() || [];
-  const col = n => head.findIndex(h => h.trim() === n);
+  const col = n => head.findIndex(h => h.trim() === n), head0 = () => col('表示');
   const c = { n: col('商品名'), p: col('価格'), u: col('URL'), i: col('画像URL'), k: col('種類'), m: col('ひとこと') };
-  const items = rows.map(r => ({ n: r[c.n] || '', p: (r[c.p] || '').replace(/[^\d]/g, ''), u: (r[c.u] || '').trim(), i: (r[c.i] || '').trim(), k: r[c.k] || '', m: r[c.m] || '' }))
+  const hideCol = head0(rows); const items = rows.filter(r => !(hideCol >= 0 && (r[hideCol] || '').trim() === 'しない')).map(r => ({ n: r[c.n] || '', p: (r[c.p] || '').replace(/[^\d]/g, ''), u: (r[c.u] || '').trim(), i: (r[c.i] || '').trim(), k: r[c.k] || '', m: r[c.m] || '' }))
     .filter(x => x.n.trim());
   if (!items.length) { box.innerHTML = '<p class="empty">ただいま準備中です</p>'; return; }
   const safe = u => /^https:\/\//.test(u) ? u : '';
