@@ -895,8 +895,8 @@ const SAMPLE_CSV = './damegane-sample.csv', GOODS_SAMPLE = './damegane-goods-sam
 const SONGS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ56-UaGnW3Kx68gEQPMy2szOO3sLZyE3gSLRO13YtUrIC_q0dnSHX-UE5ZTCC8E9gfsMzao_d5uMOc/pub?gid=3093179&single=true&output=csv';
 const SONGS_SAMPLE = './damegane-songs-sample.csv';
 /* 設定(配信中・配信先URL)と記念日: それぞれのタブを公開したURL(空ならサンプル) */
-const SETTINGS_CSV = '', SETTINGS_SAMPLE = './damegane-settings-sample.csv';
-const ANNIV_CSV = '', ANNIV_SAMPLE = './damegane-anniv-sample.csv';
+const SETTINGS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ56-UaGnW3Kx68gEQPMy2szOO3sLZyE3gSLRO13YtUrIC_q0dnSHX-UE5ZTCC8E9gfsMzao_d5uMOc/pub?single=true&output=csv&gid=660765045', SETTINGS_SAMPLE = './damegane-settings-sample.csv';
+const ANNIV_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ56-UaGnW3Kx68gEQPMy2szOO3sLZyE3gSLRO13YtUrIC_q0dnSHX-UE5ZTCC8E9gfsMzao_d5uMOc/pub?single=true&output=csv&gid=877564755', ANNIV_SAMPLE = './damegane-anniv-sample.csv';
 function parseCSV(t) {
   const rows = []; let row = [], cell = '', q = false;
   t = t.replace(/^﻿/, '');
@@ -1013,7 +1013,12 @@ async function loadAnniv() {
   const q = new URLSearchParams(location.search);
   const [rows] = await loadCSV(q.get('anniv') || ANNIV_CSV, ANNIV_SAMPLE);
   const d = new Date(), md = q.get('date') || `${d.getMonth() + 1}/${d.getDate()}`;
-  const norm = x => (x || '').trim().replace(/[-.月]/g, '/').replace(/日/, '').split('/').map(n => String(Number(n))).join('/');
+  const norm = x => { // 「12/24」「12月24日」「2026/12/24」「シートの日付(数値)」のどれでもOK
+    x = (x || '').trim();
+    if (/^\d{5}$/.test(x)) { const t = new Date(Date.UTC(1899, 11, 30) + Number(x) * 864e5); return `${t.getUTCMonth() + 1}/${t.getUTCDate()}`; }
+    const p = x.replace(/[-.年月]/g, '/').replace(/日/, '').split('/').filter(Boolean).map(n => String(Number(n)));
+    return p.slice(-2).join('/');
+  };
   const hit = (rows || []).slice(1).find(r => r[0] && norm(r[0]) === norm(md));
   if (!hit) return;
   annivToday = { n: (hit[1] || '').trim(), k: (hit[2] || '').trim(), m: (hit[3] || '').trim() };
