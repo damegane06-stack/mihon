@@ -133,6 +133,15 @@ section{margin-top:100px;position:relative}
 .meter.in .fill{width:calc(100% + 26px)}
 .meter .burst{position:absolute;right:-30px;top:50%;transform:translateY(-50%) scale(0);font-size:20px;transition:transform .5s cubic-bezier(.3,1.8,.5,1) 2s}
 .meter.in .burst{transform:translateY(-50%) scale(1)}
+.likes{margin-top:22px;border-top:2px dotted rgba(58,34,25,.3);padding-top:14px}
+.sub-h{font-size:11.5px;font-weight:700;letter-spacing:.15em;color:var(--red);margin:8px 0 6px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips span{font-size:12px;border:1.5px solid var(--ink);border-radius:6px;padding:1px 10px;background:#fffdf7}
+.hello{
+  margin-top:18px;background:var(--paper);border:2px solid var(--ink);border-radius:14px;padding:12px 16px;
+  font-size:14px;font-weight:700;text-align:center;position:relative;
+}
+.hello::before{content:"";position:absolute;top:-10px;left:36px;width:14px;height:14px;background:var(--paper);border-left:2px solid var(--ink);border-top:2px solid var(--ink);transform:rotate(45deg)}
 .tbd{display:inline-block;margin-top:14px;font-size:11px;color:#9a5a2e;border:1px dashed #d79a63;border-radius:4px;padding:1px 10px}
 
 /* 本日の甘やかし(ガチャ型くじ) */
@@ -416,14 +425,20 @@ html[data-time="night"] .hero .open i{background:var(--red);box-shadow:0 0 10px 
             <path d="M12 52h10M12 58h10M62 52h10M62 58h10" stroke="#3a2219" stroke-width="2"/>
           </svg>
         </div>
-        <p><span class="name">だめがね</span>ねこっぽい店主です。熱しやすく冷めやすいけど、来てくれた人のことはつい甘やかしてしまう。今日もカウンターでのんびり待っています。</p>
+        <p><span class="name">だめがね</span>猫と暮らしている、ねこっぽい店主です。熱しやすく冷めやすいけど、来てくれた人のことはつい甘やかしてしまう。お店ではゲームと雑談、ときどきお題を決めてみんなで語り合う日もやっています。</p>
       </div>
-      <div class="tags"><span>🐈 猫</span><span>熱しやすく冷めやすい</span><span>天然の人たらし</span><span>尽くし屋</span></div>
+      <div class="tags"><span>🐈 ねこっぽい</span><span>熱しやすく冷めやすい</span><span>天然の人たらし</span><span>尽くし屋</span></div>
       <div class="meter" id="meter">
         <div class="lab"><span>甘やかしメーター</span><b>天元突破</b></div>
         <div class="track"><div class="fill"></div><span class="burst" aria-hidden="true">💥</span></div>
       </div>
-      <span class="tbd">※ 自己紹介の文章は仮です</span>
+      <div class="likes">
+        <p class="sub-h">すきなもの</p>
+        <div class="chips"><span>🐈 猫・動物ぜんぶ</span><span>🎮 APEX</span><span>🎮 VALORANT</span><span>🎮 Overwatch</span><span>📺 アニメ</span><span>🎧 音楽</span></div>
+        <p class="sub-h">お店のメニュー(配信)</p>
+        <div class="chips"><span>ゲーム配信</span><span>雑談</span><span>ディベート</span></div>
+      </div>
+      <p class="hello">「皆で楽しめる配信にしたいです!<br>気軽にコメントしてね!」</p>
     </div>
   </section>
 
