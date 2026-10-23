@@ -712,18 +712,19 @@ document.getElementById('greetVoice').addEventListener('click', () => {
 });
 
 /* ---------- 窓の外: 本当の天気(Open-Meteo・無料・キー不要) ---------- */
+/* 天気を借りる場所: 本人の住まいが分からないよう、大きな街の中心を使う(画面には地名を出さない) */
 const WX_PLACE = { lat: 34.69, lon: 135.50 };
 const WX_TYPES = { clear: '晴れ', cloudy: 'くもり', fog: '霧', rain: '雨', snow: '雪', thunder: '雷雨' };
 const wxOf = c => c === 0 || c === 1 ? 'clear' : c <= 3 ? 'cloudy' : c <= 48 ? 'fog' : (c >= 71 && c <= 77) || c === 85 || c === 86 ? 'snow' : c >= 95 ? 'thunder' : 'rain';
 async function loadWeather() {
   const force = new URLSearchParams(location.search).get('wx');
   const label = document.getElementById('wxLabel');
-  if (force) { document.documentElement.dataset.wx = force; label.textContent = `いまの${WX_PLACE.name}:${WX_TYPES[force] || force}(試作)`; label.hidden = false; return; }
+  if (force) { document.documentElement.dataset.wx = force; label.textContent = `窓の外:${WX_TYPES[force] || force}(試作)`; label.hidden = false; return; }
   try {
     const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${WX_PLACE.lat}&longitude=${WX_PLACE.lon}&current=weather_code,temperature_2m&timezone=Asia%2FTokyo`);
     const j = await r.json(), k = wxOf(j.current.weather_code);
     document.documentElement.dataset.wx = k;
-    label.textContent = `いまの${WX_PLACE.name}:${WX_TYPES[k]} ${Math.round(j.current.temperature_2m)}℃`;
+    label.textContent = `窓の外:${WX_TYPES[k]}`;
     label.hidden = false;
   } catch (e) { label.hidden = true; }
 }
