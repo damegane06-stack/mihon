@@ -224,6 +224,14 @@ section{margin-top:100px;position:relative}
 .song-list li .m{display:block;font-size:11px;color:var(--red)}
 .song-list li .tx{min-width:0}
 .song-list li.hit{background:#fff1cc}
+.song-list li{padding:0}
+.song-list li .yt{display:flex;align-items:baseline;gap:8px;width:100%;padding:10px 2px;text-decoration:none;color:inherit}
+.song-list li .yt:active{background:#fde3d6}
+.song-list li .yt:focus-visible{outline:3px solid var(--orange);outline-offset:-3px}
+.song-list li .go{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--red);color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;align-self:center}
+.song-list li .g{margin-left:auto}
+.song-list li.empty{padding:10px 2px}
+.yt-btn{display:inline-block;margin-top:8px;font-size:12px;font-weight:700;color:#fff;background:var(--red);border:2px solid var(--ink);border-radius:999px;padding:3px 14px;text-decoration:none}
 
 /* 年譜(横にめくる) */
 .chronicle{
@@ -507,7 +515,7 @@ html[data-time="night"] .hero .open i{background:var(--red);box-shadow:0 0 10px 
       </div>
       <div class="gyo" id="gyo" role="group" aria-label="あいうえおで絞り込む"></div>
       <div class="picked" id="picked" aria-live="polite"></div>
-      <p class="count" id="songCount"></p>
+      <p class="count"><span id="songCount"></span>　曲をタップするとYouTubeでさがせます</p>
       <ul class="song-list" id="songList"><li class="empty">メニューを読み込んでいます…</li></ul>
     </div>
     <p class="src" id="songSrc"></p>
@@ -744,6 +752,8 @@ const GYO = [['あ','あいうえおぁぃぅぇぉゔ'],['か','かきくけこ
 const toHira = s => (s || '').trim().replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
 const gyoOf = y => { const c = toHira(y).charAt(0); const g = GYO.find(([, cs]) => cs.includes(c)); return g ? g[0] : '英'; };
 let SONGS = [], gyoSel = null;
+/* 曲名+アーティストからYouTube検索のリンクを自動で作る(スプレッドシートの入力は不要) */
+const ytSearch = x => 'https://www.youtube.com/results?search_query=' + encodeURIComponent((x.t + ' ' + x.a).trim());
 function renderSongs(rows, fromSheet) {
   const head = rows.shift() || [], col = n => head.findIndex(h => h.trim() === n), hide = col('表示');
   const c = { t: col('曲名'), y: col('よみがな'), a: col('アーティスト'), g: col('ジャンル'), m: col('ひとこと') };
@@ -761,7 +771,7 @@ function drawSongs(hit) {
   const q = document.getElementById('songQ').value.trim().toLowerCase(), qh = toHira(q);
   const list = SONGS.filter(x => (!gyoSel || x.k === gyoSel) && (!q || (x.t + ' ' + x.a).toLowerCase().includes(q) || x.y.includes(qh)));
   document.getElementById('songCount').textContent = `${list.length}曲 / 全${SONGS.length}曲`;
-  document.getElementById('songList').innerHTML = list.length ? list.map(x => `<li${x === hit ? ' class="hit"' : ''}><span class="tx"><span class="t">${esc(x.t)}</span> <span class="a">${esc(x.a)}</span>${x.m ? `<span class="m">${esc(x.m)}</span>` : ''}</span>${x.g ? `<span class="g">${esc(x.g)}</span>` : ''}</li>`).join('') : '<li class="empty">見つかりませんでした</li>';
+  document.getElementById('songList').innerHTML = list.length ? list.map(x => `<li${x === hit ? ' class="hit"' : ''}><a class="yt" href="${ytSearch(x)}" target="_blank" rel="noopener" aria-label="${esc(x.t)}をYouTubeでさがす"><span class="tx"><span class="t">${esc(x.t)}</span> <span class="a">${esc(x.a)}</span>${x.m ? `<span class="m">${esc(x.m)}</span>` : ''}</span>${x.g ? `<span class="g">${esc(x.g)}</span>` : ''}<span class="go" aria-hidden="true">▶</span></a></li>`).join('') : '<li class="empty">見つかりませんでした</li>';
 }
 document.getElementById('songQ').addEventListener('input', () => drawSongs());
 document.getElementById('gyo').addEventListener('click', e => {
@@ -774,7 +784,7 @@ document.getElementById('songPick').addEventListener('click', () => {
   if (!SONGS.length) return;
   const x = SONGS[Math.floor(Math.random() * SONGS.length)];
   const p = document.getElementById('picked');
-  p.innerHTML = `<small>店主のおまかせ</small><b>${esc(x.t)}</b><span>${esc(x.a)}</span>`;
+  p.innerHTML = `<small>店主のおまかせ</small><b>${esc(x.t)}</b><span>${esc(x.a)}</span><a class="yt-btn" href="${ytSearch(x)}" target="_blank" rel="noopener">▶ YouTubeでさがす</a>`;
   p.classList.remove('show'); void p.offsetWidth; p.classList.add('show');
   try { tone(1319, audio().currentTime, .5, .06); } catch (e) {}
 });
