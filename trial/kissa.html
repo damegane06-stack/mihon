@@ -191,6 +191,40 @@ section{margin-top:100px;position:relative}
 .after.show{display:block}
 #fx{position:fixed;inset:0;pointer-events:none;z-index:60}
 
+/* 歌のメニュー */
+.song-tools{display:flex;gap:8px}
+.song-tools input{
+  flex:1;min-width:0;font-family:inherit;font-size:15px;color:var(--ink);background:#fffdf7;
+  border:2px solid var(--ink);border-radius:999px;padding:9px 16px;
+}
+.song-tools input:focus-visible{outline:3px solid var(--orange);outline-offset:1px}
+.pick{
+  flex-shrink:0;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;color:#fff;background:var(--orange);
+  border:2px solid var(--ink);border-radius:999px;padding:0 14px;box-shadow:0 3px 0 var(--ink);
+}
+.pick:active{transform:translateY(3px);box-shadow:none}
+.gyo{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px}
+.gyo button{
+  font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;color:var(--ink);background:#fffdf7;
+  border:1.5px solid var(--ink);border-radius:6px;min-width:34px;padding:3px 6px;
+}
+.gyo button[aria-pressed="true"]{background:var(--red);color:#fff;border-color:var(--red)}
+.gyo button:disabled{opacity:.3;cursor:default}
+.picked{display:none;margin-top:14px;background:var(--paper);border:2px solid var(--ink);border-radius:12px;padding:12px 14px}
+.picked.show{display:block;animation:slipIn .5s cubic-bezier(.3,1.4,.5,1)}
+.picked small{display:block;font-size:10.5px;font-weight:700;color:var(--red);letter-spacing:.15em}
+.picked b{font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:19px;letter-spacing:.04em}
+.picked span{display:block;font-size:12.5px;color:var(--sub)}
+.count{font-size:11px;color:var(--sub);margin:12px 0 4px}
+.song-list{list-style:none;max-height:440px;overflow-y:auto;border-top:2px dotted rgba(58,34,25,.3);-webkit-overflow-scrolling:touch}
+.song-list li{display:flex;align-items:baseline;gap:8px;padding:10px 2px;border-bottom:1px dashed rgba(58,34,25,.2)}
+.song-list li .t{font-weight:700;font-size:14px}
+.song-list li .a{font-size:11.5px;color:var(--sub)}
+.song-list li .g{margin-left:auto;flex-shrink:0;font-size:10px;font-weight:700;border:1.5px solid var(--ink);border-radius:999px;padding:0 8px;background:#fffdf7}
+.song-list li .m{display:block;font-size:11px;color:var(--red)}
+.song-list li .tx{min-width:0}
+.song-list li.hit{background:#fff1cc}
+
 /* 年譜(横にめくる) */
 .chronicle{
   display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
@@ -465,6 +499,21 @@ html[data-time="night"] .hero .open i{background:var(--red);box-shadow:0 0 10px 
   </section>
 
   <section class="reveal">
+    <div class="menu-head"><span class="en">SONGS</span><h2>歌のメニュー</h2></div>
+    <div class="card songs">
+      <div class="song-tools">
+        <input type="search" id="songQ" placeholder="曲名・アーティストでさがす" aria-label="曲をさがす">
+        <button class="pick" id="songPick">🎲 おまかせ1曲</button>
+      </div>
+      <div class="gyo" id="gyo" role="group" aria-label="あいうえおで絞り込む"></div>
+      <div class="picked" id="picked" aria-live="polite"></div>
+      <p class="count" id="songCount"></p>
+      <ul class="song-list" id="songList"><li class="empty">メニューを読み込んでいます…</li></ul>
+    </div>
+    <p class="src" id="songSrc"></p>
+  </section>
+
+  <section class="reveal">
     <div class="menu-head"><span class="en">HISTORY</span><h2>お店のあゆみ</h2></div>
     <div class="chronicle" id="chronicle"><p class="empty">記録を読み込んでいます…</p></div>
     <p class="swipe">← むかしへ　横にめくれます</p>
@@ -631,6 +680,9 @@ document.getElementById('reset').onclick = () => {
 const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ56-UaGnW3Kx68gEQPMy2szOO3sLZyE3gSLRO13YtUrIC_q0dnSHX-UE5ZTCC8E9gfsMzao_d5uMOc/pub?gid=0&single=true&output=csv';
 const GOODS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ56-UaGnW3Kx68gEQPMy2szOO3sLZyE3gSLRO13YtUrIC_q0dnSHX-UE5ZTCC8E9gfsMzao_d5uMOc/pub?gid=468015229&single=true&output=csv';
 const SAMPLE_CSV = './damegane-sample.csv', GOODS_SAMPLE = './damegane-goods-sample.csv';
+/* 歌リスト: スプレッドシートの「歌リスト」タブを公開したURL(空ならサンプル) */
+const SONGS_CSV = '';
+const SONGS_SAMPLE = './damegane-songs-sample.csv';
 function parseCSV(t) {
   const rows = []; let row = [], cell = '', q = false;
   t = t.replace(/^﻿/, '');
@@ -687,6 +739,46 @@ function renderGoods(rows, fromSheet) {
   }).join('');
   document.getElementById('goodsSrc').textContent = fromSheet ? '' : '※ サンプルのデータを表示しています';
 }
+/* ---------- 歌のメニュー ---------- */
+const GYO = [['あ','あいうえおぁぃぅぇぉゔ'],['か','かきくけこがぎぐげご'],['さ','さしすせそざじずぜぞ'],['た','たちつてとだぢづでどっ'],['な','なにぬねの'],['は','はひふへほばびぶべぼぱぴぷぺぽ'],['ま','まみむめも'],['や','やゆよゃゅょ'],['ら','らりるれろ'],['わ','わをん']];
+const toHira = s => (s || '').trim().replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
+const gyoOf = y => { const c = toHira(y).charAt(0); const g = GYO.find(([, cs]) => cs.includes(c)); return g ? g[0] : '英'; };
+let SONGS = [], gyoSel = null;
+function renderSongs(rows, fromSheet) {
+  const head = rows.shift() || [], col = n => head.findIndex(h => h.trim() === n), hide = col('表示');
+  const c = { t: col('曲名'), y: col('よみがな'), a: col('アーティスト'), g: col('ジャンル'), m: col('ひとこと') };
+  SONGS = rows.filter(r => !(hide >= 0 && (r[hide] || '').trim() === 'しない'))
+    .map(r => ({ t: (r[c.t] || '').trim(), y: toHira(r[c.y] || r[c.t]), a: r[c.a] || '', g: r[c.g] || '', m: r[c.m] || '' }))
+    .filter(x => x.t).sort((p, q) => p.y.localeCompare(q.y, 'ja'));
+  SONGS.forEach(x => x.k = gyoOf(x.y));
+  const have = new Set(SONGS.map(x => x.k));
+  document.getElementById('gyo').innerHTML = '<button data-g="" aria-pressed="true">すべて</button>' +
+    [...GYO.map(g => g[0]), '英'].map(k => `<button data-g="${k}" aria-pressed="false"${have.has(k) ? '' : ' disabled'}>${k === '英' ? 'A-Z' : k}</button>`).join('');
+  document.getElementById('songSrc').textContent = fromSheet ? '' : '※ サンプルのデータを表示しています';
+  drawSongs();
+}
+function drawSongs(hit) {
+  const q = document.getElementById('songQ').value.trim().toLowerCase(), qh = toHira(q);
+  const list = SONGS.filter(x => (!gyoSel || x.k === gyoSel) && (!q || (x.t + ' ' + x.a).toLowerCase().includes(q) || x.y.includes(qh)));
+  document.getElementById('songCount').textContent = `${list.length}曲 / 全${SONGS.length}曲`;
+  document.getElementById('songList').innerHTML = list.length ? list.map(x => `<li${x === hit ? ' class="hit"' : ''}><span class="tx"><span class="t">${esc(x.t)}</span> <span class="a">${esc(x.a)}</span>${x.m ? `<span class="m">${esc(x.m)}</span>` : ''}</span>${x.g ? `<span class="g">${esc(x.g)}</span>` : ''}</li>`).join('') : '<li class="empty">見つかりませんでした</li>';
+}
+document.getElementById('songQ').addEventListener('input', () => drawSongs());
+document.getElementById('gyo').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b || b.disabled) return;
+  gyoSel = b.dataset.g || null;
+  document.querySelectorAll('#gyo button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  drawSongs();
+});
+document.getElementById('songPick').addEventListener('click', () => {
+  if (!SONGS.length) return;
+  const x = SONGS[Math.floor(Math.random() * SONGS.length)];
+  const p = document.getElementById('picked');
+  p.innerHTML = `<small>店主のおまかせ</small><b>${esc(x.t)}</b><span>${esc(x.a)}</span>`;
+  p.classList.remove('show'); void p.offsetWidth; p.classList.add('show');
+  try { tone(1319, audio().currentTime, .5, .06); } catch (e) {}
+});
+
 document.addEventListener('click', e => {
   const b = e.target.closest('.vid'); if (!b || b.classList.contains('on')) return;
   b.classList.add('on');
@@ -696,6 +788,8 @@ document.addEventListener('click', e => {
   const q = new URLSearchParams(location.search);
   const [h, hs] = await loadCSV(q.get('sheet') || SHEET_CSV, SAMPLE_CSV);
   if (h) renderHistory(h, hs); else document.getElementById('chronicle').innerHTML = '<p class="empty">読み込めませんでした</p>';
+  const [sg, ss] = await loadCSV(q.get('songs') || SONGS_CSV, SONGS_SAMPLE);
+  if (sg) renderSongs(sg, ss); else document.getElementById('songList').innerHTML = '<li class="empty">読み込めませんでした</li>';
   const [g, gs] = await loadCSV(q.get('goods') || GOODS_CSV, GOODS_SAMPLE);
   if (g) renderGoods(g, gs); else document.getElementById('goods').innerHTML = '<p class="empty">読み込めませんでした</p>';
 })();
