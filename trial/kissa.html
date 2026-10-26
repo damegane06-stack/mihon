@@ -80,21 +80,22 @@ main{position:relative;z-index:2;max-width:600px;margin:0 auto;padding:0 20px 11
 #door.open .sign{opacity:0}
 /* 扉 B: 手前に開く3Dの扉。すき間から店の灯りがこぼれて、一歩入る */
 #door .glow{display:none}
-#door.swing{perspective:1300px;perspective-origin:50% 45%;transition:visibility 0s 1.9s,opacity .8s ease .9s,transform 1.8s cubic-bezier(.5,0,.25,1) .15s}
-#door.swing .glow{
-  display:block;position:absolute;inset:0;z-index:0;opacity:0;transition:opacity .9s ease .1s;
-  background:radial-gradient(closest-side at 50% 50%,rgba(255,246,220,.95),rgba(255,208,138,.7) 40%,rgba(232,131,42,.25) 75%,rgba(232,131,42,0));
+#door.swing{perspective:1300px;perspective-origin:50% 45%;transition:visibility 0s 2.6s,opacity 1s ease 1.5s,transform 2s cubic-bezier(.5,0,.25,1) .15s}
+#door.swing .glow{ /* トンネルを抜けたときみたいに、まぶしい光が画面いっぱいに広がる */
+  display:block;position:absolute;left:50%;top:50%;width:40vmax;height:40vmax;margin:-20vmax 0 0 -20vmax;border-radius:50%;z-index:2;
+  opacity:0;transform:scale(.2);transition:transform 1.3s cubic-bezier(.6,0,.3,1) .35s,opacity .5s ease .35s;
+  background:radial-gradient(closest-side,#fff 0%,#fffaf0 55%,rgba(255,250,240,0) 100%);
 }
 #door.swing .leaf{z-index:1;transition:transform 1.6s cubic-bezier(.55,0,.2,1),filter 1.6s;box-shadow:inset 0 0 0 10px #7a1d17,0 0 40px rgba(0,0,0,.35)}
 #door.swing .leaf.l{transform-origin:0 50%}
 #door.swing .leaf.r{transform-origin:100% 50%}
-#door.swing.open{opacity:0;transform:scale(1.35)}
-#door.swing.open .glow{opacity:1}
+#door.swing.open{opacity:0;transform:scale(1.25)}
+#door.swing.open .glow{opacity:1;transform:scale(6)}
 #door.swing.open .leaf.l{transform:rotateY(-105deg);filter:brightness(.55)}
 #door.swing.open .leaf.r{transform:rotateY(105deg);filter:brightness(.55)}
 #door.swing.open .sign{transition:opacity .25s}
-html.entering main{transform:scale(.94);opacity:.4}
-main{transition:transform 1.8s cubic-bezier(.3,0,.2,1),opacity 1.4s ease}
+html.entering main{transform:scale(.94);filter:brightness(1.6) saturate(.6)}
+main{transition:transform 2.2s cubic-bezier(.3,0,.2,1),filter 2.4s ease}
 
 /* ---------- 看板 ---------- */
 .hero{min-height:92vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;padding:60px 0 20px}
@@ -247,6 +248,8 @@ html[data-time="night"] .labrow span{color:#d9b99c}
 footer .labrow button{border-color:currentColor;background:none;color:inherit}
 footer .labrow button[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
 .rc,.printer{display:none}
+.cake-pick{display:none}
+.gacha[data-kuji="cake"] .cake-pick{display:flex}
 .stage{margin:22px auto 0;max-width:300px;position:relative}
 .stage[hidden]{display:none}
 .stage svg{width:100%;height:auto;display:block;overflow:visible}
@@ -257,12 +260,13 @@ footer .labrow button[aria-pressed="true"]{background:var(--red);border-color:va
 /* B: レシート。プリンタから「ジジジ」と出てくる */
 .gacha[data-kuji="receipt"] .printer{display:block;max-width:300px;margin:26px auto 0;height:20px;border-radius:10px;background:linear-gradient(#5a3a2c,#2a1810);border:2px solid var(--ink);position:relative;z-index:2;box-shadow:0 4px 0 rgba(58,34,25,.2)}
 .gacha[data-kuji="receipt"] .printer i{position:absolute;left:24px;right:24px;top:7px;height:4px;border-radius:2px;background:#120a07}
-.gacha[data-kuji="receipt"] .feed{overflow:hidden;margin:-10px auto 0;max-width:280px;padding:0 6px 14px}
+.gacha[data-kuji="receipt"] .feed{overflow:hidden;margin:-10px auto 0;max-width:300px;padding:0 16px 18px;background:linear-gradient(#4a2c20,#2e1a12);border:2px solid var(--ink);border-top:none;border-radius:0 0 14px 14px;box-shadow:inset 0 10px 14px rgba(0,0,0,.45)}
+.gacha[data-kuji="receipt"] .printer{border-radius:10px 10px 4px 4px}
 .gacha[data-kuji="receipt"] .slip{
   margin:0 auto;max-width:none;border:none;border-radius:0;padding:24px 18px 30px;text-align:left;
-  font-family:'DotGothic16','Zen Kaku Gothic New',monospace;letter-spacing:.06em;background:#fffefa;
+  font-family:'DotGothic16','Zen Kaku Gothic New',monospace;letter-spacing:.06em;background:#fffdf5;color:#2a1810;
   background-image:linear-gradient(180deg,rgba(58,34,25,.08),transparent 18px);
-  box-shadow:0 6px 10px rgba(58,34,25,.12);
+  box-shadow:none;
   -webkit-mask:conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) bottom/14px 8px repeat-x,linear-gradient(#000 0 0) top/100% calc(100% - 7.5px) no-repeat;
           mask:conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) bottom/14px 8px repeat-x,linear-gradient(#000 0 0) top/100% calc(100% - 7.5px) no-repeat;
 }
@@ -284,20 +288,6 @@ footer .labrow button[aria-pressed="true"]{background:var(--red);border-color:va
 .gacha[data-kuji="receipt"] .slip .who{font-family:'Zen Kaku Gothic New',sans-serif}
 .gacha[data-kuji="receipt"] .slip.ss{background-color:#fff6ea;box-shadow:0 0 0 0 transparent,0 6px 16px rgba(200,55,45,.25)}
 
-/* C: 紅茶の湯気 */
-.tea .steam2 path{fill:none;stroke-linecap:round;stroke-dasharray:140;stroke-dashoffset:140;animation:waft 2.4s ease-in-out forwards}
-.tea .steam2 path:nth-child(2){animation-delay:.35s}.tea .steam2 path:nth-child(3){animation-delay:.7s}
-@keyframes waft{0%{stroke-dashoffset:140;opacity:0}25%{opacity:.85}100%{stroke-dashoffset:0;opacity:.85;transform:translateY(-6px)}}
-.tea .puff{transform-box:fill-box;transform-origin:center;transform:scale(0);opacity:0}
-.tea.go .puff{animation:puff 1s cubic-bezier(.2,.8,.3,1) forwards}
-@keyframes puff{0%{transform:scale(0);opacity:0}40%{opacity:.95}100%{transform:scale(1);opacity:0}}
-.tea .surface{animation:ripple 2.4s ease-in-out infinite}
-@keyframes ripple{50%{transform:scaleX(.97)}}
-.tea .surface{transform-box:fill-box;transform-origin:center}
-.tea .spark{opacity:0;transform-box:fill-box;transform-origin:center}
-.tea.gold .spark{animation:spark 1.2s ease-in-out infinite}
-.tea.gold .spark:nth-of-type(2){animation-delay:.4s}.tea.gold .spark:nth-of-type(3){animation-delay:.8s}
-@keyframes spark{0%,100%{opacity:0;transform:scale(.3)}50%{opacity:1;transform:scale(1) rotate(45deg)}}
 .slip.rise{animation:rise2 .9s cubic-bezier(.2,.9,.3,1) both!important}
 @keyframes rise2{from{opacity:0;transform:translateY(-40px) scale(.9);filter:blur(8px)}to{opacity:1;transform:rotate(-1deg);filter:none}}
 
@@ -424,10 +414,10 @@ footer .mark{font-family:'Dela Gothic One',sans-serif;font-size:16px;color:var(-
 .window stop{transition:stop-color var(--T) ease}
 .sun,.moon{transition:transform var(--T) cubic-bezier(.45,0,.3,1)}
 .sun circle,.town,.cloud{transition:fill var(--T) ease,opacity var(--T) ease}
-.stars,.lights,.birds,.clouds{transition:opacity var(--T) ease}
+.scene .stars,.lights,.birds,.clouds{transition:opacity var(--T) ease}
 .sun{transform:translate(170px,50px) scale(.85)}
 .moon{transform:translate(20px,220px)}
-.stars,.lights,.birds{opacity:0}
+.scene .stars,.lights,.birds{opacity:0}
 .sun .disc{fill:#fff6c8}.sun .halo{fill:#fff6c8;opacity:.3}
 .town{fill:#a9c6da}.cloud{fill:#fff}
 .s0{stop-color:#3f9fe6}.s1{stop-color:#86c6f2}.s2{stop-color:#d8eeff}
@@ -445,11 +435,11 @@ html[data-time="night"] .sun{transform:translate(130px,290px) scale(1.4)}
 html[data-time="night"] .sun .disc{fill:#ff6a3a}
 html[data-time="night"] .moon{transform:none}
 html[data-time="night"] .town{fill:#0b0e22}
-html[data-time="night"] .stars,html[data-time="night"] .lights{opacity:1}
+html[data-time="night"] .scene .stars,html[data-time="night"] .lights{opacity:1}
 html[data-time="night"] .clouds{opacity:0}
 .cloud.c1{animation:drift 28s ease-in-out infinite alternate}.cloud.c2{animation:drift 22s ease-in-out infinite alternate-reverse}
 @keyframes drift{to{transform:translateX(24px)}}
-.stars circle{animation:twinkle 3s ease-in-out infinite}.stars circle:nth-child(2n){animation-delay:-1.4s}.stars circle:nth-child(3n){animation-delay:-2.2s}
+.scene .stars circle{animation:twinkle 3s ease-in-out infinite}.scene .stars circle:nth-child(2n){animation-delay:-1.4s}.scene .stars circle:nth-child(3n){animation-delay:-2.2s}
 @keyframes twinkle{50%{opacity:.35}}
 .cat{opacity:0;transition:opacity 1.8s ease}
 html:not([data-time]) .cat.n,html[data-time="morning"] .cat.m,html[data-time="noon"] .cat.n,html[data-time="evening"] .cat.e,html[data-time="night"] .cat.d{opacity:1}
@@ -465,9 +455,8 @@ html[data-time="night"] .window{--light:rgba(120,130,220,.35)}
 
 .bunting,.celebrate,.cake,.hat{display:none}
 html.anniv .bunting,html.anniv .celebrate,html.anniv .cake,html.anniv .hat{display:inline}
-.balloons{display:none}
-.fwc{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;clip-path:url(#archBox);-webkit-clip-path:url(#archBox);mix-blend-mode:screen;opacity:0;transition:opacity 1.5s}
-html.anniv[data-time="evening"] .fwc,html.anniv[data-time="night"] .fwc{opacity:1}
+.fireworks,.balloons{display:none}
+html.anniv[data-time="evening"] .fireworks,html.anniv[data-time="night"] .fireworks{display:inline}
 html.anniv[data-time="morning"] .balloons,html.anniv[data-time="noon"] .balloons{display:inline}
 .fw{transform-box:fill-box;transform-origin:center;opacity:0;animation:fw 3s ease-out infinite}
 @keyframes fw{0%{transform:scale(.1);opacity:0}10%{opacity:1}60%{transform:scale(1);opacity:.9}100%{transform:scale(1.15);opacity:0}}
@@ -598,7 +587,7 @@ html[data-time="night"] .hero .open i{background:var(--red);box-shadow:0 0 10px 
   #door{display:none}
   .meter .fill{width:calc(100% + 18px)}
   .meter .hanko{opacity:.92;transform:rotate(-9deg)}
-  html.entering main{transform:none;opacity:1}
+  html.entering main{transform:none;filter:none}
 }
 </style>
 </head>
@@ -620,7 +609,6 @@ html[data-time="night"] .hero .open i{background:var(--red);box-shadow:0 0 10px 
       <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.7 1.95" result="gm"/>
       <feComposite in="d" in2="gm" operator="in"/>
     </filter>
-    <clipPath id="archBox" clipPathUnits="objectBoundingBox"><path d="M.1538 .7458V.3814a.3462 .339 0 0 1 .6923 0v.3644z"/></clipPath>
   </defs>
 </svg>
 
@@ -645,7 +633,7 @@ html[data-time="night"] .hero .open i{background:var(--red);box-shadow:0 0 10px 
           <g class="lights" fill="#ffcf6a"><rect x="66" y="146" width="5" height="5"/><rect x="190" y="140" width="5" height="5"/><rect x="178" y="154" width="5" height="5"/></g>
         </g>
         <g clip-path="url(#arch)" class="celebrate" aria-hidden="true">
-          
+          <g class="fireworks" stroke-width="2" stroke-linecap="round"><g class="fw" style="animation-delay:0s;stroke:#ffd36b;fill:#ffd36b"><line x1="92" y1="70" x2="118.0" y2="70.0"/><line x1="92" y1="70" x2="114.5" y2="83.0"/><line x1="92" y1="70" x2="105.0" y2="92.5"/><line x1="92" y1="70" x2="92.0" y2="96.0"/><line x1="92" y1="70" x2="79.0" y2="92.5"/><line x1="92" y1="70" x2="69.5" y2="83.0"/><line x1="92" y1="70" x2="66.0" y2="70.0"/><line x1="92" y1="70" x2="69.5" y2="57.0"/><line x1="92" y1="70" x2="79.0" y2="47.5"/><line x1="92" y1="70" x2="92.0" y2="44.0"/><line x1="92" y1="70" x2="105.0" y2="47.5"/><line x1="92" y1="70" x2="114.5" y2="57.0"/><circle cx="122.0" cy="78.0" r="2"/><circle cx="114.0" cy="91.9" r="2"/><circle cx="100.1" cy="99.9" r="2"/><circle cx="84.0" cy="100.0" r="2"/><circle cx="70.1" cy="92.0" r="2"/><circle cx="62.1" cy="78.1" r="2"/><circle cx="62.0" cy="62.0" r="2"/><circle cx="70.0" cy="48.1" r="2"/><circle cx="83.9" cy="40.1" r="2"/><circle cx="100.0" cy="40.0" r="2"/><circle cx="113.9" cy="48.0" r="2"/><circle cx="121.9" cy="61.9" r="2"/></g><g class="fw" style="animation-delay:0.8s;stroke:#ff8fb1;fill:#ff8fb1"><line x1="170" y1="52" x2="196.0" y2="52.0"/><line x1="170" y1="52" x2="192.5" y2="65.0"/><line x1="170" y1="52" x2="183.0" y2="74.5"/><line x1="170" y1="52" x2="170.0" y2="78.0"/><line x1="170" y1="52" x2="157.0" y2="74.5"/><line x1="170" y1="52" x2="147.5" y2="65.0"/><line x1="170" y1="52" x2="144.0" y2="52.0"/><line x1="170" y1="52" x2="147.5" y2="39.0"/><line x1="170" y1="52" x2="157.0" y2="29.5"/><line x1="170" y1="52" x2="170.0" y2="26.0"/><line x1="170" y1="52" x2="183.0" y2="29.5"/><line x1="170" y1="52" x2="192.5" y2="39.0"/><circle cx="200.0" cy="60.0" r="2"/><circle cx="192.0" cy="73.9" r="2"/><circle cx="178.1" cy="81.9" r="2"/><circle cx="162.0" cy="82.0" r="2"/><circle cx="148.1" cy="74.0" r="2"/><circle cx="140.1" cy="60.1" r="2"/><circle cx="140.0" cy="44.0" r="2"/><circle cx="148.0" cy="30.1" r="2"/><circle cx="161.9" cy="22.1" r="2"/><circle cx="178.0" cy="22.0" r="2"/><circle cx="191.9" cy="30.0" r="2"/><circle cx="199.9" cy="43.9" r="2"/></g><g class="fw" style="animation-delay:1.6s;stroke:#7fe0c4;fill:#7fe0c4"><line x1="132" y1="104" x2="152.0" y2="104.0"/><line x1="132" y1="104" x2="149.3" y2="114.0"/><line x1="132" y1="104" x2="142.0" y2="121.3"/><line x1="132" y1="104" x2="132.0" y2="124.0"/><line x1="132" y1="104" x2="122.0" y2="121.3"/><line x1="132" y1="104" x2="114.7" y2="114.0"/><line x1="132" y1="104" x2="112.0" y2="104.0"/><line x1="132" y1="104" x2="114.7" y2="94.0"/><line x1="132" y1="104" x2="122.0" y2="86.7"/><line x1="132" y1="104" x2="132.0" y2="84.0"/><line x1="132" y1="104" x2="142.0" y2="86.7"/><line x1="132" y1="104" x2="149.3" y2="94.0"/><circle cx="156.2" cy="110.4" r="2"/><circle cx="149.7" cy="121.6" r="2"/><circle cx="138.5" cy="128.1" r="2"/><circle cx="125.6" cy="128.2" r="2"/><circle cx="114.4" cy="121.7" r="2"/><circle cx="107.9" cy="110.5" r="2"/><circle cx="107.8" cy="97.6" r="2"/><circle cx="114.3" cy="86.4" r="2"/><circle cx="125.5" cy="79.9" r="2"/><circle cx="138.4" cy="79.8" r="2"/><circle cx="149.6" cy="86.3" r="2"/><circle cx="156.1" cy="97.5" r="2"/></g><g class="fw" style="animation-delay:2.2s;stroke:#ffd36b;fill:#ffd36b"><line x1="196" y1="112" x2="214.0" y2="112.0"/><line x1="196" y1="112" x2="211.6" y2="121.0"/><line x1="196" y1="112" x2="205.0" y2="127.6"/><line x1="196" y1="112" x2="196.0" y2="130.0"/><line x1="196" y1="112" x2="187.0" y2="127.6"/><line x1="196" y1="112" x2="180.4" y2="121.0"/><line x1="196" y1="112" x2="178.0" y2="112.0"/><line x1="196" y1="112" x2="180.4" y2="103.0"/><line x1="196" y1="112" x2="187.0" y2="96.4"/><line x1="196" y1="112" x2="196.0" y2="94.0"/><line x1="196" y1="112" x2="205.0" y2="96.4"/><line x1="196" y1="112" x2="211.6" y2="103.0"/><circle cx="218.2" cy="117.9" r="2"/><circle cx="212.3" cy="128.2" r="2"/><circle cx="202.0" cy="134.2" r="2"/><circle cx="190.1" cy="134.2" r="2"/><circle cx="179.8" cy="128.3" r="2"/><circle cx="173.8" cy="118.0" r="2"/><circle cx="173.8" cy="106.1" r="2"/><circle cx="179.7" cy="95.8" r="2"/><circle cx="190.0" cy="89.8" r="2"/><circle cx="201.9" cy="89.8" r="2"/><circle cx="212.2" cy="95.7" r="2"/><circle cx="218.2" cy="106.0" r="2"/></g></g>
           <g class="balloons"><g class="bl" style="animation-delay:-0s;animation-duration:7s"><path d="M70 200q-4 12 2 24" fill="none" stroke="#3a2219" stroke-width="1.2"/><ellipse cx="70" cy="188" rx="11" ry="13" fill="#ff8fb1" stroke="#3a2219" stroke-width="2"/><path d="M66 182q2-5 6-6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"/></g><g class="bl" style="animation-delay:-2.5s;animation-duration:8s"><path d="M104 200q-4 12 2 24" fill="none" stroke="#3a2219" stroke-width="1.2"/><ellipse cx="104" cy="188" rx="11" ry="13" fill="#ffd36b" stroke="#3a2219" stroke-width="2"/><path d="M100 182q2-5 6-6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"/></g><g class="bl" style="animation-delay:-5s;animation-duration:7.5s"><path d="M138 200q-4 12 2 24" fill="none" stroke="#3a2219" stroke-width="1.2"/><ellipse cx="138" cy="188" rx="11" ry="13" fill="#7fe0c4" stroke="#3a2219" stroke-width="2"/><path d="M134 182q2-5 6-6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"/></g><g class="bl" style="animation-delay:-1.2s;animation-duration:8.5s"><path d="M176 200q-4 12 2 24" fill="none" stroke="#3a2219" stroke-width="1.2"/><ellipse cx="176" cy="188" rx="11" ry="13" fill="#e8832a" stroke="#3a2219" stroke-width="2"/><path d="M172 182q2-5 6-6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"/></g><g class="bl" style="animation-delay:-4s;animation-duration:7s"><path d="M206 200q-4 12 2 24" fill="none" stroke="#3a2219" stroke-width="1.2"/><ellipse cx="206" cy="188" rx="11" ry="13" fill="#b79ce8" stroke="#3a2219" stroke-width="2"/><path d="M202 182q2-5 6-6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"/></g></g>
         </g>
         <path d="M40 176V90a90 80 0 0 1 180 0v86z" fill="none" stroke="#3a2219" stroke-width="6"/>
@@ -702,7 +690,6 @@ html[data-time="night"] .hero .open i{background:var(--red);box-shadow:0 0 10px 
           <path d="M162 160q4 3 8 0" fill="none" stroke="#3a2219" stroke-width="2.5" stroke-linecap="round"/>
           <text x="198" y="132" font-size="12" font-weight="700" fill="#fff3c2">z</text><text x="208" y="120" font-size="14" font-weight="700" fill="#fff3c2">z</text><text x="220" y="106" font-size="16" font-weight="700" fill="#fff3c2">Z</text><g class="hat"><polygon points="164,146 180,146 168,122" fill="#ff8fb1" stroke="#3a2219" stroke-width="2.5" stroke-linejoin="round"/><circle cx="168" cy="121" r="4" fill="#ffd36b" stroke="#3a2219" stroke-width="2"/></g></g>
       </svg>
-      <canvas class="fwc" id="fwc"></canvas>
     </div>
     <p class="anniv-count" id="annivCount" hidden></p>
     <p class="anniv-ribbon" id="anniv" hidden></p>
@@ -780,7 +767,10 @@ html[data-time="night"] .hero .open i{background:var(--red);box-shadow:0 0 10px 
       </div>
       <p class="note">※ 試作のため、声のかわりに文字と効果音です。</p>
       <div class="labrow" id="labKuji" role="group" aria-label="出し方をくらべる(試作用)">
-        <span>出し方</span><button data-v="slip">伝票</button><button data-v="receipt">レシート</button><button data-v="tea">紅茶の湯気</button><button data-v="cake">ケーキ</button>
+        <span>出し方</span><button data-v="slip">伝票</button><button data-v="receipt">レシート</button><button data-v="cake">ケーキ</button>
+      </div>
+      <div class="labrow cake-pick" id="labCake" role="group" aria-label="ケーキをえらぶ(試作用)">
+        <span>ケーキ</span><button data-v="short">いちごショート</button><button data-v="choco">チョコ</button><button data-v="matcha">抹茶</button><button data-v="cheese">チーズ</button><button data-v="tart">フルーツタルト</button><button data-v="mont">モンブラン</button><button data-v="random">おまかせ</button>
       </div>
       <button class="demo-reset" id="reset">(試作用)もういちど注文する</button>
       <button class="demo-reset" id="force5">(試作用)★5で注文する</button>
@@ -934,7 +924,8 @@ document.getElementById('greetVoice').addEventListener('click', () => {
 const LAB = (() => {
   let v = {}; try { v = JSON.parse(localStorage.getItem('kissa-damegane-lab') || '{}') || {}; } catch (e) {}
   const q = new URLSearchParams(location.search);
-  return { door: q.get('door') || v.door || 'slide', kuji: q.get('kuji') || v.kuji || 'slip' };
+  const kuji = q.get('kuji') || v.kuji || 'slip';
+  return { door: q.get('door') || v.door || 'slide', kuji: /^(slip|receipt|cake)$/.test(kuji) ? kuji : 'slip', cake: q.get('cake') || v.cake || 'short' };
 })();
 const saveLab = () => { try { localStorage.setItem('kissa-damegane-lab', JSON.stringify(LAB)); } catch (e) {} };
 const markLab = (id, val) => document.querySelectorAll(`#${id} button`).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === val)));
@@ -951,9 +942,9 @@ function openDoor(withSound) {
   if (opened) return; opened = true; clearTimeout(doorTimer);
   if (withSound) playVoice(VOICES.enter, null); // 声が入るまでは無音
   door.classList.add('open');
-  setTimeout(() => document.documentElement.classList.remove('entering'), 250);
+  setTimeout(() => document.documentElement.classList.remove('entering'), LAB.door === 'swing' ? 1300 : 250);
   // 入ったら、ひとつ前の時間帯から今の時間帯へ
-  setTimeout(() => { arrived = true; applyTime(pinned); }, LAB.door === 'swing' ? 1800 : 1300);
+  setTimeout(() => { arrived = true; applyTime(pinned); }, LAB.door === 'swing' ? 2400 : 1300);
   if (annivToday) setTimeout(() => { burst(innerWidth / 2, innerHeight * .35, 70); }, LAB.door === 'swing' ? 1200 : 900);
 }
 function replayDoor(st) {
@@ -1015,61 +1006,7 @@ function crumbs(x, y) { // ケーキのかけら
   fire({ origin: { x: x / innerWidth, y: y / innerHeight }, particleCount: 16, spread: 80, startVelocity: 16, gravity: 1.4, ticks: 90, scalar: .55, shapes: ['circle'], colors: ['#fff4e6', '#f3d29b', '#ff8fb1', '#c8372d'] });
 }
 
-/* ---------- 窓の花火: 光の粒が尾を引いて、落ちながら消える ---------- */
-const fwSync = (() => {
-  const c = document.getElementById('fwc'), g = c.getContext('2d');
-  let w = 0, h = 0, run = false, seen = true, rockets = [], sparks = [], flashes = [], next = 0;
-  const PAL = [[44, 100, 68], [340, 100, 76], [160, 70, 62], [24, 100, 62], [48, 30, 96]];
-  const pick = () => PAL[Math.floor(Math.random() * PAL.length)];
-  function size() { const r = c.getBoundingClientRect(), d = Math.min(2, devicePixelRatio || 1); w = r.width; h = r.height; c.width = w * d; c.height = h * d; g.setTransform(d, 0, 0, d, 0, 0); }
-  function launch() { rockets.push({ x: w * (.32 + Math.random() * .36), y: h * .74, vx: (Math.random() - .5) * .5, vy: -(h * .011 + Math.random() * h * .003), ty: h * (.16 + Math.random() * .2), col: pick(), tr: [] }); }
-  function explode(r) {
-    const n = 44 + Math.floor(Math.random() * 22), sp = h * .0078 * (.85 + Math.random() * .3), c2 = Math.random() < .4 ? pick() : null;
-    for (let i = 0; i < n; i++) {
-      const a = i / n * Math.PI * 2 + Math.random() * .12, v = sp * (.6 + Math.random() * .4);
-      sparks.push({ x: r.x, y: r.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 1, dec: .009 + Math.random() * .007, col: c2 && i % 2 ? c2 : r.col, tw: Math.random() < .35, tr: [] });
-    }
-    flashes.push({ x: r.x, y: r.y, life: 1, col: r.col });
-  }
-  const hsla = (c, l, a) => `hsla(${c[0]},${c[1]}%,${l}%,${a})`;
-  function frame(t) {
-    if (!run) return;
-    g.clearRect(0, 0, w, h); g.globalCompositeOperation = 'lighter'; g.lineCap = 'round';
-    if (t > next) { launch(); next = t + 850 + Math.random() * 900; }
-    rockets = rockets.filter(r => {
-      r.tr.push([r.x, r.y]); if (r.tr.length > 10) r.tr.shift();
-      r.x += r.vx; r.y += r.vy; r.vy *= .986;
-      g.strokeStyle = hsla(r.col, 80, .35); g.lineWidth = 1.6; g.beginPath(); g.moveTo(r.tr[0][0], r.tr[0][1]); g.lineTo(r.x, r.y); g.stroke();
-      g.fillStyle = hsla(r.col, 90, .9); g.beginPath(); g.arc(r.x, r.y, 1.6, 0, 7); g.fill();
-      if (r.y <= r.ty) { explode(r); return false; } return true;
-    });
-    flashes = flashes.filter(f => {
-      const rg = g.createRadialGradient(f.x, f.y, 0, f.x, f.y, 34);
-      rg.addColorStop(0, hsla(f.col, 90, .45 * f.life)); rg.addColorStop(1, hsla(f.col, 70, 0));
-      g.fillStyle = rg; g.beginPath(); g.arc(f.x, f.y, 34, 0, 7); g.fill();
-      return (f.life -= .08) > 0;
-    });
-    sparks = sparks.filter(p => {
-      p.tr.push([p.x, p.y]); if (p.tr.length > 7) p.tr.shift();
-      p.vx *= .962; p.vy = p.vy * .962 + h * .00038; p.x += p.vx; p.y += p.vy; p.life -= p.dec;
-      let a = Math.max(p.life, 0); if (p.tw && p.life < .55) a *= Math.random() < .5 ? 1 : .15;
-      g.strokeStyle = hsla(p.col, p.col[2], a * .7); g.lineWidth = 2;
-      g.beginPath(); g.moveTo(p.tr[0][0], p.tr[0][1]); g.lineTo(p.x, p.y); g.stroke();
-      g.fillStyle = hsla(p.col, 92, a); g.beginPath(); g.arc(p.x, p.y, 1.8, 0, 7); g.fill();
-      g.fillStyle = hsla(p.col, 70, a * .22); g.beginPath(); g.arc(p.x, p.y, 6, 0, 7); g.fill();
-      return p.life > 0;
-    });
-    requestAnimationFrame(frame);
-  }
-  new IntersectionObserver(es => { seen = es[0].isIntersecting; sync(); }).observe(c);
-  addEventListener('resize', () => run && size());
-  function sync() {
-    const html = document.documentElement, on = !reduced && seen && html.classList.contains('anniv') && /evening|night/.test(html.dataset.time || '');
-    if (on && !run) { run = true; size(); next = 0; requestAnimationFrame(frame); }
-    if (!on && run) { run = false; rockets = []; sparks = []; flashes = []; g.clearRect(0, 0, w, h); }
-  }
-  return sync;
-})();
+const fwSync = () => {}; // 窓の花火はSVG(CSSアニメ)で表示
 
 /* ---------- 本日の甘やかし: ガチャ型くじ ---------- */
 /* 実際のサイトでは line の代わりに本人の録音ファイルを鳴らす */
@@ -1140,36 +1077,26 @@ function printSound() { if (!soundOn) return; try { const t = audio().currentTim
 const wait = ms => new Promise(r => setTimeout(r, ms));
 function closeStage() { stage.classList.add('fade'); return wait(650).then(() => { stage.hidden = true; stage.className = 'stage'; stage.innerHTML = ''; }); }
 
-/* 紅茶: 湯気がふわっと立って、湯気の中から伝票が出てくる(★5は金色の湯気) */
-async function teaStage(m) {
-  const gold = m.s === 5, st = gold ? '#e9b44c' : 'rgba(122,90,72,.5)';
-  stage.hidden = false; stage.className = 'stage';
-  stage.innerHTML = `<svg class="tea${gold ? ' gold' : ''}" viewBox="0 0 240 225" aria-hidden="true">
-    <defs><filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.4"/></filter>
-      <filter id="cloud" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
-      <radialGradient id="teaG" cx=".45" cy=".35" r=".7"><stop offset="0" stop-color="#d7893c"/><stop offset="1" stop-color="#83441a"/></radialGradient>
-      <clipPath id="cupC"><path d="M62 132h116c0 44-24 62-58 62s-58-18-58-62z"/></clipPath></defs>
-    <g class="steam2" filter="url(#soft)" stroke="${st}" stroke-width="7">
-      <path d="M100 122c-12-16 12-26 0-44s10-30 0-48"/><path d="M121 120c12-18-12-28 0-46s-10-30 2-50"/><path d="M142 122c-10-14 12-24 2-40s8-26-2-42"/></g>
-    <g class="sparks" fill="#ffd36b" stroke="#c98a1c" stroke-width="1"><path class="spark" d="M74 64l3 7l7 3l-7 3l-3 7l-3-7l-7-3l7-3z"/><path class="spark" d="M166 44l3 7l7 3l-7 3l-3 7l-3-7l-7-3l7-3z"/><path class="spark" d="M160 96l2 5l5 2l-5 2l-2 5l-2-5l-5-2l5-2z"/></g>
-    <ellipse cx="120" cy="198" rx="94" ry="20" fill="#fffdf7" stroke="#3a2219" stroke-width="3"/>
-    <ellipse cx="120" cy="195" rx="58" ry="10" fill="none" stroke="#e2cfae" stroke-width="2"/>
-    <path d="M172 142c28-6 32 32 0 38" fill="none" stroke="#3a2219" stroke-width="11" stroke-linecap="round"/>
-    <path d="M172 142c28-6 32 32 0 38" fill="none" stroke="#fffdf7" stroke-width="5" stroke-linecap="round"/>
-    <path d="M62 132h116c0 44-24 62-58 62s-58-18-58-62z" fill="#fffdf7" stroke="#3a2219" stroke-width="3" stroke-linejoin="round"/>
-    <g clip-path="url(#cupC)"><rect x="60" y="150" width="120" height="7" fill="#c8372d"/><rect x="60" y="160" width="120" height="2.5" fill="#e9b44c"/></g>
-    <ellipse cx="120" cy="132" rx="58" ry="12" fill="#fffdf7" stroke="#3a2219" stroke-width="3"/>
-    <ellipse class="surface" cx="120" cy="133" rx="50" ry="8" fill="url(#teaG)"/>
-    <ellipse cx="103" cy="131" rx="13" ry="2.4" fill="#fff" opacity=".35"/>
-    <g class="puff" filter="url(#cloud)" fill="${gold ? '#fff2c4' : '#fffdf7'}"><circle cx="120" cy="64" r="40"/><circle cx="88" cy="78" r="28"/><circle cx="152" cy="76" r="30"/><circle cx="104" cy="42" r="26"/><circle cx="138" cy="40" r="24"/></g>
-  </svg><p class="hint">${gold ? 'なんだか、いい香りがする…' : 'いれています…'}</p>`;
-  const svg = stage.querySelector('svg');
-  if (soundOn && gold) { try { const t = audio().currentTime; [1568, 1976, 2349].forEach((f, i) => tone(f, t + .8 + i * .3, .5, .03, 'triangle')); } catch (e) {} }
-  await wait(reduced ? 0 : 2300); svg.classList.add('go');
-  await wait(reduced ? 0 : 450); await closeStage();
-}
-
 /* ケーキ: タップでひと口ずつ。食べたところから星が出てくる。5口でおしまい */
+/* ケーキの種類: 断面の層(色, 上からの割合)・上の面の色・かざり */
+const CAKES = {
+  short:  { top: '#fffaf2', layers: [['#fff8ec', .16], ['#f3d29b', .46], ['#ff9fbd', .6], ['#f3d29b', 1]], deco: 'strawberry' },
+  choco:  { top: '#5b2f1d', layers: [['#4a2516', .14], ['#8a5232', .45], ['#fff1e0', .58], ['#8a5232', 1]], deco: 'raspberry', drizzle: '#3a1a0e' },
+  matcha: { top: '#9cc46a', layers: [['#86b356', .14], ['#cfe0a0', .45], ['#fffaf0', .58], ['#cfe0a0', 1]], deco: 'shiratama' },
+  cheese: { top: '#f3c565', layers: [['#e2a447', .1], ['#fde8b0', .78], ['#b9783e', 1]], deco: 'blueberry' },
+  tart:   { top: '#ffe08a', layers: [['#ffe08a', .22], ['#d99a52', 1]], deco: 'fruit', rim: '#c98a44' },
+  mont:   { top: '#c99566', layers: [['#b9845a', .3], ['#fff1dc', .55], ['#e6c08a', 1]], deco: 'marron', lines: '#9c6a42' }
+};
+const DECO = {
+  strawberry: (x, y) => `<ellipse cx="${x}" cy="${y + 2}" rx="11" ry="7" fill="#fff" stroke="#3a2219" stroke-width="2"/><path d="M${x - 7} ${y - 3}q7-10 14 0q-1 9-7 11q-6-2-7-11z" fill="#d9322b" stroke="#3a2219" stroke-width="2" stroke-linejoin="round"/><path d="M${x - 4} ${y - 6}l4 3l4-3" fill="none" stroke="#3f8f5a" stroke-width="2.2" stroke-linecap="round"/><circle cx="${x - 2}" cy="${y}" r=".9" fill="#ffe7a3"/><circle cx="${x + 2.5}" cy="${y + 2}" r=".9" fill="#ffe7a3"/>`,
+  raspberry: (x, y) => `<ellipse cx="${x}" cy="${y + 2}" rx="11" ry="7" fill="#fff1e0" stroke="#3a2219" stroke-width="2"/><circle cx="${x}" cy="${y - 2}" r="6.5" fill="#c4234a" stroke="#3a2219" stroke-width="2"/><circle cx="${x - 2.5}" cy="${y - 3.5}" r="1.3" fill="#ff7a9a"/><circle cx="${x + 2}" cy="${y - 1}" r="1.3" fill="#ff7a9a"/><circle cx="${x - .5}" cy="${y + 1.5}" r="1.3" fill="#ff7a9a"/>`,
+  shiratama: (x, y) => `<circle cx="${x - 5}" cy="${y}" r="6" fill="#fffdf7" stroke="#3a2219" stroke-width="2"/><circle cx="${x + 5}" cy="${y + 1}" r="6" fill="#fffdf7" stroke="#3a2219" stroke-width="2"/><ellipse cx="${x}" cy="${y - 5}" rx="5" ry="3.5" fill="#6b2a2a" stroke="#3a2219" stroke-width="1.6"/>`,
+  blueberry: (x, y) => `<circle cx="${x - 5}" cy="${y + 1}" r="4.5" fill="#3b3f8a" stroke="#1d1f45" stroke-width="1.6"/><circle cx="${x + 4}" cy="${y + 2}" r="4.5" fill="#4a4fa0" stroke="#1d1f45" stroke-width="1.6"/><circle cx="${x}" cy="${y - 4}" r="4.5" fill="#3b3f8a" stroke="#1d1f45" stroke-width="1.6"/><path d="M${x + 6} ${y - 6}q6-4 9 1q-5 3-9-1z" fill="#6fbf73" stroke="#2f6b3a" stroke-width="1.2"/>`,
+  fruit: (x, y, i) => i % 2
+    ? `<ellipse cx="${x}" cy="${y}" rx="10" ry="7" fill="#f7a23a" stroke="#3a2219" stroke-width="2"/><ellipse cx="${x}" cy="${y}" rx="7" ry="4.6" fill="#ffc46a"/><path d="M${x} ${y - 4.6}V${y + 4.6}M${x - 7} ${y}H${x + 7}M${x - 5} ${y - 3.3}L${x + 5} ${y + 3.3}M${x + 5} ${y - 3.3}L${x - 5} ${y + 3.3}" stroke="#f7a23a" stroke-width="1"/><circle cx="${x + 9}" cy="${y - 6}" r="3.6" fill="#c4234a" stroke="#3a2219" stroke-width="1.5"/>`
+    : `<ellipse cx="${x}" cy="${y}" rx="10" ry="7" fill="#7cbf3a" stroke="#3a2219" stroke-width="2"/><ellipse cx="${x}" cy="${y}" rx="7" ry="4.6" fill="#b9e07a"/><ellipse cx="${x}" cy="${y}" rx="2.6" ry="1.8" fill="#f4f7d0"/>${[0, 1, 2, 3, 4, 5, 6, 7].map(j => `<circle cx="${(x + 4.6 * Math.cos(j * .785)).toFixed(1)}" cy="${(y + 3 * Math.sin(j * .785)).toFixed(1)}" r=".8" fill="#222"/>`).join('')}<circle cx="${x - 9}" cy="${y - 6}" r="3.6" fill="#3b3f8a" stroke="#1d1f45" stroke-width="1.5"/>`,
+  marron: (x, y) => `<path d="M${x} ${y - 9}q9 6 7 12q-3 4-7 4t-7-4q-2-6 7-12z" fill="#8a4a22" stroke="#3a2219" stroke-width="2" stroke-linejoin="round"/><path d="M${x - 3} ${y - 3}q1-3 3-4" fill="none" stroke="#e0a26a" stroke-width="1.6" stroke-linecap="round"/><path d="M${x - 7} ${y + 6}q7 3 14 0" fill="none" stroke="#f4e3c8" stroke-width="2.4" stroke-linecap="round"/>`
+};
 function cakeStage(m) {
   return new Promise(done => {
     const cx = 130, cy = 92, R = 96, k = .58, H = 34, N = 5;
@@ -1177,7 +1104,9 @@ function cakeStage(m) {
     const arc = (a, b, dy) => `A${R} ${(R * k).toFixed(1)} 0 0 ${b > a ? 1 : 0} ${P(b, dy)}`;
     const band = (s, e, d0, d1, fill) => `<path d="M${P(s, d0)}${arc(s, e, d0)}L${P(e, d1)}${arc(e, s, d1)}Z" fill="${fill}"/>`;
     const face = (b, d0, d1, fill) => `<path d="M${cx} ${cy + d0}L${P(b, d0)}L${P(b, d1)}L${cx} ${cy + d1}Z" fill="${fill}"/>`;
-    const layers = (mk) => mk(0, H * .16, '#fff8ec') + mk(H * .16, H * .46, '#f3d29b') + mk(H * .46, H * .6, '#ff9fbd') + mk(H * .6, H, '#f3d29b');
+    const keys = Object.keys(CAKES), kind = LAB.cake === 'random' || !CAKES[LAB.cake] ? keys[Math.floor(Math.random() * keys.length)] : LAB.cake, C = CAKES[kind];
+    const layers = (mk) => { let prev = 0; return C.layers.map(([f, end]) => { const o = mk(prev * H, end * H, f); prev = end; return o; }).join(''); };
+    const arcR = (a, b, r) => `M${P(a, 0, r)}A${r} ${(r * k).toFixed(1)} 0 0 1 ${P(b, 0, r)}`;
     const wedges = [];
     for (let i = 0; i < N; i++) {
       const a0 = -Math.PI / 2 + i * 2 * Math.PI / N + .015, a1 = a0 + 2 * Math.PI / N - .03, mid = (a0 + a1) / 2;
@@ -1189,9 +1118,12 @@ function cakeStage(m) {
       const s2 = Math.max(a0, 2 * Math.PI), e2 = Math.min(a1, 3 * Math.PI);
       [[s, e], [s2, e2]].forEach(([u, v]) => { if (v > u) g += `<g>${layers((d0, d1, f) => band(u, v, d0, d1, f))}<path d="M${P(u)}${arc(u, v, 0)}L${P(v, H)}${arc(v, u, H)}Z" fill="none" stroke="#3a2219" stroke-width="2.5" stroke-linejoin="round"/></g>`; });
       // 上の面とかざり
-      g += `<path d="M${cx} ${cy}L${P(a0)}${arc(a0, a1, 0)}Z" fill="#fffaf2" stroke="#3a2219" stroke-width="2.5" stroke-linejoin="round"/>`;
+      g += `<path d="M${cx} ${cy}L${P(a0)}${arc(a0, a1, 0)}Z" fill="${C.top}" stroke="#3a2219" stroke-width="2.5" stroke-linejoin="round"/>`;
+      if (C.rim) g += `<path d="${arcR(a0 + .02, a1 - .02, R * .93)}" fill="none" stroke="${C.rim}" stroke-width="7" stroke-linecap="round"/>`;
+      if (C.lines) [.28, .45, .62, .79].forEach(r => { g += `<path d="${arcR(a0 + .06, a1 - .06, R * r)}" fill="none" stroke="${C.lines}" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="7 3"/>`; });
+      if (C.drizzle) g += `<path d="${arcR(a0 + .05, a1 - .05, R * .55)}" fill="none" stroke="${C.drizzle}" stroke-width="2" stroke-linecap="round"/>`;
       const [dx, dy] = P(mid, 0, R * .74).split(' ').map(Number);
-      g += `<ellipse cx="${dx}" cy="${dy + 2}" rx="11" ry="7" fill="#fff" stroke="#3a2219" stroke-width="2"/><path d="M${dx - 7} ${dy - 3}q7-10 14 0q-1 9-7 11q-6-2-7-11z" fill="#d9322b" stroke="#3a2219" stroke-width="2" stroke-linejoin="round"/><path d="M${dx - 4} ${dy - 6}l4 3l4-3" fill="none" stroke="#3f8f5a" stroke-width="2.2" stroke-linecap="round"/><circle cx="${dx - 2}" cy="${dy}" r=".9" fill="#ffe7a3"/><circle cx="${dx + 2.5}" cy="${dy + 2}" r=".9" fill="#ffe7a3"/>`;
+      g += DECO[C.deco](dx, dy, i);
       wedges.push({ i, mid, g, depth: Math.sin(mid) });
     }
     const order = [...wedges].sort((p, q) => p.depth - q.depth); // 奥から描く
@@ -1229,7 +1161,6 @@ async function present(m) {
   btn.disabled = true; btn.textContent = 'ご用意しています…';
   const k = LAB.kuji;
   if (k === 'receipt') return show(m, true, { print: true });
-  if (k === 'tea') { await teaStage(m); return show(m, true, { rise: true }); }
   if (k === 'cake') { await cakeStage(m); return show(m, true, { rise: true, quick: true }); }
   show(m, true);
 }
@@ -1320,6 +1251,10 @@ function resetOrder() {
 }
 document.getElementById('reset').onclick = resetOrder;
 document.getElementById('force5').onclick = () => { resetOrder(); force5 = true; btn.click(); };
+markLab('labCake', LAB.cake);
+document.getElementById('labCake').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return; LAB.cake = b.dataset.v; markLab('labCake', b.dataset.v); saveLab(); resetOrder();
+});
 document.getElementById('labKuji').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return; setKuji(b.dataset.v); saveLab(); resetOrder();
 });
