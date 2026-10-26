@@ -38,6 +38,12 @@ main{position:relative;z-index:2;max-width:600px;margin:0 auto;padding:0 20px 11
 .dela{font-family:'Dela Gothic One',sans-serif;font-weight:400}
 
 /* ---------- 開幕: 喫茶の扉が開く ---------- */
+#soundBtn{
+  position:fixed;top:12px;right:12px;z-index:95;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;
+  color:var(--ink);background:rgba(255,253,247,.92);border:2px solid var(--ink);border-radius:999px;padding:6px 14px;box-shadow:0 3px 0 var(--ink);
+}
+#soundBtn[aria-pressed="true"]{background:var(--mustard)}
+#soundBtn:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
 #door{position:fixed;inset:0;z-index:80;display:flex;cursor:pointer;transition:visibility 0s 1.3s}
 #door .leaf{
   flex:1;background:linear-gradient(180deg,#a92c24,#8e231c);position:relative;
@@ -444,6 +450,7 @@ html[data-time="night"] .hero .open i{background:var(--red);box-shadow:0 0 10px 
 </head>
 <body>
 
+<button id="soundBtn" aria-pressed="false">🔈 音をつける</button>
 <div id="door" role="button" aria-label="お店に入る">
   <div class="leaf l"></div><div class="leaf r"></div>
   <div class="sign"><b>OPEN</b><small>タップして入店</small></div>
@@ -679,21 +686,23 @@ html[data-time="night"] .hero .open i{background:var(--red);box-shadow:0 0 10px 
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let ac = null;
 function audio() { if (!ac) ac = new (window.AudioContext || window.webkitAudioContext)(); ac.resume(); return ac; }
+/* ---------- 音: 最初は無音。「音をつける」を押した人にだけ鳴らす ---------- */
+let soundOn = false;
+try { soundOn = localStorage.getItem('kissa-damegane-sound') === 'on'; } catch (e) {}
+function setSound(on) {
+  soundOn = on;
+  try { localStorage.setItem('kissa-damegane-sound', on ? 'on' : 'off'); } catch (e) {}
+  const b = document.getElementById('soundBtn');
+  b.textContent = on ? '🔊 音あり' : '🔈 音をつける'; b.setAttribute('aria-pressed', String(on));
+  if (on) { try { audio(); } catch (e) {} } else if (voicePlayer) { voicePlayer.pause(); }
+}
+document.getElementById('soundBtn').addEventListener('click', e => { e.stopPropagation(); setSound(!soundOn); });
 function tone(f, t, d, v, type) {
+  if (!soundOn) return;
   const c = audio(), o = c.createOscillator(), g = c.createGain();
   o.type = type || 'sine'; o.frequency.value = f;
   g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(.0001, t + d);
   o.connect(g).connect(c.destination); o.start(t); o.stop(t + d + .05);
-}
-/* 入店のベル: 録音の効果音(Mixkit「Store door bell ring」)。読めないときだけ電子音 */
-const bellSound = new Audio('./sound/doorbell.mp3');
-bellSound.preload = 'auto';
-function doorbell() {
-  try { bellSound.currentTime = 0; const p = bellSound.play(); if (p) p.catch(synthBell); } catch (e) { synthBell(); }
-}
-function synthBell() {
-  const t = audio().currentTime;
-  [[1568, 0], [1319, .16], [1568, .32], [1175, .5]].forEach(([f, s]) => { tone(f, t + s, 1.1, .09); tone(f * 2.76, t + s, .4, .02); });
 }
 
 /* ---------- 時間帯: 朝 5-10時 / 昼 10-16時 / 夕方 16-19時 / 夜 19-5時 ---------- */
@@ -722,17 +731,21 @@ setInterval(() => { if (!pinned) applyTime(null); }, 60000); // 開いたまま�
 
 /* ---------- 声(録音ファイルを置けば鳴る。空なら効果音) ---------- */
 const VOICES = {
+  enter: '',                                                // 入店のひとこと 例: './voice/irasshai.m4a'
   greet: { morning: '', noon: '', evening: '', night: '' }, // 例: './voice/greet_morning.m4a'
   kuji: { 1: '', 2: '', 3: '', 4: '', 5: '' },               // 例: './voice/star5.m4a'
   secret: ''
 };
-let voicePlayer = null;
+var voicePlayer = null;
 function playVoice(src, fallback) {
+  if (!soundOn) return;
   if (voicePlayer) { voicePlayer.pause(); voicePlayer = null; }
   if (src) { voicePlayer = new Audio(src); voicePlayer.play().catch(() => fallback && fallback()); }
   else if (fallback) fallback();
 }
+setSound(soundOn); // 前回の設定をボタンに反映
 document.getElementById('greetVoice').addEventListener('click', () => {
+  if (!soundOn) setSound(true); // ▶を押した人は聞きたい人なので音をオンにする
   const slot = document.documentElement.dataset.time || nowSlot();
   playVoice(VOICES.greet[slot], () => { try { const t = audio().currentTime; [880, 1175].forEach((f, i) => tone(f, t + i * .14, .7, .07)); } catch (e) {} });
 });
@@ -742,7 +755,7 @@ const door = document.getElementById('door');
 let opened = false;
 function openDoor(withSound) {
   if (opened) return; opened = true;
-  if (withSound) { try { doorbell(); } catch (e) {} }
+  if (withSound) playVoice(VOICES.enter, null); // 声が入るまでは無音
   door.classList.add('open');
   if (annivToday) setTimeout(() => { burst(innerWidth / 2, innerHeight * .35, 70); }, 900);
 }
@@ -833,7 +846,7 @@ btn.addEventListener('click', () => {
   addDex(m.s);
   show(m, true);
 });
-document.getElementById('replay').onclick = () => current && playVoice(VOICES.kuji[current.s], () => chime(current.s));
+document.getElementById('replay').onclick = () => { if (!soundOn) setSound(true); if (current) playVoice(VOICES.kuji[current.s], () => chime(current.s)); };
 
 /* ---------- 結果をシェア(画像つき。対応していなければ投稿画面) ---------- */
 function slipImage(m) {
@@ -1027,6 +1040,7 @@ async function loadSettings() {
 }
 const SHOP = 'だめがね';
 function cracker() {
+  if (!soundOn) return;
   try {
     const c = audio(), t = c.currentTime, len = .25;
     const buf = c.createBuffer(1, c.sampleRate * len, c.sampleRate), d = buf.getChannelData(0);
