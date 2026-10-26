@@ -68,7 +68,7 @@ main{position:relative;z-index:2;max-width:600px;margin:0 auto;padding:0 20px 11
 #door.open .sign{opacity:0}
 
 /* ---------- 看板 ---------- */
-.hero{min-height:92vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative}
+.hero{min-height:92vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;padding:60px 0 20px}
 .awning{ /* ひさしのストライプ */
   position:absolute;top:0;left:-20px;right:-20px;height:44px;
   background:repeating-linear-gradient(90deg,var(--red) 0 32px,var(--cream) 32px 64px);
@@ -310,8 +310,40 @@ html[data-time="night"] .window{--light:rgba(120,130,220,.35)}
 .cat.d{animation:breathe 3.6s ease-in-out infinite;transform-origin:180px 176px}
 @keyframes breathe{50%{transform:scaleY(1.04)}}
 
-.bunting{display:none}
-html.anniv .bunting{display:inline}
+.bunting,.celebrate,.cake,.hat{display:none}
+html.anniv .bunting,html.anniv .celebrate,html.anniv .cake,html.anniv .hat{display:inline}
+.fireworks,.balloons{display:none}
+html.anniv[data-time="evening"] .fireworks,html.anniv[data-time="night"] .fireworks{display:inline}
+html.anniv[data-time="morning"] .balloons,html.anniv[data-time="noon"] .balloons{display:inline}
+.fw{transform-box:fill-box;transform-origin:center;opacity:0;animation:fw 3s ease-out infinite}
+@keyframes fw{0%{transform:scale(.1);opacity:0}10%{opacity:1}60%{transform:scale(1);opacity:.9}100%{transform:scale(1.15);opacity:0}}
+.bl{animation:rise 7s linear infinite}
+@keyframes rise{from{transform:translateY(10px)}to{transform:translateY(-240px)}}
+.flame{transform-box:fill-box;transform-origin:50% 100%;animation:flicker .5s ease-in-out infinite alternate}
+@keyframes flicker{to{transform:scaleY(1.2) rotate(4deg)}}
+/* 記念日のお店の色 */
+html.anniv[data-ak="birthday"]:not([data-time="night"]) body::before{background:radial-gradient(90% 60% at 50% 0%,rgba(255,143,177,.45),transparent 70%),linear-gradient(rgba(58,34,25,.035) 1px,transparent 1px) 0 0/28px 28px,linear-gradient(90deg,rgba(58,34,25,.035) 1px,transparent 1px) 0 0/28px 28px,#ffeef3}
+html.anniv[data-ak="birthday"][data-time="night"] body::before{background:radial-gradient(80% 50% at 50% 8%,rgba(255,143,177,.3),transparent 70%),linear-gradient(rgba(251,243,230,.035) 1px,transparent 1px) 0 0/28px 28px,linear-gradient(90deg,rgba(251,243,230,.035) 1px,transparent 1px) 0 0/28px 28px,#2a1420}
+html.anniv[data-ak="anniversary"]:not([data-time="night"]) body::before{background:radial-gradient(90% 60% at 50% 0%,rgba(233,180,76,.5),transparent 70%),linear-gradient(rgba(58,34,25,.035) 1px,transparent 1px) 0 0/28px 28px,linear-gradient(90deg,rgba(58,34,25,.035) 1px,transparent 1px) 0 0/28px 28px,#fff3d9}
+html.anniv[data-ak="anniversary"][data-time="night"] body::before{background:radial-gradient(80% 50% at 50% 8%,rgba(233,180,76,.32),transparent 70%),linear-gradient(rgba(251,243,230,.035) 1px,transparent 1px) 0 0/28px 28px,linear-gradient(90deg,rgba(251,243,230,.035) 1px,transparent 1px) 0 0/28px 28px,#24180a}
+html.anniv[data-ak="event"]:not([data-time="night"]) body::before{background:radial-gradient(90% 60% at 50% 0%,rgba(79,174,147,.38),transparent 70%),linear-gradient(rgba(58,34,25,.035) 1px,transparent 1px) 0 0/28px 28px,linear-gradient(90deg,rgba(58,34,25,.035) 1px,transparent 1px) 0 0/28px 28px,#eef7ef}
+html.anniv[data-ak="event"][data-time="night"] body::before{background:radial-gradient(80% 50% at 50% 8%,rgba(79,174,147,.3),transparent 70%),linear-gradient(rgba(251,243,230,.035) 1px,transparent 1px) 0 0/28px 28px,linear-gradient(90deg,rgba(251,243,230,.035) 1px,transparent 1px) 0 0/28px 28px,#0f2019}
+html.anniv .signboard{box-shadow:0 0 0 3px var(--mustard),0 0 34px rgba(233,180,76,.55),0 10px 0 rgba(58,34,25,.18)}
+html.anniv .signboard .kind{font-family:'Dela Gothic One',sans-serif;font-size:15px;letter-spacing:.18em;text-indent:.18em;color:#ffd36b;text-shadow:0 0 8px rgba(255,211,107,.9),0 0 22px rgba(255,211,107,.6);animation:blink 1.6s ease-in-out infinite}
+html.anniv[data-ak="birthday"] .signboard .kind{color:#ff9fc0;text-shadow:0 0 8px rgba(255,143,177,.95),0 0 22px rgba(255,143,177,.6)}
+.anniv-count{
+  margin:0 0 12px;font-size:12.5px;font-weight:700;letter-spacing:.06em;color:var(--ink);background:#fff;
+  border:2px dashed var(--red);border-radius:999px;padding:3px 14px;
+}
+.cheer-wrap{margin-top:18px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.cheer-wrap[hidden]{display:none}
+.cheer{
+  font-family:'Dela Gothic One',sans-serif;font-size:16px;letter-spacing:.1em;color:#fff;cursor:pointer;
+  background:linear-gradient(90deg,#ff8fb1,#e8832a,#e9b44c);border:2px solid var(--ink);border-radius:999px;padding:10px 24px;box-shadow:0 4px 0 var(--ink);
+}
+.cheer:active{transform:translateY(4px);box-shadow:none}
+.cheer-x{font-size:12.5px;font-weight:700;color:var(--red)}
+html[data-time="night"] .cheer-x{color:#ffb39a}
 .anniv-ribbon{
   margin:0 0 12px;font-weight:700;font-size:13px;letter-spacing:.08em;color:#fff;background:var(--red);
   border:2px solid var(--ink);border-radius:999px;padding:4px 16px;animation:pop .5s cubic-bezier(.3,2,.5,1);
@@ -449,6 +481,10 @@ html[data-time="night"] .hero .open i{background:var(--red);box-shadow:0 0 10px 
             <path d="M40 176v-26h22v-14h18v40zM172 176v-34h16v-10h22v44z" fill="#0b0e22"/>
             <g fill="#ffcf6a"><rect x="66" y="146" width="5" height="5"/><rect x="190" y="140" width="5" height="5"/><rect x="178" y="154" width="5" height="5"/></g></g>
         </g>
+        <g clip-path="url(#arch)" class="celebrate" aria-hidden="true">
+          <g class="fireworks" stroke-width="2" stroke-linecap="round"><g class="fw" style="animation-delay:0s;stroke:#ffd36b;fill:#ffd36b"><line x1="92" y1="70" x2="118.0" y2="70.0"/><line x1="92" y1="70" x2="114.5" y2="83.0"/><line x1="92" y1="70" x2="105.0" y2="92.5"/><line x1="92" y1="70" x2="92.0" y2="96.0"/><line x1="92" y1="70" x2="79.0" y2="92.5"/><line x1="92" y1="70" x2="69.5" y2="83.0"/><line x1="92" y1="70" x2="66.0" y2="70.0"/><line x1="92" y1="70" x2="69.5" y2="57.0"/><line x1="92" y1="70" x2="79.0" y2="47.5"/><line x1="92" y1="70" x2="92.0" y2="44.0"/><line x1="92" y1="70" x2="105.0" y2="47.5"/><line x1="92" y1="70" x2="114.5" y2="57.0"/><circle cx="122.0" cy="78.0" r="2"/><circle cx="114.0" cy="91.9" r="2"/><circle cx="100.1" cy="99.9" r="2"/><circle cx="84.0" cy="100.0" r="2"/><circle cx="70.1" cy="92.0" r="2"/><circle cx="62.1" cy="78.1" r="2"/><circle cx="62.0" cy="62.0" r="2"/><circle cx="70.0" cy="48.1" r="2"/><circle cx="83.9" cy="40.1" r="2"/><circle cx="100.0" cy="40.0" r="2"/><circle cx="113.9" cy="48.0" r="2"/><circle cx="121.9" cy="61.9" r="2"/></g><g class="fw" style="animation-delay:0.8s;stroke:#ff8fb1;fill:#ff8fb1"><line x1="170" y1="52" x2="196.0" y2="52.0"/><line x1="170" y1="52" x2="192.5" y2="65.0"/><line x1="170" y1="52" x2="183.0" y2="74.5"/><line x1="170" y1="52" x2="170.0" y2="78.0"/><line x1="170" y1="52" x2="157.0" y2="74.5"/><line x1="170" y1="52" x2="147.5" y2="65.0"/><line x1="170" y1="52" x2="144.0" y2="52.0"/><line x1="170" y1="52" x2="147.5" y2="39.0"/><line x1="170" y1="52" x2="157.0" y2="29.5"/><line x1="170" y1="52" x2="170.0" y2="26.0"/><line x1="170" y1="52" x2="183.0" y2="29.5"/><line x1="170" y1="52" x2="192.5" y2="39.0"/><circle cx="200.0" cy="60.0" r="2"/><circle cx="192.0" cy="73.9" r="2"/><circle cx="178.1" cy="81.9" r="2"/><circle cx="162.0" cy="82.0" r="2"/><circle cx="148.1" cy="74.0" r="2"/><circle cx="140.1" cy="60.1" r="2"/><circle cx="140.0" cy="44.0" r="2"/><circle cx="148.0" cy="30.1" r="2"/><circle cx="161.9" cy="22.1" r="2"/><circle cx="178.0" cy="22.0" r="2"/><circle cx="191.9" cy="30.0" r="2"/><circle cx="199.9" cy="43.9" r="2"/></g><g class="fw" style="animation-delay:1.6s;stroke:#7fe0c4;fill:#7fe0c4"><line x1="132" y1="104" x2="152.0" y2="104.0"/><line x1="132" y1="104" x2="149.3" y2="114.0"/><line x1="132" y1="104" x2="142.0" y2="121.3"/><line x1="132" y1="104" x2="132.0" y2="124.0"/><line x1="132" y1="104" x2="122.0" y2="121.3"/><line x1="132" y1="104" x2="114.7" y2="114.0"/><line x1="132" y1="104" x2="112.0" y2="104.0"/><line x1="132" y1="104" x2="114.7" y2="94.0"/><line x1="132" y1="104" x2="122.0" y2="86.7"/><line x1="132" y1="104" x2="132.0" y2="84.0"/><line x1="132" y1="104" x2="142.0" y2="86.7"/><line x1="132" y1="104" x2="149.3" y2="94.0"/><circle cx="156.2" cy="110.4" r="2"/><circle cx="149.7" cy="121.6" r="2"/><circle cx="138.5" cy="128.1" r="2"/><circle cx="125.6" cy="128.2" r="2"/><circle cx="114.4" cy="121.7" r="2"/><circle cx="107.9" cy="110.5" r="2"/><circle cx="107.8" cy="97.6" r="2"/><circle cx="114.3" cy="86.4" r="2"/><circle cx="125.5" cy="79.9" r="2"/><circle cx="138.4" cy="79.8" r="2"/><circle cx="149.6" cy="86.3" r="2"/><circle cx="156.1" cy="97.5" r="2"/></g><g class="fw" style="animation-delay:2.2s;stroke:#ffd36b;fill:#ffd36b"><line x1="196" y1="112" x2="214.0" y2="112.0"/><line x1="196" y1="112" x2="211.6" y2="121.0"/><line x1="196" y1="112" x2="205.0" y2="127.6"/><line x1="196" y1="112" x2="196.0" y2="130.0"/><line x1="196" y1="112" x2="187.0" y2="127.6"/><line x1="196" y1="112" x2="180.4" y2="121.0"/><line x1="196" y1="112" x2="178.0" y2="112.0"/><line x1="196" y1="112" x2="180.4" y2="103.0"/><line x1="196" y1="112" x2="187.0" y2="96.4"/><line x1="196" y1="112" x2="196.0" y2="94.0"/><line x1="196" y1="112" x2="205.0" y2="96.4"/><line x1="196" y1="112" x2="211.6" y2="103.0"/><circle cx="218.2" cy="117.9" r="2"/><circle cx="212.3" cy="128.2" r="2"/><circle cx="202.0" cy="134.2" r="2"/><circle cx="190.1" cy="134.2" r="2"/><circle cx="179.8" cy="128.3" r="2"/><circle cx="173.8" cy="118.0" r="2"/><circle cx="173.8" cy="106.1" r="2"/><circle cx="179.7" cy="95.8" r="2"/><circle cx="190.0" cy="89.8" r="2"/><circle cx="201.9" cy="89.8" r="2"/><circle cx="212.2" cy="95.7" r="2"/><circle cx="218.2" cy="106.0" r="2"/></g></g>
+          <g class="balloons"><g class="bl" style="animation-delay:-0s;animation-duration:7s"><path d="M70 200q-4 12 2 24" fill="none" stroke="#3a2219" stroke-width="1.2"/><ellipse cx="70" cy="188" rx="11" ry="13" fill="#ff8fb1" stroke="#3a2219" stroke-width="2"/><path d="M66 182q2-5 6-6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"/></g><g class="bl" style="animation-delay:-2.5s;animation-duration:8s"><path d="M104 200q-4 12 2 24" fill="none" stroke="#3a2219" stroke-width="1.2"/><ellipse cx="104" cy="188" rx="11" ry="13" fill="#ffd36b" stroke="#3a2219" stroke-width="2"/><path d="M100 182q2-5 6-6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"/></g><g class="bl" style="animation-delay:-5s;animation-duration:7.5s"><path d="M138 200q-4 12 2 24" fill="none" stroke="#3a2219" stroke-width="1.2"/><ellipse cx="138" cy="188" rx="11" ry="13" fill="#7fe0c4" stroke="#3a2219" stroke-width="2"/><path d="M134 182q2-5 6-6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"/></g><g class="bl" style="animation-delay:-1.2s;animation-duration:8.5s"><path d="M176 200q-4 12 2 24" fill="none" stroke="#3a2219" stroke-width="1.2"/><ellipse cx="176" cy="188" rx="11" ry="13" fill="#e8832a" stroke="#3a2219" stroke-width="2"/><path d="M172 182q2-5 6-6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"/></g><g class="bl" style="animation-delay:-4s;animation-duration:7s"><path d="M206 200q-4 12 2 24" fill="none" stroke="#3a2219" stroke-width="1.2"/><ellipse cx="206" cy="188" rx="11" ry="13" fill="#b79ce8" stroke="#3a2219" stroke-width="2"/><path d="M202 182q2-5 6-6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"/></g></g>
+        </g>
         <path d="M40 176V90a90 80 0 0 1 180 0v86z" fill="none" stroke="#3a2219" stroke-width="6"/>
         <path d="M130 12v164M40 120h180" stroke="#3a2219" stroke-width="4"/>
         <!-- カーテン -->
@@ -464,6 +500,12 @@ html[data-time="night"] .hero .open i{background:var(--red);box-shadow:0 0 10px 
           <path d="M210 14l8 18l8-17z" fill="#fff" stroke="#3a2219" stroke-width="1.5"/></g>
         <!-- 窓台 -->
         <rect x="18" y="176" width="224" height="14" rx="3" fill="#8a5a3c" stroke="#3a2219" stroke-width="3"/>
+        <g class="cake" aria-hidden="true">
+          <rect x="54" y="158" width="40" height="18" rx="3" fill="#fff4e6" stroke="#3a2219" stroke-width="2.5"/>
+          <path d="M54 164q5 5 10 0t10 0t10 0t10 0" fill="none" stroke="#ff8fb1" stroke-width="3"/>
+          <rect x="72" y="146" width="4" height="12" fill="#7fe0c4" stroke="#3a2219" stroke-width="1.5"/>
+          <path class="flame" d="M74 138q-4 5 0 8q4-3 0-8z" fill="#ffb02e" stroke="#c8372d" stroke-width="1"/>
+        </g>
         <!-- 店主(猫): 時間帯で姿が変わる -->
         <g class="cat m"><!-- 朝: あくび -->
           <path d="M150 176c-2-26 8-40 26-40s28 14 26 40z" fill="#e8832a" stroke="#3a2219" stroke-width="3"/>
@@ -472,7 +514,7 @@ html[data-time="night"] .hero .open i{background:var(--red);box-shadow:0 0 10px 
           <path d="M160 112l-2-18l14 10M192 112l2-18l-14 10" fill="#e8832a" stroke="#3a2219" stroke-width="3" stroke-linejoin="round"/>
           <path d="M166 120q4 3 8 0M178 120q4 3 8 0" fill="none" stroke="#3a2219" stroke-width="2.5" stroke-linecap="round"/>
           <ellipse cx="176" cy="131" rx="5" ry="6" fill="#7a2a20" stroke="#3a2219" stroke-width="2"/>
-          <text x="214" y="104" font-size="12" font-weight="700" fill="#3a2219">ふぁ〜</text></g>
+          <text x="214" y="104" font-size="12" font-weight="700" fill="#3a2219">ふぁ〜</text><g class="hat"><polygon points="166,104 186,104 178,78" fill="#ff8fb1" stroke="#3a2219" stroke-width="2.5" stroke-linejoin="round"/><circle cx="178" cy="77" r="4" fill="#ffd36b" stroke="#3a2219" stroke-width="2"/></g></g>
         <g class="cat n"><!-- 昼: カップをふく -->
           <path d="M150 176c-2-26 8-40 26-40s28 14 26 40z" fill="#e8832a" stroke="#3a2219" stroke-width="3"/>
           <path d="M150 170c-14 0-18-12-10-20" fill="none" stroke="#3a2219" stroke-width="3" stroke-linecap="round"/>
@@ -482,29 +524,34 @@ html[data-time="night"] .hero .open i{background:var(--red);box-shadow:0 0 10px 
           <path d="M172 130q4 3 8 0" fill="none" stroke="#3a2219" stroke-width="2.5" stroke-linecap="round"/>
           <path d="M206 176v-14h18v6a8 8 0 0 1-8 8z" fill="#fff" stroke="#3a2219" stroke-width="2.5"/>
           <path d="M196 158c6-4 14-4 16 2" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
-          <path d="M196 158c6-4 14-4 16 2" fill="none" stroke="#3a2219" stroke-width="2" stroke-linecap="round"/></g>
+          <path d="M196 158c6-4 14-4 16 2" fill="none" stroke="#3a2219" stroke-width="2" stroke-linecap="round"/><g class="hat"><polygon points="166,104 186,104 178,78" fill="#ff8fb1" stroke="#3a2219" stroke-width="2.5" stroke-linejoin="round"/><circle cx="178" cy="77" r="4" fill="#ffd36b" stroke="#3a2219" stroke-width="2"/></g></g>
         <g class="cat e"><!-- 夕方: ひなたぼっこ -->
           <path d="M138 176c0-18 16-26 40-26s42 8 42 26z" fill="#e8832a" stroke="#3a2219" stroke-width="3"/>
           <path d="M220 172c12 2 18-4 16-12" fill="none" stroke="#3a2219" stroke-width="3" stroke-linecap="round"/>
           <circle cx="146" cy="156" r="18" fill="#e8832a" stroke="#3a2219" stroke-width="3"/>
           <path d="M132 148l-4-16l14 8M158 146l4-16l-14 8" fill="#e8832a" stroke="#3a2219" stroke-width="3" stroke-linejoin="round"/>
           <path d="M136 156q4-3 8 0M148 156q4-3 8 0" fill="none" stroke="#3a2219" stroke-width="2.5" stroke-linecap="round"/>
-          <path d="M143 164q3 2 6 0" fill="none" stroke="#3a2219" stroke-width="2" stroke-linecap="round"/></g>
+          <path d="M143 164q3 2 6 0" fill="none" stroke="#3a2219" stroke-width="2" stroke-linecap="round"/><g class="hat"><polygon points="136,140 154,140 147,116" fill="#ff8fb1" stroke="#3a2219" stroke-width="2.5" stroke-linejoin="round"/><circle cx="147" cy="115" r="4" fill="#ffd36b" stroke="#3a2219" stroke-width="2"/></g></g>
         <g class="cat d"><!-- 夜: まるまって寝る -->
           <path d="M146 176c-6-28 14-38 34-36c20 2 34 16 26 36z" fill="#e8832a" stroke="#3a2219" stroke-width="3"/>
           <path d="M150 174c10-10 34-12 50-2" fill="none" stroke="#3a2219" stroke-width="3" stroke-linecap="round"/>
           <path d="M160 152l-2-14l12 8" fill="#e8832a" stroke="#3a2219" stroke-width="3" stroke-linejoin="round"/>
           <path d="M162 160q4 3 8 0" fill="none" stroke="#3a2219" stroke-width="2.5" stroke-linecap="round"/>
-          <text x="198" y="132" font-size="12" font-weight="700" fill="#fff3c2">z</text><text x="208" y="120" font-size="14" font-weight="700" fill="#fff3c2">z</text><text x="220" y="106" font-size="16" font-weight="700" fill="#fff3c2">Z</text></g>
+          <text x="198" y="132" font-size="12" font-weight="700" fill="#fff3c2">z</text><text x="208" y="120" font-size="14" font-weight="700" fill="#fff3c2">z</text><text x="220" y="106" font-size="16" font-weight="700" fill="#fff3c2">Z</text><g class="hat"><polygon points="164,146 180,146 168,122" fill="#ff8fb1" stroke="#3a2219" stroke-width="2.5" stroke-linejoin="round"/><circle cx="168" cy="121" r="4" fill="#ffd36b" stroke="#3a2219" stroke-width="2"/></g></g>
       </svg>
     </div>
+    <p class="anniv-count" id="annivCount" hidden></p>
     <p class="anniv-ribbon" id="anniv" hidden></p>
     <div class="signboard">
-      <span class="kind">甘やかし喫茶</span>
+      <span class="kind" id="signKind">甘やかし喫茶</span>
       <h1>だめ<span class="g">が</span>ね</h1>
     </div>
     <p class="lead"><span id="greet">甘やかし、おかわり自由です。</span><button class="mini" id="greetVoice" aria-label="あいさつを聞く">▶</button></p>
     <p class="open" id="openSign"><i></i><span id="openText">きまぐれ営業中</span></p>
+    <div class="cheer-wrap" id="cheerWrap" hidden>
+      <button class="cheer" id="cheer">🎉 おめでとうを送る</button>
+      <a class="cheer-x" id="cheerX" href="#" target="_blank" rel="noopener" hidden>Xでお祝いする</a>
+    </div>
     <a class="onair" id="onair" href="#" target="_blank" rel="noopener" hidden><b>● ON AIR</b>いま配信中! のぞきにいく</a>
   </header>
 
@@ -542,9 +589,9 @@ html[data-time="night"] .hero .open i{background:var(--red);box-shadow:0 0 10px 
   <section class="reveal">
     <div class="menu-head"><span class="en">TODAY</span><h2>本日の甘やかし</h2></div>
     <div class="card gacha">
-      <p class="lead2">1日1回、店主がなにか出してくれます。<br>★5が出たら、甘やかしメーター天元突破。</p>
+      <p class="lead2" id="kujiLead">1日1回、店主がなにか出してくれます。<br>★5が出たら、甘やかしメーター天元突破。</p>
       <button class="bell-btn" id="order">🔔 注文する</button>
-      <p class="rates"><span>★1 30%</span> / <span>★2 30%</span> / <span>★3 22%</span> / <span>★4 15%</span> / <b>★5 3%</b></p>
+      <p class="rates" id="rates"><span>★1 30%</span> / <span>★2 30%</span> / <span>★3 22%</span> / <span>★4 15%</span> / <b>★5 3%</b></p>
       <div class="slip" id="slip" aria-live="polite">
         <p class="no"><span>伝票 No.<span id="slipNo">000</span></span><span id="slipDate"></span></p>
         <p class="stars" id="stars"></p>
@@ -725,11 +772,20 @@ const MENU = [
   { s: 4, w: 15, item: 'クリームソーダ', line: 'さくらんぼ、2個のせといた。内緒ね。' },
   { s: 5, w: 3,  item: '甘やかしフルコース', line: 'もう今日は何もしなくていいよ。全部やっとくから、そこ座ってて。' }
 ];
+/* 記念日だけのお祝いメニュー(★5の確率アップ) */
+const ANNIV_MENU = [
+  { s: 1, w: 26, item: 'クラッカー', line: 'パーン! ……びっくりした? 今日はお祝いだからね。' },
+  { s: 2, w: 27, item: '乾杯のソーダ', line: 'はい、乾杯。今日来てくれたの、ちゃんと覚えとくから。' },
+  { s: 3, w: 20, item: 'お祝いのナポリタン', line: '今日は特別に、旗も立てといた。ほら、かわいいでしょ。' },
+  { s: 4, w: 12, item: 'バースデーパフェ', line: 'てっぺんのいちご、きみの分。……一緒に食べる?' },
+  { s: 5, w: 15, item: '特製ホールケーキ', line: '今日はぜんぶ、きみのために用意した。来てくれて、ほんとにありがとう。' }
+];
+const activeMenu = () => (annivToday ? ANNIV_MENU : MENU);
 const KEY = 'kissa-damegane-order';
 const today = () => { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
 const load = () => { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; } };
 const save = v => { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) {} };
-function draw() { let r = Math.random() * 100; for (const m of MENU) if ((r -= m.w) < 0) return m; return MENU[0]; }
+function draw() { const M = activeMenu(); let r = Math.random() * 100; for (const m of M) if ((r -= m.w) < 0) return m; return M[0]; }
 function untilTomorrow() { const n = new Date(), m = new Date(n); m.setHours(24, 0, 0, 0); const h = Math.floor((m - n) / 36e5), mm = Math.floor((m - n) / 6e4) % 60; return h ? `${h}時間${mm}分` : `${mm}分`; }
 function chime(s) {
   try {
@@ -768,7 +824,7 @@ btn.addEventListener('click', () => {
   if (btn.disabled) return;
   try { doorbell(); } catch (e) {}
   const m = draw();
-  save({ date: today(), s: m.s });
+  save({ date: today(), s: m.s, item: m.item, line: m.line });
   addDex(m.s);
   show(m, true);
 });
@@ -840,7 +896,7 @@ document.getElementById('reset').onclick = () => {
   save(null); current = null; slip.classList.remove('show', 'done', 'ss'); after.classList.remove('show');
   btn.disabled = false; btn.textContent = '🔔 注文する';
 };
-(() => { const s = load(); if (s && s.date === today()) { const m = MENU.find(x => x.s === s.s); if (m) show(m, false); } })();
+(() => { const s = load(); if (s && s.date === today()) { const m = s.item ? { s: s.s, item: s.item, line: s.line } : MENU.find(x => x.s === s.s); if (m) show(m, false); } })();
 
 /* ---------- スプレッドシート(年譜・お持ち帰り) ---------- */
 const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ56-UaGnW3Kx68gEQPMy2szOO3sLZyE3gSLRO13YtUrIC_q0dnSHX-UE5ZTCC8E9gfsMzao_d5uMOc/pub?gid=0&single=true&output=csv';
@@ -964,23 +1020,75 @@ async function loadSettings() {
   a.hidden = !on; document.getElementById('openSign').hidden = on;
   const u = kv['配信先URL'] || ''; a.href = /^https:\/\//.test(u) ? u : '#';
 }
+const SHOP = 'だめがね';
+function cracker() {
+  try {
+    const c = audio(), t = c.currentTime, len = .25;
+    const buf = c.createBuffer(1, c.sampleRate * len, c.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3);
+    const src = c.createBufferSource(), g = c.createGain(); src.buffer = buf; g.gain.value = .5;
+    src.connect(g).connect(c.destination); src.start(t);
+    [1047, 1319, 1568, 2093].forEach((f, i) => tone(f, t + .15 + i * .09, .7, .06, 'triangle'));
+  } catch (e) {}
+}
 async function loadAnniv() {
   const q = new URLSearchParams(location.search);
   const [rows] = await loadCSV(q.get('anniv') || ANNIV_CSV, ANNIV_SAMPLE);
-  const d = new Date(), md = q.get('date') || `${d.getMonth() + 1}/${d.getDate()}`;
+  const d0 = new Date();
+  let md = q.get('date') || `${d0.getMonth() + 1}/${d0.getDate()}`;
   const norm = x => { // 「12/24」「12月24日」「2026/12/24」「シートの日付(数値)」のどれでもOK
     x = (x || '').trim();
     if (/^\d{5}$/.test(x)) { const t = new Date(Date.UTC(1899, 11, 30) + Number(x) * 864e5); return `${t.getUTCMonth() + 1}/${t.getUTCDate()}`; }
     const p = x.replace(/[-.年月]/g, '/').replace(/日/, '').split('/').filter(Boolean).map(n => String(Number(n)));
     return p.slice(-2).join('/');
   };
-  const hit = (rows || []).slice(1).find(r => r[0] && norm(r[0]) === norm(md));
+  const kindOf = k => /誕生/.test(k) ? 'birthday' : /周年|記念/.test(k) ? 'anniversary' : 'event';
+  const list = (rows || []).slice(1).filter(r => r[0] && norm(r[0]).includes('/'))
+    .map(r => ({ md: norm(r[0]), n: (r[1] || '').trim(), k: (r[2] || '').trim(), m: (r[3] || '').trim() }));
+  const [tm, td] = norm(md).split('/').map(Number);
+  const base = new Date(d0.getFullYear(), tm - 1, td);
+  // カウントダウン(7日前から)
+  let soon = null;
+  for (const x of list) {
+    const [m, dd] = x.md.split('/').map(Number);
+    let t = new Date(base.getFullYear(), m - 1, dd); if (t < base) t = new Date(base.getFullYear() + 1, m - 1, dd);
+    const days = Math.round((t - base) / 864e5);
+    if (days >= 1 && days <= 7 && (!soon || days < soon.days)) soon = { ...x, days };
+  }
+  const hitToday = list.some(x => x.md === norm(md));
+  if (soon && !hitToday) { // 当日はお祝いを優先して、次の記念日のカウントダウンは出さない
+    const c = document.getElementById('annivCount');
+    c.textContent = kindOf(soon.k) === 'birthday' ? `🎂 ${soon.n}の誕生日まで あと${soon.days}日` : `🎉 ${soon.n}まで あと${soon.days}日`;
+    c.hidden = false;
+  }
+  const hit = list.find(x => x.md === norm(md));
   if (!hit) return;
-  annivToday = { n: (hit[1] || '').trim(), k: (hit[2] || '').trim(), m: (hit[3] || '').trim() };
+  annivToday = hit;
+  const kind = kindOf(hit.k);
   document.documentElement.classList.add('anniv');
+  document.documentElement.dataset.ak = kind;
   const el = document.getElementById('anniv');
-  el.textContent = (annivToday.k === '誕生日' ? '🎂 ' : '🎉 ') + `今日は${annivToday.n}` + (annivToday.k === '誕生日' ? 'の誕生日!' : '!');
+  el.textContent = kind === 'birthday' ? `🎂 今日は${hit.n}の誕生日!` : `🎉 今日は${hit.n}!`;
   el.hidden = false;
+  const num = (hit.n.match(/(\d+)\s*周年/) || [])[1];
+  const ord = n => n + (n % 100 >= 11 && n % 100 <= 13 ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' })[n % 10] || 'th');
+  document.getElementById('signKind').textContent = kind === 'birthday' ? 'HAPPY BIRTHDAY' : num ? `${ord(Number(num))} ANNIVERSARY` : kind === 'anniversary' ? 'ANNIVERSARY' : 'SPECIAL DAY';
+  // 記念日限定くじ
+  document.getElementById('kujiLead').innerHTML = '今日は記念日のお祝いメニュー!<br>★5の確率アップ中(3% → 15%)';
+  document.getElementById('rates').innerHTML = ANNIV_MENU.map(m => m.s === 5 ? `<b>★5 ${m.w}%</b>` : `<span>★${m.s} ${m.w}%</span>`).join(' / ');
+  // おめでとうボタン
+  const tag = kind === 'birthday' ? `#${SHOP}誕生祭` : `#${SHOP}${num ? num + '周年' : ''}`;
+  document.getElementById('cheerWrap').hidden = false;
+  document.getElementById('cheer').onclick = () => {
+    cracker();
+    burst(innerWidth * .5, innerHeight * .45, 80);
+    setTimeout(() => burst(innerWidth * .15, innerHeight * .3, 50), 180);
+    setTimeout(() => burst(innerWidth * .85, innerHeight * .3, 50), 360);
+    const x = document.getElementById('cheerX');
+    const text = kind === 'birthday' ? `${hit.n}、お誕生日おめでとう!🎂 ${tag}` : `${hit.n}、おめでとう!🎉 ${tag}`;
+    x.href = 'https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(location.origin + location.pathname);
+    x.hidden = false;
+  };
   applyTime(pinned);
   if (opened) burst(innerWidth / 2, innerHeight * .35, 70);
 }
