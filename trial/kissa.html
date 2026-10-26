@@ -685,7 +685,13 @@ function tone(f, t, d, v, type) {
   g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(.0001, t + d);
   o.connect(g).connect(c.destination); o.start(t); o.stop(t + d + .05);
 }
-function doorbell() { // カランコロン
+/* 入店のベル: 録音の効果音(Mixkit「Store door bell ring」)。読めないときだけ電子音 */
+const bellSound = new Audio('./sound/doorbell.mp3');
+bellSound.preload = 'auto';
+function doorbell() {
+  try { bellSound.currentTime = 0; const p = bellSound.play(); if (p) p.catch(synthBell); } catch (e) { synthBell(); }
+}
+function synthBell() {
   const t = audio().currentTime;
   [[1568, 0], [1319, .16], [1568, .32], [1175, .5]].forEach(([f, s]) => { tone(f, t + s, 1.1, .09); tone(f * 2.76, t + s, .4, .02); });
 }
@@ -822,7 +828,6 @@ function show(m, animate) {
 }
 btn.addEventListener('click', () => {
   if (btn.disabled) return;
-  try { doorbell(); } catch (e) {}
   const m = draw();
   save({ date: today(), s: m.s, item: m.item, line: m.line });
   addDex(m.s);
