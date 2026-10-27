@@ -420,8 +420,9 @@ function beep(f, t, d, v, type) {
     o.connect(g).connect(c.destination); o.start(s); o.stop(s + d + .05); } catch (e) {}
 }
 /* 効果音: 注ぐ音などのファイルを置けば鳴る(空なら仮の電子音) */
-const SE = { pour: '', sake: '' }; // 例: './se/pour_beer.mp3'
-function playSE(src) { if (!soundOn || !src) return; try { const a = new Audio(src); a.volume = .7; a.play().catch(() => {}); } catch (e) {} }
+const SE = { pour: './se/pour.mp3', water: './se/water.mp3', sake: './se/sake.mp3' }; // シュワっと注ぐ音 / 水を注ぐ音 / 徳利のとくとく
+let seNow = null;
+function playSE(src) { if (!soundOn || !src) return; try { if (seNow) seNow.pause(); seNow = new Audio(src); seNow.volume = .8; seNow.play().catch(() => {}); } catch (e) {} }
 /* 録音した声を置けば鳴る(空なら効果音) */
 const VOICES = { greet: { morning: '', noon: '', evening: '', night: '' }, score: { 1: '', 2: '', 3: '', 4: '', 5: '' } };
 let player = null;
@@ -504,7 +505,7 @@ function serve(m) {
   liquid({ l1: '#8a6a3a', l2: '#b8925a', foam: 0 }); level(0);
   if (reduced) { fill(m); scr.className = 'screen show done' + (m.s === 5 ? ' perfect' : ''); $('#after').classList.add('show'); return; }
   const T = m.s === 5 ? 3200 : 2400, t0 = performance.now(); let tick = 0, omen = false, swapped = false;
-  playSE(SE.pour);
+  playSE(m.s === 1 ? SE.water : SE.pour); // お冷だけ水の音。音でなんとなく察せる
   (function f(t) {
     const p = Math.min(1, (t - t0) / T);
     if (m.s >= 3 && p > .35 && !omen) { omen = true; row.classList.add('omen'); beep(1568, 0, .2, .03, 'triangle'); }
