@@ -84,6 +84,28 @@ main{position:relative;z-index:1;overflow:hidden}
 .onair i{width:9px;height:9px;border-radius:50%;background:#fff;animation:blink 1s steps(2) infinite}
 @keyframes blink{50%{opacity:.2}}
 
+/* のれん: 開店したら一度ゆれる(くぐった感じ) */
+.noren{position:absolute;top:0;left:18px;right:18px;height:150px;display:flex;gap:5px;padding-top:12px;z-index:2;pointer-events:none}
+.noren::before{content:"";position:absolute;top:2px;left:-10px;right:-10px;height:11px;border-radius:5px;background:linear-gradient(#7a5530,#4a3019);box-shadow:0 3px 0 rgba(0,0,0,.5)}
+.noren span{flex:1;position:relative;background:linear-gradient(90deg,rgba(255,255,255,.03),transparent 30%,rgba(0,0,0,.25)),#151515;border:1px solid #2a2a2a;border-top:none;
+  color:var(--w);font-family:'Dela Gothic One',sans-serif;font-size:clamp(28px,9vw,44px);display:flex;justify-content:center;padding-top:22px;transform-origin:50% 0}
+.noren span:nth-child(2){color:var(--y)}
+.noren span::after{content:"";position:absolute;left:0;right:0;bottom:0;height:10px;background:repeating-linear-gradient(90deg,#151515 0 8px,transparent 8px 10px)}
+.hero.on .noren span{animation:push 1.6s cubic-bezier(.3,0,.3,1) both}
+.hero.on .noren span:nth-child(2){animation-delay:.06s}.hero.on .noren span:nth-child(3){animation-delay:.12s}
+@keyframes push{0%{transform:rotateX(0)}22%{transform:perspective(500px) rotateX(-38deg)}55%{transform:perspective(500px) rotateX(10deg)}80%{transform:perspective(500px) rotateX(-3deg)}100%{transform:none}}
+/* 赤ちょうちん: ゆっくりゆれる。光は動かさない */
+.chochin{position:absolute;top:168px;right:20px;display:flex;gap:16px;z-index:2;pointer-events:none}
+.chochin i{display:block;position:relative;width:60px;height:82px;font-style:normal;transform-origin:50% -18px;animation:sway 5.5s ease-in-out infinite alternate}
+.chochin i:nth-child(2){margin-top:26px;width:52px;height:72px;animation-duration:6.5s;animation-delay:-2s}
+.chochin i::before{content:"";position:absolute;left:50%;top:-18px;width:2px;height:18px;background:#777}
+.chochin i b{position:absolute;inset:0;border-radius:46% 46% 46% 46%/50% 50% 50% 50%;display:grid;place-items:center;font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:26px;color:#1a0806;
+  background:repeating-linear-gradient(180deg,transparent 0 8px,rgba(0,0,0,.18) 8px 9px),radial-gradient(60% 55% at 45% 45%,#ff6a3d,#d7261e 55%,#8a120e);
+  box-shadow:0 0 34px rgba(255,80,40,.45),inset 0 0 12px rgba(0,0,0,.4)}
+.chochin i:nth-child(2) b{font-size:22px}
+.chochin i::after{content:"";position:absolute;left:14%;right:14%;top:-4px;height:7px;background:#111;border-radius:2px;box-shadow:0 calc(var(--h,82px) + 1px) 0 #111}
+.chochin i:nth-child(2)::after{--h:72px}
+@keyframes sway{from{transform:rotate(-3deg)}to{transform:rotate(3deg)}}
 /* 流れる帯: にぎやかさの担当。transformだけで動かす */
 .band{background:var(--y);color:var(--k);overflow:hidden;white-space:nowrap;border-top:3px solid var(--k);border-bottom:3px solid var(--k);transform:rotate(-2deg);margin:0 -10px}
 .band .track{display:inline-block;padding:8px 0;font-family:'Dela Gothic One',sans-serif;font-size:20px;letter-spacing:.06em;animation:marq 22s linear infinite}
@@ -110,6 +132,21 @@ section{padding:110px 0 0}
 .facts dd b{background:linear-gradient(transparent 60%,var(--y) 60%)}
 
 /* お品書き(配信メニュー) */
+.fuda{list-style:none;display:flex;justify-content:center;gap:14px;position:relative;padding-top:18px}
+.fuda::before{content:"";position:absolute;top:0;left:0;right:0;height:8px;background:linear-gradient(#6b4a2a,#3e2a16);border-radius:3px}
+.fuda li{width:72px;min-height:290px;display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:18px 0 14px;position:relative;color:#1a1a1a;
+  background:repeating-linear-gradient(90deg,rgba(90,60,30,.08) 0 2px,transparent 2px 7px),linear-gradient(90deg,#ead3a6,#dcbd88 50%,#e6cc9b);border:2px solid #3b2a17;box-shadow:0 8px 0 rgba(0,0,0,.45)}
+.fuda li::before{content:"";position:absolute;top:-18px;left:50%;width:2px;height:18px;background:#8a6a45}
+.fuda li b{font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:24px;line-height:1;letter-spacing:.08em}
+.fuda li b span,.fuda li em span{display:block;text-align:center}
+.fuda li span.cho{transform:rotate(90deg)}
+.fuda li em{font-style:normal;font-size:12px;line-height:1;font-weight:900;letter-spacing:.1em;color:#a01b14}
+.fuda li.big{background:repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 2px,transparent 2px 7px),var(--y)}
+.board{margin-top:26px;background:#1d2a22;border:8px solid #5a3d22;box-shadow:inset 0 0 30px rgba(0,0,0,.6),0 8px 0 rgba(0,0,0,.45);padding:16px 18px 14px;color:#eef0e8}
+.board p{font-size:12px;font-weight:900;letter-spacing:.24em;color:var(--y);margin-bottom:6px}
+.board dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:13.5px}
+.board dt{font-weight:900}
+.board dd{opacity:.85}
 .menu{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .menu li{background:var(--k2);border:2px solid #2c2c2c;padding:16px 14px 14px;position:relative}
 .menu li::before{content:attr(data-no);position:absolute;right:10px;top:4px;font-family:'Bebas Neue',sans-serif;font-size:30px;color:rgba(255,213,0,.25)}
@@ -133,7 +170,16 @@ section{padding:110px 0 0}
 .screen::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 3px);pointer-events:none}
 .screen .top{display:flex;justify-content:space-between;font-size:11px;font-weight:900;letter-spacing:.18em;color:var(--g)}
 .screen .top .rec{color:#e8322b}
-.screen .num{font-family:'Bebas Neue',sans-serif;font-size:118px;line-height:1;color:var(--y);margin:6px 0 0;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.screen .row{display:flex;align-items:center;justify-content:center;gap:12px;margin:6px 0 0;--lv:0}
+.screen .jug{width:52px;flex-shrink:0;overflow:visible}
+.screen .jug .beer{transform:translateY(calc((1 - var(--lv)) * 60px))}
+.screen .jug .bub{opacity:0}
+.screen.rolling .jug .bub{animation:bub 1.1s linear infinite}
+.screen .jug .bub:nth-child(2){animation-delay:-.4s}.screen .jug .bub:nth-child(3){animation-delay:-.75s}
+@keyframes bub{0%{opacity:0;transform:translateY(0)}20%{opacity:.8}100%{opacity:0;transform:translateY(-40px)}}
+.screen .jug .drip{opacity:0;transition:opacity .3s .1s}
+.screen.perfect .jug .drip{opacity:1}
+.screen .num{white-space:nowrap;font-family:'Bebas Neue',sans-serif;font-size:min(118px,28vw);line-height:1;color:var(--y);margin:0;font-variant-numeric:tabular-nums;letter-spacing:.02em}
 .screen .num small{font-size:40px;margin-left:4px}
 .screen .bars{display:flex;gap:3px;justify-content:center;height:34px;align-items:flex-end;margin-top:4px}
 .screen .bars i{width:8px;height:100%;background:var(--y);opacity:.85;transform-origin:bottom;transform:scaleY(.15)}
@@ -148,7 +194,8 @@ section{padding:110px 0 0}
 .screen.done .rank,.screen.done .line{opacity:1;transform:none}
 /* 100点: 画面がドンと揺れて、黄色に反転 */
 .screen.perfect{border-color:var(--y);animation:hit .45s cubic-bezier(.3,0,.2,1)}
-.screen.perfect .num{color:var(--k);background:var(--y);margin:6px -16px 0}
+.screen.perfect .row{background:var(--y);margin:6px -16px 0;padding:4px 0}
+.screen.perfect .num{color:var(--k)}
 @keyframes hit{0%{transform:scale(1.06)}30%{transform:translate(-4px,2px)}50%{transform:translate(4px,-2px)}70%{transform:translate(-2px,1px)}100%{transform:none}}
 .after{display:none;margin-top:14px;gap:8px;justify-content:center}
 .after.show{display:flex}
@@ -195,6 +242,8 @@ footer .logo{display:block;font-family:'Dela Gothic One',sans-serif;font-size:26
   <!-- ===== HERO ===== -->
   <header class="hero">
     <span class="bgword" aria-hidden="true">GORILLA</span>
+    <div class="noren" aria-hidden="true"><span>呑</span><span>唄</span><span>語</span></div>
+    <div class="chochin" aria-hidden="true"><i><b>酒</b></i><i><b>唄</b></i></div>
     <div class="wrap" id="heroIn">
       <div class="icon rise" style="--d:.1s">ICON</div>
       <span class="tag rise" style="--d:.2s">SPOON / 歌・雑談・お悩み相談</span>
@@ -208,8 +257,8 @@ footer .logo{display:block;font-family:'Dela Gothic One',sans-serif;font-size:26
       </div>
     </div>
   </header>
-  <div class="band" aria-hidden="true"><div class="track"><span>歌う</span>／<span>飲む</span>／<span>しゃべる</span>／<span>聞く</span>／<span>自認ゴリラ</span>／<span>巻き舌</span>／<span>SPOON</span>／<span>歌う</span>／<span>飲む</span>／<span>しゃべる</span>／<span>聞く</span>／<span>自認ゴリラ</span>／<span>巻き舌</span>／<span>SPOON</span>／</div></div>
-  <div class="band rev" aria-hidden="true"><div class="track bb"><span>SING</span>✕<span>DRINK</span>✕<span>TALK</span>✕<span>LISTEN</span>✕<span>SING</span>✕<span>DRINK</span>✕<span>TALK</span>✕<span>LISTEN</span>✕</div></div>
+  <div class="band" aria-hidden="true"><div class="track"><span>歌う</span>／<span>飲む</span>／<span>しゃべる</span>／<span>聞く</span>／<span>自認ゴリラ</span>／<span>巻き舌</span>／<span>とりあえず生</span>／<span>乾杯</span>／<span>SPOON</span>／<span>歌う</span>／<span>飲む</span>／<span>しゃべる</span>／<span>聞く</span>／<span>自認ゴリラ</span>／<span>巻き舌</span>／<span>とりあえず生</span>／<span>乾杯</span>／<span>SPOON</span>／</div></div>
+  <div class="band rev" aria-hidden="true"><div class="track bb"><span>SING</span>✕<span>DRINK</span>✕<span>TALK</span>✕<span>LISTEN</span>✕<span>CHEERS</span>✕<span>SING</span>✕<span>DRINK</span>✕<span>TALK</span>✕<span>LISTEN</span>✕<span>CHEERS</span>✕</div></div>
 
   <div class="wrap">
     <!-- ===== PROFILE ===== -->
@@ -229,11 +278,19 @@ footer .logo{display:block;font-family:'Dela Gothic One',sans-serif;font-size:26
     <!-- ===== MENU ===== -->
     <section class="sec">
       <div class="head"><span class="en" data-decode>MENU</span><h2 class="rise" style="--d:.4s">今夜のお品書き</h2></div>
-      <ul class="menu">
-        <li class="big rise" data-no="01" style="--d:.45s"><b>カラオケ</b><span>歌いたい曲を、歌いたいだけ。リクエストもどうぞ</span></li>
-        <li class="rise" data-no="02" style="--d:.55s"><b>酒飲み雑談</b><span>グラス片手に、ゆるっと</span></li>
-        <li class="rise" data-no="03" style="--d:.65s"><b>お悩み相談</b><span>まじめな話も、ちゃんと聞く</span></li>
+      <ul class="fuda">
+        <li class="big rise" style="--d:.45s"><b>カラオケ</b><em>一曲 〇円</em></li>
+        <li class="rise" style="--d:.55s"><b>酒飲み雑談</b><em>飲み放題</em></li>
+        <li class="rise" style="--d:.65s"><b>お悩み相談</b><em>時価</em></li>
       </ul>
+      <div class="board rise" style="--d:.8s">
+        <p>本日のおすすめ</p>
+        <dl>
+          <dt>カラオケ</dt><dd>歌いたい曲を、歌いたいだけ。リクエストもどうぞ</dd>
+          <dt>酒飲み雑談</dt><dd>グラス片手に、ゆるっと</dd>
+          <dt>お悩み相談</dt><dd>まじめな話も、ちゃんと聞く</dd>
+        </dl>
+      </div>
     </section>
 
     <!-- ===== SCORE (ボイスくじ) ===== -->
@@ -241,11 +298,25 @@ footer .logo{display:block;font-family:'Dela Gothic One',sans-serif;font-size:26
       <div class="head"><span class="en" data-decode>SCORE</span><h2 class="rise" style="--d:.7s">今夜の採点</h2></div>
       <div class="score rise" style="--d:.75s">
         <p class="lead2">1日1回、レイやんがあなたの歌を採点します。<br>100点が出たら、特別なひとこと。</p>
-        <button class="mic" id="mic">🎤 歌って採点してもらう</button>
+        <button class="mic" id="mic">🍺 一杯やって、歌って採点</button>
         <p class="rates" id="rates"></p>
         <div class="screen" id="screen" aria-live="polite">
           <div class="top"><span>KARAOKE SCORE</span><span class="rec">● REC</span></div>
-          <p class="num"><span id="num">00</span><small>点</small></p>
+          <div class="row" id="row">
+            <svg class="jug" viewBox="0 0 62 84" aria-hidden="true">
+              <defs><clipPath id="glass"><rect x="6" y="10" width="38" height="68" rx="4"/></clipPath>
+                <linearGradient id="beerG" x1="0" x2="1"><stop offset="0" stop-color="#e79a0c"/><stop offset=".45" stop-color="#ffc21a"/><stop offset="1" stop-color="#d98a08"/></linearGradient></defs>
+              <path d="M44 24h8a7 7 0 0 1 7 7v22a7 7 0 0 1-7 7h-8" fill="none" stroke="#d8d8d8" stroke-width="4"/>
+              <g clip-path="url(#glass)">
+                <g class="beer"><rect x="0" y="18" width="62" height="70" fill="url(#beerG)"/><rect x="0" y="11" width="62" height="9" fill="#fffaf0"/>
+                  <circle class="bub" cx="16" cy="70" r="1.6" fill="#fff6cc"/><circle class="bub" cx="27" cy="74" r="1.3" fill="#fff6cc"/><circle class="bub" cx="36" cy="68" r="1.5" fill="#fff6cc"/></g>
+              </g>
+              <path class="drip" d="M4 12q-2-8 6-9q4-6 12-3q6-5 13 0q8-2 11 5q4 4-1 8v10q-3 4-4 0v-6H10v9q-3 4-5 0z" fill="#fffaf0"/>
+              <rect x="6" y="10" width="38" height="68" rx="4" fill="rgba(255,255,255,.05)" stroke="#d8d8d8" stroke-width="3"/>
+              <path d="M13 18v52" stroke="rgba(255,255,255,.35)" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            <p class="num"><span id="num">00</span><small>点</small></p>
+          </div>
           <div class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
           <p class="stars" id="stars"></p>
           <p class="rank" id="rank"></p>
@@ -316,7 +387,7 @@ function applyTime(t) {
 }
 $('#timebar').onclick = e => { const b = e.target.closest('button'); if (!b) return; pinned = b.dataset.t === 'auto' ? null : b.dataset.t; applyTime(pinned); };
 applyTime(null); setInterval(() => !pinned && applyTime(null), 60000);
-$('#greetVoice').onclick = () => { if (!soundOn) setSound(true); const s = pinned || nowSlot(); playVoice(VOICES.greet[s], () => { beep(660, 0, .25, .05, 'triangle'); beep(880, .14, .35, .05, 'triangle'); }); };
+$('#greetVoice').onclick = () => { if (!soundOn) setSound(true); const s = pinned || nowSlot(); playVoice(VOICES.greet[s], () => { beep(2093, 0, .25, .04, 'sine'); beep(2637, .05, .35, .035, 'sine'); }); }; // 声がないあいだは、グラスの「カチン」
 /* 配信中(見本: URLの最後に ?onair) */
 if (new URLSearchParams(location.search).has('onair')) { $('#onair').hidden = false; $('#sign').hidden = true; }
 
@@ -352,6 +423,9 @@ function openShop(withSound) {
 sh.addEventListener('click', () => openShop(true));
 if (reduced) openShop(false); else setTimeout(() => openShop(false), 3800);
 
+/* 木札の文字を1文字ずつ縦に並べる(どのフォントでも崩れないように) */
+document.querySelectorAll('.fuda b, .fuda em').forEach(el => { el.innerHTML = [...el.textContent].map(c => `<span${/[ー〜]/.test(c) ? ' class="cho"' : ''}>${c}</span>`).join(''); });
+
 /* ---------- 今夜の採点(★1〜★5) ---------- */
 const MENU = [
   { s: 1, w: 30, lo: 62, hi: 79, rank: 'まだまだ、これから', line: '音程どこに置いてきた? ……でも楽しそうだったから、よし!' },
@@ -362,32 +436,35 @@ const MENU = [
 ];
 $('#rates').innerHTML = MENU.map(m => m.s === 5 ? `<b>★5 ${m.w}%</b>` : `★${m.s} ${m.w}%`).join(' / ');
 const KEY = 'rayyan-score', dayKey = () => { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
-const mic = $('#mic'), scr = $('#screen'), numEl = $('#num');
+const mic = $('#mic'), scr = $('#screen'), numEl = $('#num'), row = $('#row');
+const level = v => row.style.setProperty('--lv', Math.max(0, Math.min(1, (v - 40) / 60)).toFixed(3)); // 40点で空、100点で満杯
+function clink(t) { beep(2093, t || 0, .25, .04, 'sine'); beep(2637, (t || 0) + .05, .35, .035, 'sine'); }
 let current = null, force5 = false;
 const pick = () => { if (force5) { force5 = false; return MENU[4]; } let r = Math.random() * 100; for (const m of MENU) if ((r -= m.w) < 0) return m; return MENU[0]; };
 const untilTomorrow = () => { const n = new Date(), m = new Date(n); m.setHours(24, 0, 0, 0); return `${Math.floor((m - n) / 36e5)}時間${Math.floor((m - n) / 6e4) % 60}分`; };
 function fill(m, score) {
   current = { ...m, score };
   $('#stars').innerHTML = [1, 2, 3, 4, 5].map(i => `<span${i <= m.s ? ' class="on"' : ''}>★</span>`).join('');
-  $('#rank').textContent = m.rank; $('#line').textContent = m.line; numEl.textContent = score;
+  $('#rank').textContent = m.rank; $('#line').textContent = m.line; numEl.textContent = score; level(score);
   mic.disabled = true; mic.textContent = '今夜はもう歌ったよ'; $('#next').textContent = `次の採点は、あした(あと${untilTomorrow()})`;
 }
 function sing(m) {
   const score = m.lo + Math.floor(Math.random() * (m.hi - m.lo + 1));
   scr.className = 'screen show rolling'; $('#after').classList.remove('show');
-  $('#stars').innerHTML = ''; $('#rank').textContent = ''; $('#line').textContent = '';
+  $('#stars').innerHTML = ''; $('#rank').textContent = ''; $('#line').textContent = ''; level(0);
   mic.disabled = true; mic.textContent = '採点中…';
   if (reduced) { fill(m, score); scr.className = 'screen show done' + (m.s === 5 ? ' perfect' : ''); $('#after').classList.add('show'); return; }
   // 数字が速く回って、だんだんゆっくり止まる(ドラムロール)
   const T = 2600, t0 = performance.now(); let lastTick = 0;
   (function f(t) {
     const p = Math.min(1, (t - t0) / T), ease = 1 - Math.pow(1 - p, 3);
-    numEl.textContent = p < 1 ? Math.max(0, Math.round(score * ease + (1 - p) * (Math.random() * 30 - 15))) : score;
+    const shown = p < 1 ? Math.max(0, Math.round(score * ease + (1 - p) * (Math.random() * 30 - 15))) : score;
+    numEl.textContent = shown; level(score * ease);
     if (t - lastTick > 40 + p * 160) { lastTick = t; beep(300 + p * 500, 0, .03, .03); }
     if (p < 1) return requestAnimationFrame(f);
     fill(m, score); scr.classList.remove('rolling'); scr.classList.add('done');
     if (m.s === 5) {
-      scr.classList.add('perfect');
+      scr.classList.add('perfect'); clink(.1); clink(.45);
       const r = scr.getBoundingClientRect(), o = { x: .5, y: (r.top + 60) / innerHeight };
       const opt = { colors: ['#ffd500', '#0d0d0d', '#f5f3ee'], shapes: ['square'], disableForReducedMotion: true, zIndex: 80 };
       if (window.confetti) { confetti({ ...opt, origin: o, particleCount: 110, spread: 90, startVelocity: 45 }); confetti({ ...opt, origin: { x: 0, y: .9 }, angle: 60, particleCount: 50, spread: 50, startVelocity: 60 }); confetti({ ...opt, origin: { x: 1, y: .9 }, angle: 120, particleCount: 50, spread: 50, startVelocity: 60 }); }
@@ -403,7 +480,7 @@ $('#share').onclick = () => {
   const text = `レイやんの採点で ${current.score}点(★${current.s})でした🎤 #レイやんの採点`, url = location.origin + location.pathname;
   if (navigator.share) navigator.share({ text, url }).catch(() => {}); else window.open('https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url), '_blank', 'noopener');
 };
-function reset() { store.set(KEY, null); current = null; scr.className = 'screen'; $('#after').classList.remove('show'); mic.disabled = false; mic.textContent = '🎤 歌って採点してもらう'; $('#next').textContent = ''; }
+function reset() { store.set(KEY, null); current = null; scr.className = 'screen'; $('#after').classList.remove('show'); mic.disabled = false; mic.textContent = '🍺 一杯やって、歌って採点'; $('#next').textContent = ''; }
 $('#reset').onclick = reset;
 $('#force5').onclick = () => { reset(); force5 = true; mic.click(); };
 (() => { const s = store.get(KEY, null); if (s && s.day === dayKey()) { const m = MENU.find(x => x.s === s.s); if (m) { fill(m, s.score); scr.className = 'screen show done' + (m.s === 5 ? ' perfect' : ''); $('#after').classList.add('show'); } } })();
