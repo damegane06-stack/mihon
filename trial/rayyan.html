@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="dark">
 <meta name="robots" content="noindex">
-<title>レイやん | 歌って飲んでしゃべる夜 | 試作</title>
+<title>巻き舌レイやん | 歌って飲んでしゃべる夜 | 試作</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -72,6 +72,7 @@ main{position:relative;z-index:1;overflow:hidden}
 .hero .icon img{width:100%;height:100%;object-fit:cover}
 .hero .tag{display:inline-block;background:var(--y);color:var(--k);font-weight:900;font-size:12px;letter-spacing:.2em;padding:2px 10px;margin-bottom:10px}
 .hero h1{font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:clamp(68px,22vw,150px);line-height:1;letter-spacing:.02em;color:var(--y)}
+.hero .maki{font-size:clamp(22px,7vw,40px);line-height:1;color:var(--w);letter-spacing:.12em;margin:4px 0 -2px;transform-origin:left}
 .hero .roma{font-size:26px;color:var(--w);margin-top:6px}
 .hero .lead{margin-top:16px;font-size:15px;font-weight:700}
 .hero .lead .mini{margin-left:8px;width:26px;height:26px;border-radius:50%;border:2px solid var(--y);background:none;color:var(--y);font-size:9px;cursor:pointer;vertical-align:2px}
@@ -185,7 +186,7 @@ footer .logo{display:block;font-family:'Dela Gothic One',sans-serif;font-size:26
 <button id="soundBtn" aria-pressed="false">🔈 音をつける</button>
 
 <div id="shutter" role="button" aria-label="タップして開店">
-  <div class="slats"><div class="plate"><b>レイやん</b><small>タップで開店</small></div></div>
+  <div class="slats"><div class="plate"><small>巻き舌</small><b>レイやん</b><small>タップで開店</small></div></div>
   <div class="hazard"></div>
   <div class="handle"><i></i></div>
 </div>
@@ -197,6 +198,7 @@ footer .logo{display:block;font-family:'Dela Gothic One',sans-serif;font-size:26
     <div class="wrap" id="heroIn">
       <div class="icon rise" style="--d:.1s">ICON</div>
       <span class="tag rise" style="--d:.2s">SPOON / 歌・雑談・お悩み相談</span>
+      <p class="maki dg rise" style="--d:.3s">巻き舌</p>
       <h1 data-decode>レイやん</h1>
       <p class="roma bb rise" style="--d:.7s">RAY-YAN</p>
       <p class="lead rise" style="--d:.85s"><span id="greet">今夜も、歌って飲んでしゃべろう。</span><button class="mini" id="greetVoice" aria-label="あいさつを聞く">▶</button></p>
@@ -206,7 +208,7 @@ footer .logo{display:block;font-family:'Dela Gothic One',sans-serif;font-size:26
       </div>
     </div>
   </header>
-  <div class="band" aria-hidden="true"><div class="track"><span>歌う</span>／<span>飲む</span>／<span>しゃべる</span>／<span>聞く</span>／<span>自認ゴリラ</span>／<span>SPOON</span>／<span>歌う</span>／<span>飲む</span>／<span>しゃべる</span>／<span>聞く</span>／<span>自認ゴリラ</span>／<span>SPOON</span>／</div></div>
+  <div class="band" aria-hidden="true"><div class="track"><span>歌う</span>／<span>飲む</span>／<span>しゃべる</span>／<span>聞く</span>／<span>自認ゴリラ</span>／<span>巻き舌</span>／<span>SPOON</span>／<span>歌う</span>／<span>飲む</span>／<span>しゃべる</span>／<span>聞く</span>／<span>自認ゴリラ</span>／<span>巻き舌</span>／<span>SPOON</span>／</div></div>
   <div class="band rev" aria-hidden="true"><div class="track bb"><span>SING</span>✕<span>DRINK</span>✕<span>TALK</span>✕<span>LISTEN</span>✕<span>SING</span>✕<span>DRINK</span>✕<span>TALK</span>✕<span>LISTEN</span>✕</div></div>
 
   <div class="wrap">
@@ -214,7 +216,7 @@ footer .logo{display:block;font-family:'Dela Gothic One',sans-serif;font-size:26
     <section class="sec">
       <div class="head"><span class="en" data-decode>PROFILE</span><h2 class="rise" style="--d:.5s">レイやんのこと</h2></div>
       <div class="prof wipe" style="--d:.55s">
-        <div class="name"><b>レイやん</b><span>自認ゴリラ</span></div>
+        <div class="name"><b>巻き舌レイやん</b><span>自認ゴリラ</span></div>
         <p>歌とゲームが趣味。この頃は、推しの歌声を聞くのが日課。Spoonでは、ゴリラやってます。</p>
         <dl class="facts">
           <dt>すきなこと</dt><dd><b>歌</b>、ゲーム、推しの歌声を聞くこと</dd>
@@ -268,8 +270,8 @@ footer .logo{display:block;font-family:'Dela Gothic One',sans-serif;font-size:26
   </div>
 
   <footer>
-    <span class="logo">レイやん</span>
-    © 2026 レイやん / site by damegane　この頁は試作です
+    <span class="logo">巻き舌レイやん</span>
+    © 2026 巻き舌レイやん / site by damegane　この頁は試作です
     <div class="timebar" id="timebar" aria-label="時間帯をためす(試作用)">
       <button data-t="auto">いまの時間</button><button data-t="morning">朝</button><button data-t="noon">昼</button><button data-t="evening">夕方</button><button data-t="night">夜</button>
     </div>
