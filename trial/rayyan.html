@@ -427,12 +427,12 @@ if (reduced) openShop(false); else setTimeout(() => openShop(false), 3800);
 document.querySelectorAll('.fuda b, .fuda em').forEach(el => { el.innerHTML = [...el.textContent].map(c => `<span${/[ー〜]/.test(c) ? ' class="cho"' : ''}>${c}</span>`).join(''); });
 
 /* ---------- 今夜の採点(★1〜★5) ---------- */
-const MENU = [
-  { s: 1, w: 30, lo: 62, hi: 79, rank: 'まだまだ、これから', line: '音程どこに置いてきた? ……でも楽しそうだったから、よし!' },
-  { s: 2, w: 30, lo: 80, hi: 88, rank: 'なかなか、やるじゃん', line: 'お、いいね。次は一緒にハモろうか。' },
-  { s: 3, w: 22, lo: 89, hi: 94, rank: 'うまい!', line: 'うまいじゃん! 今夜の一杯目は、おごり。' },
-  { s: 4, w: 15, lo: 95, hi: 99, rank: 'ガチのやつ', line: 'え、ガチじゃん。ちょっとマイク置いて拍手させて。' },
-  { s: 5, w: 3,  lo: 100, hi: 100, rank: '100点!! 今夜の主役', line: '100点!? もう今夜の主役はきみ。ゴリラ全員で胸たたいて祝うわ。' }
+const MENU = [ // セリフは本人が考えたもの
+  { s: 1, w: 30, lo: 62, hi: 79, rank: 'いらっしゃい', line: '来てくれてありがとう。ゆっくりしていってね。' },
+  { s: 2, w: 30, lo: 80, hi: 88, rank: '乾杯しよ', line: '好きなお酒何? わたしはチューハイが好きなんだよね。君のも飲ませてよ。' },
+  { s: 3, w: 22, lo: 89, hi: 94, rank: 'いつもの席', line: '今日も来てくれたんだ。嬉しいな。いつものでいい?' },
+  { s: 4, w: 15, lo: 95, hi: 99, rank: 'となりの席', line: 'なんか遠くない? そんなに遠いと寂しいな。こっちおいで?' },
+  { s: 5, w: 3,  lo: 100, hi: 100, rank: '100点!! 今夜の主役', line: '普段こういうことは言わないようにしてるんだけど、ずっと一緒にいてくれてる君だからこそ言うんだけど……いつもありがとう。大好きだよ。……って! やめやめ! 終わり! 酒飲むぞ!!' }
 ];
 $('#rates').innerHTML = MENU.map(m => m.s === 5 ? `<b>★5 ${m.w}%</b>` : `★${m.s} ${m.w}%`).join(' / ');
 const KEY = 'rayyan-score', dayKey = () => { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
