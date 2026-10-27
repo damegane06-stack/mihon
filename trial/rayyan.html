@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="noindex">
+<title>レイやん | 歌って飲んでしゃべる夜 | 試作</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   レイやん 試作: 深夜のカラオケ酒場
+   色: 黄色 × 黒 × 白。キラキラ・子どもっぽさはなし
+   動き: ふだんは止まっていて、出てくる瞬間だけ「カチッ」と動く。跳ねない。
+   にぎやかさは、帯の文字の流れと採点の盛り上がりで出す
+   ============================================================ */
+:root{
+  --y:#ffd500;      /* 黄色 */
+  --k:#0d0d0d;      /* 黒 */
+  --k2:#1a1a1a;
+  --w:#f5f3ee;      /* 白 */
+  --g:#8b8b8b;
+  --ease:cubic-bezier(.2,.7,0,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--k);color-scheme:dark;overflow-x:clip;scroll-behavior:smooth}
+body{background:var(--k);color:var(--w);font-family:'Zen Kaku Gothic New',sans-serif;font-weight:500;line-height:1.85;letter-spacing:.03em;-webkit-font-smoothing:antialiased}
+.bb{font-family:'Bebas Neue',sans-serif;letter-spacing:.06em;font-weight:400}
+.dg{font-family:'Dela Gothic One',sans-serif;font-weight:400}
+button{font:inherit;color:inherit}
+/* 背景: 黒地にうすい格子。動かない */
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(rgba(255,213,0,.04) 1px,transparent 1px) 0 0/40px 40px,linear-gradient(90deg,rgba(255,213,0,.04) 1px,transparent 1px) 0 0/40px 40px}
+main{position:relative;z-index:1;overflow:hidden}
+.wrap{max-width:680px;margin:0 auto;padding:0 20px}
+.hazard{height:14px;background:repeating-linear-gradient(-45deg,var(--y) 0 14px,var(--k) 14px 28px)}
+
+#soundBtn{position:fixed;top:12px;right:12px;z-index:70;cursor:pointer;background:var(--k);color:var(--w);border:2px solid var(--y);padding:4px 12px;font-size:12px;font-weight:700}
+#soundBtn[aria-pressed="true"]{background:var(--y);color:var(--k)}
+
+/* ---------- 開幕: シャッターが上がる ---------- */
+#shutter{position:fixed;inset:0;z-index:60;cursor:pointer;display:flex;flex-direction:column;
+  transition:transform 1.1s cubic-bezier(.7,0,.25,1),visibility 0s 1.1s}
+#shutter .slats{flex:1;position:relative;
+  background:repeating-linear-gradient(180deg,#2b2b2b 0 22px,#1d1d1d 22px 24px,#3a3a3a 24px 26px,#2b2b2b 26px 46px)}
+#shutter .slats::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.5),transparent 18%,transparent 82%,rgba(0,0,0,.5))}
+#shutter .plate{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);text-align:center;background:var(--y);color:var(--k);padding:14px 26px 12px;border:4px solid var(--k);box-shadow:0 0 0 3px var(--y)}
+#shutter .plate b{display:block;font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:28px;letter-spacing:.08em;line-height:1.2}
+#shutter .plate small{font-size:12px;font-weight:900;letter-spacing:.2em}
+#shutter .handle{height:30px;background:#111;border-top:3px solid #444;display:flex;justify-content:center;align-items:center}
+#shutter .handle i{width:90px;height:8px;background:#555;border-radius:2px}
+#shutter.up{transform:translateY(-100%);visibility:hidden}
+#shutter.up .plate{transition:opacity .2s}
+
+/* ---------- 見出しが組み上がる(記号 → 文字) ---------- */
+[data-decode]{white-space:nowrap}
+
+/* 順番に出てくる: 見出しのあと、少し間をおいて中身。跳ねない */
+.rise{opacity:0;transform:translateY(26px);transition:opacity .7s var(--ease) var(--d,0s),transform .9s var(--ease) var(--d,0s)}
+.on .rise,.rise.on{opacity:1;transform:none}
+/* 黒い幕がスッと抜けて出る */
+.wipe{position:relative}
+.wipe::after{content:"";position:absolute;inset:0;background:var(--y);transform:scaleX(1);transform-origin:right;transition:transform .7s cubic-bezier(.7,0,.2,1) var(--d,0s);z-index:2}
+.on .wipe::after,.wipe.on::after{transform:scaleX(0)}
+
+/* ---------- ヒーロー ---------- */
+.hero{min-height:100svh;position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:90px 0 40px}
+.hero .bgword{position:absolute;right:-4vw;top:8vh;font-family:'Bebas Neue',sans-serif;font-size:min(46vw,300px);line-height:.8;color:transparent;-webkit-text-stroke:1px rgba(255,213,0,.22);pointer-events:none;writing-mode:vertical-rl;letter-spacing:-.02em}
+.hero .icon{width:112px;height:112px;border-radius:50%;background:var(--k2);border:3px solid var(--y);display:grid;place-items:center;font-size:11px;color:var(--g);letter-spacing:.2em;margin-bottom:22px;overflow:hidden}
+.hero .icon img{width:100%;height:100%;object-fit:cover}
+.hero .tag{display:inline-block;background:var(--y);color:var(--k);font-weight:900;font-size:12px;letter-spacing:.2em;padding:2px 10px;margin-bottom:10px}
+.hero h1{font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:clamp(68px,22vw,150px);line-height:1;letter-spacing:.02em;color:var(--y)}
+.hero .roma{font-size:26px;color:var(--w);margin-top:6px}
+.hero .lead{margin-top:16px;font-size:15px;font-weight:700}
+.hero .lead .mini{margin-left:8px;width:26px;height:26px;border-radius:50%;border:2px solid var(--y);background:none;color:var(--y);font-size:9px;cursor:pointer;vertical-align:2px}
+.state{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sign{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--w);padding:4px 14px;font-size:12.5px;font-weight:900;letter-spacing:.12em}
+.sign i{width:9px;height:9px;border-radius:50%;background:var(--y)}
+.onair{display:inline-flex;align-items:center;gap:10px;text-decoration:none;background:#e8322b;color:#fff;font-weight:900;font-size:13px;letter-spacing:.12em;padding:6px 16px;border:2px solid #fff}
+.onair b{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.1em;font-weight:400}
+.onair i{width:9px;height:9px;border-radius:50%;background:#fff;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:.2}}
+
+/* 流れる帯: にぎやかさの担当。transformだけで動かす */
+.band{background:var(--y);color:var(--k);overflow:hidden;white-space:nowrap;border-top:3px solid var(--k);border-bottom:3px solid var(--k);transform:rotate(-2deg);margin:0 -10px}
+.band .track{display:inline-block;padding:8px 0;font-family:'Dela Gothic One',sans-serif;font-size:20px;letter-spacing:.06em;animation:marq 22s linear infinite}
+.band .track span{margin:0 18px}
+.band.rev{background:var(--k);color:var(--y);border-color:var(--y);transform:rotate(1.5deg);margin-top:-6px}
+.band.rev .track{animation-direction:reverse;animation-duration:28s}
+@keyframes marq{to{transform:translateX(-50%)}}
+
+/* ---------- 見出し ---------- */
+section{padding:110px 0 0}
+.head{margin-bottom:26px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.head .en{font-family:'Bebas Neue',sans-serif;font-size:58px;line-height:.9;color:var(--y);letter-spacing:.04em}
+.head h2{font-size:15px;font-weight:900;letter-spacing:.2em}
+.head::after{content:"";flex-basis:100%;height:3px;background:repeating-linear-gradient(90deg,var(--w) 0 22px,transparent 22px 30px);opacity:.25}
+
+/* プロフィール */
+.prof{background:var(--w);color:var(--k);padding:22px 20px;clip-path:polygon(0 0,100% 0,100% calc(100% - 22px),calc(100% - 22px) 100%,0 100%)}
+.prof .name{display:flex;align-items:baseline;gap:10px}
+.prof .name b{font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:26px}
+.prof .name span{font-size:12px;font-weight:900;background:var(--k);color:var(--y);padding:0 8px}
+.prof p{font-size:14px;margin-top:10px}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin-top:16px;font-size:13.5px;border-top:3px solid var(--k);padding-top:14px}
+.facts dt{font-weight:900;font-size:11.5px;letter-spacing:.14em;color:#555;padding-top:2px}
+.facts dd b{background:linear-gradient(transparent 60%,var(--y) 60%)}
+
+/* お品書き(配信メニュー) */
+.menu{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.menu li{background:var(--k2);border:2px solid #2c2c2c;padding:16px 14px 14px;position:relative}
+.menu li::before{content:attr(data-no);position:absolute;right:10px;top:4px;font-family:'Bebas Neue',sans-serif;font-size:30px;color:rgba(255,213,0,.25)}
+.menu li b{display:block;font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:19px;color:var(--y)}
+.menu li span{font-size:12.5px;color:#cfcfcf}
+.menu li.big{grid-column:1/-1;background:var(--y);border-color:var(--y)}
+.menu li.big b{color:var(--k)}.menu li.big span{color:#333}.menu li.big::before{color:rgba(0,0,0,.2)}
+
+/* ---------- 今夜の採点(ガチャ型ボイスくじ) ---------- */
+.score{background:var(--k2);border:3px solid var(--y);padding:22px 18px;text-align:center}
+.score .lead2{font-size:13.5px}
+.mic{margin-top:18px;width:100%;cursor:pointer;border:3px solid var(--k);background:var(--y);color:var(--k);font-family:'Dela Gothic One',sans-serif;font-size:19px;letter-spacing:.1em;padding:14px;box-shadow:0 6px 0 #b39500;transition:transform .08s,box-shadow .08s}
+.mic:active{transform:translateY(6px);box-shadow:0 0 0 #b39500}
+.mic:disabled{background:#3a3a3a;color:#888;box-shadow:0 6px 0 #222;cursor:default}
+.mic:focus-visible{outline:3px solid var(--w);outline-offset:3px}
+.rates{margin-top:10px;font-size:11px;color:var(--g)}
+.rates b{color:var(--y)}
+/* 採点画面 */
+.screen{display:none;margin:22px auto 0;max-width:380px;background:#050505;border:3px solid #333;padding:18px 16px 16px;position:relative;overflow:hidden}
+.screen.show{display:block}
+.screen::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 3px);pointer-events:none}
+.screen .top{display:flex;justify-content:space-between;font-size:11px;font-weight:900;letter-spacing:.18em;color:var(--g)}
+.screen .top .rec{color:#e8322b}
+.screen .num{font-family:'Bebas Neue',sans-serif;font-size:118px;line-height:1;color:var(--y);margin:6px 0 0;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.screen .num small{font-size:40px;margin-left:4px}
+.screen .bars{display:flex;gap:3px;justify-content:center;height:34px;align-items:flex-end;margin-top:4px}
+.screen .bars i{width:8px;height:100%;background:var(--y);opacity:.85;transform-origin:bottom;transform:scaleY(.15)}
+.screen.rolling .bars i{animation:eq .42s ease-in-out infinite alternate}
+.screen .bars i:nth-child(2n){animation-delay:-.2s}.screen .bars i:nth-child(3n){animation-delay:-.33s}.screen .bars i:nth-child(5n){animation-delay:-.1s}
+@keyframes eq{from{transform:scaleY(.15)}to{transform:scaleY(1)}}
+.screen .stars{font-size:26px;letter-spacing:.12em;color:#333;margin-top:8px;min-height:40px}
+.screen .stars .on{color:var(--y)}
+.screen .rank{font-family:'Dela Gothic One',sans-serif;font-size:18px;color:var(--w);opacity:0;transform:translateY(10px);transition:opacity .5s var(--ease),transform .6s var(--ease)}
+.screen .line{font-size:14px;text-align:left;margin-top:12px;padding-top:12px;border-top:2px dashed #333;opacity:0;transition:opacity .5s .2s}
+.screen .line small{display:block;font-size:10.5px;font-weight:900;letter-spacing:.2em;color:var(--y)}
+.screen.done .rank,.screen.done .line{opacity:1;transform:none}
+/* 100点: 画面がドンと揺れて、黄色に反転 */
+.screen.perfect{border-color:var(--y);animation:hit .45s cubic-bezier(.3,0,.2,1)}
+.screen.perfect .num{color:var(--k);background:var(--y);margin:6px -16px 0}
+@keyframes hit{0%{transform:scale(1.06)}30%{transform:translate(-4px,2px)}50%{transform:translate(4px,-2px)}70%{transform:translate(-2px,1px)}100%{transform:none}}
+.after{display:none;margin-top:14px;gap:8px;justify-content:center}
+.after.show{display:flex}
+.ghost{cursor:pointer;background:none;border:2px solid var(--w);color:var(--w);font-size:12.5px;font-weight:900;padding:7px 14px}
+.next{font-size:12px;color:var(--g);margin-top:10px}
+.note{font-size:11px;color:var(--g);margin-top:12px}
+.demo{display:block;margin:8px auto 0;background:none;border:none;color:var(--g);font-size:11px;text-decoration:underline;cursor:pointer}
+
+/* ---------- リンク ---------- */
+.links{display:grid;gap:12px}
+.links a{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--k);background:var(--w);padding:16px 18px;font-weight:900;position:relative;overflow:hidden;z-index:0;
+  clip-path:polygon(0 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%)}
+.links a::before{content:"";position:absolute;inset:0;background:var(--y);transform:scaleX(0);transform-origin:left;transition:transform .35s cubic-bezier(.7,0,.2,1);z-index:-1}
+.links a:hover::before,.links a:focus-visible::before{transform:scaleX(1)}
+.links a:focus-visible{outline:none}
+.links a .k{font-family:'Bebas Neue',sans-serif;font-size:30px;line-height:1;min-width:86px}
+.links a b{font-size:16px}
+.links a small{margin-left:auto;font-size:11.5px;color:#555}
+
+footer{margin-top:120px;background:var(--y);color:var(--k);text-align:center;padding:30px 20px 34px;font-size:11.5px;font-weight:700}
+footer .logo{display:block;font-family:'Dela Gothic One',sans-serif;font-size:26px;margin-bottom:4px}
+.timebar{margin-top:14px;display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
+.timebar button{cursor:pointer;background:none;border:2px solid var(--k);padding:1px 12px;font-size:11px;font-weight:900}
+.timebar button[aria-pressed="true"]{background:var(--k);color:var(--y)}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  #shutter{display:none}
+  .rise{opacity:1;transform:none}
+  .wipe::after{display:none}
+}
+</style>
+</head>
+<body>
+<button id="soundBtn" aria-pressed="false">🔈 音をつける</button>
+
+<div id="shutter" role="button" aria-label="タップして開店">
+  <div class="slats"><div class="plate"><b>レイやん</b><small>タップで開店</small></div></div>
+  <div class="hazard"></div>
+  <div class="handle"><i></i></div>
+</div>
+
+<main>
+  <!-- ===== HERO ===== -->
+  <header class="hero">
+    <span class="bgword" aria-hidden="true">GORILLA</span>
+    <div class="wrap" id="heroIn">
+      <div class="icon rise" style="--d:.1s">ICON</div>
+      <span class="tag rise" style="--d:.2s">SPOON / 歌・雑談・お悩み相談</span>
+      <h1 data-decode>レイやん</h1>
+      <p class="roma bb rise" style="--d:.7s">RAY-YAN</p>
+      <p class="lead rise" style="--d:.85s"><span id="greet">今夜も、歌って飲んでしゃべろう。</span><button class="mini" id="greetVoice" aria-label="あいさつを聞く">▶</button></p>
+      <div class="state rise" style="--d:1s">
+        <span class="sign" id="sign"><i></i><span id="signText">営業中</span></span>
+        <a class="onair" id="onair" href="https://www.spooncast.net/jp/@lr86xmnq" target="_blank" rel="noopener" hidden><i></i><b>ON AIR</b>いま配信中! のぞきにいく</a>
+      </div>
+    </div>
+  </header>
+  <div class="band" aria-hidden="true"><div class="track"><span>歌う</span>／<span>飲む</span>／<span>しゃべる</span>／<span>聞く</span>／<span>自認ゴリラ</span>／<span>SPOON</span>／<span>歌う</span>／<span>飲む</span>／<span>しゃべる</span>／<span>聞く</span>／<span>自認ゴリラ</span>／<span>SPOON</span>／</div></div>
+  <div class="band rev" aria-hidden="true"><div class="track bb"><span>SING</span>✕<span>DRINK</span>✕<span>TALK</span>✕<span>LISTEN</span>✕<span>SING</span>✕<span>DRINK</span>✕<span>TALK</span>✕<span>LISTEN</span>✕</div></div>
+
+  <div class="wrap">
+    <!-- ===== PROFILE ===== -->
+    <section class="sec">
+      <div class="head"><span class="en" data-decode>PROFILE</span><h2 class="rise" style="--d:.5s">レイやんのこと</h2></div>
+      <div class="prof wipe" style="--d:.55s">
+        <div class="name"><b>レイやん</b><span>自認ゴリラ</span></div>
+        <p>歌とゲームが趣味。この頃は、推しの歌声を聞くのが日課。Spoonでは、ゴリラやってます。</p>
+        <dl class="facts">
+          <dt>すきなこと</dt><dd><b>歌</b>、ゲーム、推しの歌声を聞くこと</dd>
+          <dt>配信</dt><dd>酒飲み雑談、カラオケ、お悩み相談</dd>
+          <dt>正体</dt><dd>ゴリラ(自認)</dd>
+        </dl>
+      </div>
+    </section>
+
+    <!-- ===== MENU ===== -->
+    <section class="sec">
+      <div class="head"><span class="en" data-decode>MENU</span><h2 class="rise" style="--d:.4s">今夜のお品書き</h2></div>
+      <ul class="menu">
+        <li class="big rise" data-no="01" style="--d:.45s"><b>カラオケ</b><span>歌いたい曲を、歌いたいだけ。リクエストもどうぞ</span></li>
+        <li class="rise" data-no="02" style="--d:.55s"><b>酒飲み雑談</b><span>グラス片手に、ゆるっと</span></li>
+        <li class="rise" data-no="03" style="--d:.65s"><b>お悩み相談</b><span>まじめな話も、ちゃんと聞く</span></li>
+      </ul>
+    </section>
+
+    <!-- ===== SCORE (ボイスくじ) ===== -->
+    <section class="sec">
+      <div class="head"><span class="en" data-decode>SCORE</span><h2 class="rise" style="--d:.7s">今夜の採点</h2></div>
+      <div class="score rise" style="--d:.75s">
+        <p class="lead2">1日1回、レイやんがあなたの歌を採点します。<br>100点が出たら、特別なひとこと。</p>
+        <button class="mic" id="mic">🎤 歌って採点してもらう</button>
+        <p class="rates" id="rates"></p>
+        <div class="screen" id="screen" aria-live="polite">
+          <div class="top"><span>KARAOKE SCORE</span><span class="rec">● REC</span></div>
+          <p class="num"><span id="num">00</span><small>点</small></p>
+          <div class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <p class="stars" id="stars"></p>
+          <p class="rank" id="rank"></p>
+          <p class="line"><small>レイやんのひとこと</small><span id="line"></span></p>
+        </div>
+        <div class="after" id="after"><button class="ghost" id="replay">▶ もう一度聞く</button><button class="ghost" id="share">結果をシェア</button></div>
+        <p class="next" id="next"></p>
+        <p class="note">※ 試作のため、声のかわりに文字と効果音です。</p>
+        <button class="demo" id="reset">(試作用)もう一度歌う</button>
+        <button class="demo" id="force5">(試作用)100点を出す</button>
+      </div>
+    </section>
+
+    <!-- ===== LINKS ===== -->
+    <section class="sec">
+      <div class="head"><span class="en" data-decode>LINKS</span><h2 class="rise" style="--d:.4s">遊びにきてね</h2></div>
+      <div class="links">
+        <a class="rise" style="--d:.45s" href="https://www.spooncast.net/jp/@lr86xmnq" target="_blank" rel="noopener"><span class="k">SPOON</span><b>Spoon</b><small>配信はここ</small></a>
+        <a class="rise" style="--d:.55s" href="https://x.com/_ray_1104" target="_blank" rel="noopener"><span class="k">X</span><b>@_ray_1104</b><small>配信のお知らせ</small></a>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <span class="logo">レイやん</span>
+    © 2026 レイやん / site by damegane　この頁は試作です
+    <div class="timebar" id="timebar" aria-label="時間帯をためす(試作用)">
+      <button data-t="auto">いまの時間</button><button data-t="morning">朝</button><button data-t="noon">昼</button><button data-t="evening">夕方</button><button data-t="night">夜</button>
+    </div>
+  </footer>
+</main>
+
+<script src="./lib/confetti.browser.js"></script>
+<script>
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = s => document.querySelector(s);
+const store = { get(k, d) { try { return JSON.parse(localStorage.getItem(k) || 'null') ?? d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+
+/* ---------- 音(最初は無音) ---------- */
+let soundOn = store.get('rayyan-sound', false), ac = null;
+const audio = () => { if (!ac) ac = new (window.AudioContext || window.webkitAudioContext)(); ac.resume(); return ac; };
+function setSound(on) { soundOn = on; store.set('rayyan-sound', on); $('#soundBtn').textContent = on ? '🔊 音あり' : '🔈 音をつける'; $('#soundBtn').setAttribute('aria-pressed', String(on)); }
+$('#soundBtn').onclick = () => setSound(!soundOn); setSound(soundOn);
+function beep(f, t, d, v, type) {
+  if (!soundOn) return;
+  try { const c = audio(), o = c.createOscillator(), g = c.createGain(), s = c.currentTime + (t || 0);
+    o.type = type || 'square'; o.frequency.value = f; g.gain.setValueAtTime(v || .04, s); g.gain.exponentialRampToValueAtTime(.0001, s + d);
+    o.connect(g).connect(c.destination); o.start(s); o.stop(s + d + .05); } catch (e) {}
+}
+/* 録音した声を置けば鳴る(空なら効果音) */
+const VOICES = { greet: { morning: '', noon: '', evening: '', night: '' }, score: { 1: '', 2: '', 3: '', 4: '', 5: '' } };
+let player = null;
+function playVoice(src, fb) { if (!soundOn) return; if (player) player.pause(); if (src) { player = new Audio(src); player.play().catch(() => fb && fb()); } else if (fb) fb(); }
+
+/* ---------- 時間帯: あいさつと看板が変わる ---------- */
+const TIMES = {
+  morning: { greet: 'おはよう。今日もゆるっといこう。', sign: '仕込み中' },
+  noon:    { greet: 'お、昼から来たの? ゆっくりしてって。', sign: '昼営業中' },
+  evening: { greet: 'そろそろ、一杯いきますか。', sign: '営業中' },
+  night:   { greet: '今夜も、歌って飲んでしゃべろう。', sign: '深夜営業中' }
+};
+const nowSlot = () => { const h = new Date().getHours(); return h >= 5 && h < 10 ? 'morning' : h >= 10 && h < 16 ? 'noon' : h >= 16 && h < 19 ? 'evening' : 'night'; };
+let pinned = null;
+function applyTime(t) {
+  const s = t || nowSlot();
+  $('#greet').textContent = TIMES[s].greet; $('#signText').textContent = TIMES[s].sign;
+  document.querySelectorAll('#timebar button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === (t || 'auto'))));
+}
+$('#timebar').onclick = e => { const b = e.target.closest('button'); if (!b) return; pinned = b.dataset.t === 'auto' ? null : b.dataset.t; applyTime(pinned); };
+applyTime(null); setInterval(() => !pinned && applyTime(null), 60000);
+$('#greetVoice').onclick = () => { if (!soundOn) setSound(true); const s = pinned || nowSlot(); playVoice(VOICES.greet[s], () => { beep(660, 0, .25, .05, 'triangle'); beep(880, .14, .35, .05, 'triangle'); }); };
+/* 配信中(見本: URLの最後に ?onair) */
+if (new URLSearchParams(location.search).has('onair')) { $('#onair').hidden = false; $('#sign').hidden = true; }
+
+/* ---------- 見出しが記号から組み上がる ---------- */
+const GLYPH = '▚▞▟▙■□◆◇／＼＃＊＋※＝';
+function decode(el) {
+  if (el.dataset.done) return; el.dataset.done = 1;
+  const text = el.dataset.text || el.textContent; el.dataset.text = text;
+  if (reduced) { el.textContent = text; return; }
+  const chars = [...text], n = chars.length, dur = 520 + n * 40, t0 = performance.now();
+  (function f(t) {
+    const p = Math.min(1, (t - t0) / dur), fixed = Math.floor(p * n * 1.15);
+    el.textContent = chars.map((c, i) => c === ' ' ? ' ' : i < fixed ? c : GLYPH[(Math.random() * GLYPH.length) | 0]).join('');
+    if (p < 1) requestAnimationFrame(f); else el.textContent = text;
+  })(t0);
+}
+document.querySelectorAll('[data-decode]').forEach(el => { el.dataset.text = el.textContent; if (!reduced) el.textContent = [...el.textContent].map(c => c === ' ' ? ' ' : '　').join(''); });
+
+/* 見えたら: 見出し → 少し間 → 中身 */
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (!e.isIntersecting) return; io.unobserve(e.target);
+  e.target.classList.add('on'); e.target.querySelectorAll('[data-decode]').forEach(decode);
+}), { threshold: .18 });
+document.querySelectorAll('.sec').forEach(s => io.observe(s));
+
+/* ---------- 開幕: シャッター ---------- */
+const sh = $('#shutter'); let opened = false;
+function openShop(withSound) {
+  if (opened) return; opened = true; sh.classList.add('up');
+  if (withSound) { for (let i = 0; i < 9; i++) beep(140 + Math.random() * 40, i * .1, .06, .05, 'sawtooth'); }
+  setTimeout(() => { $('.hero').classList.add('on'); decode($('.hero h1')); }, reduced ? 0 : 750);
+}
+sh.addEventListener('click', () => openShop(true));
+if (reduced) openShop(false); else setTimeout(() => openShop(false), 3800);
+
+/* ---------- 今夜の採点(★1〜★5) ---------- */
+const MENU = [
+  { s: 1, w: 30, lo: 62, hi: 79, rank: 'まだまだ、これから', line: '音程どこに置いてきた? ……でも楽しそうだったから、よし!' },
+  { s: 2, w: 30, lo: 80, hi: 88, rank: 'なかなか、やるじゃん', line: 'お、いいね。次は一緒にハモろうか。' },
+  { s: 3, w: 22, lo: 89, hi: 94, rank: 'うまい!', line: 'うまいじゃん! 今夜の一杯目は、おごり。' },
+  { s: 4, w: 15, lo: 95, hi: 99, rank: 'ガチのやつ', line: 'え、ガチじゃん。ちょっとマイク置いて拍手させて。' },
+  { s: 5, w: 3,  lo: 100, hi: 100, rank: '100点!! 今夜の主役', line: '100点!? もう今夜の主役はきみ。ゴリラ全員で胸たたいて祝うわ。' }
+];
+$('#rates').innerHTML = MENU.map(m => m.s === 5 ? `<b>★5 ${m.w}%</b>` : `★${m.s} ${m.w}%`).join(' / ');
+const KEY = 'rayyan-score', dayKey = () => { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
+const mic = $('#mic'), scr = $('#screen'), numEl = $('#num');
+let current = null, force5 = false;
+const pick = () => { if (force5) { force5 = false; return MENU[4]; } let r = Math.random() * 100; for (const m of MENU) if ((r -= m.w) < 0) return m; return MENU[0]; };
+const untilTomorrow = () => { const n = new Date(), m = new Date(n); m.setHours(24, 0, 0, 0); return `${Math.floor((m - n) / 36e5)}時間${Math.floor((m - n) / 6e4) % 60}分`; };
+function fill(m, score) {
+  current = { ...m, score };
+  $('#stars').innerHTML = [1, 2, 3, 4, 5].map(i => `<span${i <= m.s ? ' class="on"' : ''}>★</span>`).join('');
+  $('#rank').textContent = m.rank; $('#line').textContent = m.line; numEl.textContent = score;
+  mic.disabled = true; mic.textContent = '今夜はもう歌ったよ'; $('#next').textContent = `次の採点は、あした(あと${untilTomorrow()})`;
+}
+function sing(m) {
+  const score = m.lo + Math.floor(Math.random() * (m.hi - m.lo + 1));
+  scr.className = 'screen show rolling'; $('#after').classList.remove('show');
+  $('#stars').innerHTML = ''; $('#rank').textContent = ''; $('#line').textContent = '';
+  mic.disabled = true; mic.textContent = '採点中…';
+  if (reduced) { fill(m, score); scr.className = 'screen show done' + (m.s === 5 ? ' perfect' : ''); $('#after').classList.add('show'); return; }
+  // 数字が速く回って、だんだんゆっくり止まる(ドラムロール)
+  const T = 2600, t0 = performance.now(); let lastTick = 0;
+  (function f(t) {
+    const p = Math.min(1, (t - t0) / T), ease = 1 - Math.pow(1 - p, 3);
+    numEl.textContent = p < 1 ? Math.max(0, Math.round(score * ease + (1 - p) * (Math.random() * 30 - 15))) : score;
+    if (t - lastTick > 40 + p * 160) { lastTick = t; beep(300 + p * 500, 0, .03, .03); }
+    if (p < 1) return requestAnimationFrame(f);
+    fill(m, score); scr.classList.remove('rolling'); scr.classList.add('done');
+    if (m.s === 5) {
+      scr.classList.add('perfect');
+      const r = scr.getBoundingClientRect(), o = { x: .5, y: (r.top + 60) / innerHeight };
+      const opt = { colors: ['#ffd500', '#0d0d0d', '#f5f3ee'], shapes: ['square'], disableForReducedMotion: true, zIndex: 80 };
+      if (window.confetti) { confetti({ ...opt, origin: o, particleCount: 110, spread: 90, startVelocity: 45 }); confetti({ ...opt, origin: { x: 0, y: .9 }, angle: 60, particleCount: 50, spread: 50, startVelocity: 60 }); confetti({ ...opt, origin: { x: 1, y: .9 }, angle: 120, particleCount: 50, spread: 50, startVelocity: 60 }); }
+    }
+    playVoice(VOICES.score[m.s], () => { [523, 659, 784, 1047].slice(0, m.s >= 4 ? 4 : m.s >= 2 ? 3 : 2).forEach((fq, i) => beep(fq, i * .1, .35, .05, 'triangle')); });
+    setTimeout(() => $('#after').classList.add('show'), 500);
+  })(t0);
+}
+mic.onclick = () => { if (mic.disabled) return; const m = pick(); sing(m); setTimeout(() => current && store.set(KEY, { day: dayKey(), s: current.s, score: current.score }), 2800); };
+$('#replay').onclick = () => { if (!soundOn) setSound(true); if (current) playVoice(VOICES.score[current.s], () => beep(784, 0, .3, .05, 'triangle')); };
+$('#share').onclick = () => {
+  if (!current) return;
+  const text = `レイやんの採点で ${current.score}点(★${current.s})でした🎤 #レイやんの採点`, url = location.origin + location.pathname;
+  if (navigator.share) navigator.share({ text, url }).catch(() => {}); else window.open('https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url), '_blank', 'noopener');
+};
+function reset() { store.set(KEY, null); current = null; scr.className = 'screen'; $('#after').classList.remove('show'); mic.disabled = false; mic.textContent = '🎤 歌って採点してもらう'; $('#next').textContent = ''; }
+$('#reset').onclick = reset;
+$('#force5').onclick = () => { reset(); force5 = true; mic.click(); };
+(() => { const s = store.get(KEY, null); if (s && s.day === dayKey()) { const m = MENU.find(x => x.s === s.s); if (m) { fill(m, s.score); scr.className = 'screen show done' + (m.s === 5 ? ' perfect' : ''); $('#after').classList.add('show'); } } })();
+</script>
+</body>
+</html>
