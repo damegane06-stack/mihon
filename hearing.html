@@ -97,6 +97,8 @@ input:focus-visible,textarea:focus-visible{outline:2.5px solid var(--accent);out
 
 .sample-link{font-size:12px;color:var(--accent)}
 .note{font-size:11.5px;color:var(--sub);margin-top:10px}
+.base{background:#fff;border:1px dashed #cfc8bd;border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:12px;line-height:1.8}
+.base b{font-size:12.5px}
 
 /* 仕上げ */
 .done{text-align:center;margin-top:34px}
@@ -172,6 +174,7 @@ footer{margin-top:60px;text-align:center;font-size:11px;color:var(--sub)}
       <button class="card"><b>深夜のラジオ局</b><small>静かな夜に、声だけで</small></button>
       <button class="card"><b>遊園地</b><small>カラフルで、たのしい</small></button>
       <button class="card"><b>図書館・書斎</b><small>静かで、ていねい</small></button>
+      <button class="card"><b>ゲーム画面・電脳空間</b><small>かっこよく、近未来</small></button>
       <button class="card"><b>おまかせ</b><small>話しながら決めたい</small></button>
       <button class="card"><b>ほかの場所</b><small>下に書いてください</small></button>
     </div>
@@ -211,7 +214,15 @@ footer{margin-top:60px;text-align:center;font-size:11px;color:var(--sub)}
     <div class="chips" data-group="sample">
       <button class="chip">夜のバー(BAR LILAS)</button><button class="chip">雪と静寂(雪浦とわ)</button>
       <button class="chip">硬質クール(REIJI)</button><button class="chip">ポップかわいい(星野ぽむ)</button>
+      <button class="chip">喫茶店(甘やかし喫茶)</button><button class="chip">ゲーム・サイバー(NOCTO)</button>
       <button class="chip">どれでもない</button>
+    </div>
+    <h3>動きの好み<span class="opt">ひとつ</span></h3>
+    <div class="cards" data-group="motion">
+      <button class="card"><b>静か</b><small>ふだんは止まっていて、切り替わる瞬間だけ動く</small></button>
+      <button class="card"><b>ほどほど</b><small>出てくるときに動いて、あとは落ち着く</small></button>
+      <button class="card"><b>にぎやか</b><small>いつもどこかが動いている</small></button>
+      <button class="card"><b>おまかせ</b><small>雰囲気に合わせて決めてほしい</small></button>
     </div>
   </section>
 
@@ -247,6 +258,19 @@ footer{margin-top:60px;text-align:center;font-size:11px;color:var(--sub)}
     <div class="field">
       <label for="introMsg">見に来てくれた人へ、ひとこと</label>
       <input type="text" id="introMsg" placeholder="例: ふらっと寄ってくれたらうれしいです">
+    </div>
+
+    <div class="field">
+      <label for="anniv">記念日(誕生日・活動を始めた日など。その日だけサイトがお祝い仕様になります)</label>
+      <input type="text" id="anniv" placeholder="例: 誕生日 4/12、活動開始 2024/4/1">
+    </div>
+    <div class="field">
+      <label for="sched">配信の曜日と時間(決まっていれば)</label>
+      <input type="text" id="sched" placeholder="例: 月・水・金の22時から/不定期">
+    </div>
+    <div class="field">
+      <label for="videos">おすすめしたい動画のURL(あれば。1行に1つ)</label>
+      <textarea id="videos" placeholder="例: https://www.youtube.com/watch?v=..."></textarea>
     </div>
 
     <h3>リンク</h3>
@@ -302,16 +326,19 @@ footer{margin-top:60px;text-align:center;font-size:11px;color:var(--sub)}
   <section class="q" data-q>
     <p class="qno">Q6</p>
     <h2>追加したいもの</h2>
-    <p class="hint">気になるものに。料金は、あとでまとめてお伝えします。<br>📗 がついたものは、完成後もGoogleスプレッドシートでご自身で更新できます。</p>
+    <div class="base">
+      <p><b>基本(どのサイトにも入っています)</b></p>
+      <p>世界観デザイン/自己紹介/リンク・マシュマロの入口/スマホ対応/開幕演出/時間帯で変わる演出(朝・昼・夕方・夜)/ON AIR表示/記念日モード/おすすめ動画(ある方のみ)</p>
+    </div>
+    <p class="hint">ここから下は追加できるものです。気になるものに。料金は、あとでまとめてお伝えします。<br>📗 がついたものは、完成後もGoogleスプレッドシートでご自身で更新できます。</p>
     <div class="cards" data-group="options" data-multi>
+      <button class="card"><b>🎰 ボイスくじ</b><small>1日1回、あなたの声で。結果はSNSでシェアできる</small></button>
       <button class="card"><b>🎤 歌リスト</b><small>検索・あいうえお絞り込み・ランダム1曲 📗</small></button>
-      <button class="card"><b>🎰 ボイスくじ</b><small>1日1回、あなたの声で。おみくじ型・ガチャ型</small></button>
-      <button class="card"><b>🕰 配信カウントダウン</b><small>次の配信まであと◯時間(定時配信の方向け)</small></button>
-      <button class="card"><b>📜 年譜</b><small>大会・周年・イベントの記録 📗</small></button>
-      <button class="card"><b>🎬 動画</b><small>YouTubeの動画を並べて、その場で再生 📗</small></button>
-      <button class="card"><b>🛍 グッズ・BOOTH</b><small>ボイスやグッズの商品を並べる 📗</small></button>
+      <button class="card"><b>🎫 常連さんカード</b><small>来るたびにスタンプ。たまるとひみつのメッセージ</small></button>
+      <button class="card"><b>🎙 あいさつボイス</b><small>時間帯ごとに、あなたの声であいさつ</small></button>
       <button class="card"><b>🎵 BGM</b><small>ボタンで流れる、サイトの音楽</small></button>
-      <button class="card"><b>✨ 開幕演出</b><small>ひらいた瞬間のアニメーション</small></button>
+      <button class="card"><b>🛍 グッズ・BOOTH</b><small>ボイスやグッズの商品を並べる 📗</small></button>
+      <button class="card"><b>🖼 キャラ絵の差し替え</b><small>時間帯や記念日でイラストが変わる(絵はご用意ください)</small></button>
       <button class="card"><b>まだわからない</b><small>話しながら決めたい</small></button>
     </div>
 
@@ -320,16 +347,15 @@ footer{margin-top:60px;text-align:center;font-size:11px;color:var(--sub)}
       <div class="chips" data-group="kujiType">
         <button class="chip">おみくじ型(大吉〜末吉)</button><button class="chip">ガチャ型(★1〜★5)</button><button class="chip">おまかせ</button>
       </div>
+      <h3>くじの出し方<span class="opt">ひとつ</span></h3>
+      <div class="chips" data-group="kujiShow">
+        <button class="chip">世界観に合わせておまかせ</button><button class="chip">伝票・レシート</button><button class="chip">ケーキを食べる</button><button class="chip">補給物資が届く</button><button class="chip">相談したい</button>
+      </div>
       <h3>くじのセリフ<span class="opt">ひとつ</span></h3>
       <div class="chips" data-group="kujiLines">
         <button class="chip">自分で考える</button><button class="chip">テンプレから選びたい</button><button class="chip">相談したい</button>
       </div>
       <p class="note">🎙 声の<b>録音はご自身でお願いします</b>(スマホの録音でもOK)。セリフの数や長さは、相談して決めます。</p>
-    </div>
-
-    <div class="field" data-when="options|🕰 配信カウントダウン" hidden style="margin-top:12px">
-      <label for="schedTime">毎週の配信の曜日と時間</label>
-      <input type="text" id="schedTime" placeholder="例: 月・水・金の22時から">
     </div>
 
     <div class="field" style="margin-top:12px">
@@ -371,7 +397,7 @@ footer{margin-top:60px;text-align:center;font-size:11px;color:var(--sub)}
 </main>
 
 <script>
-const KEY = 'mihon-hearing-v1';
+const KEY = 'mihon-hearing-v2';
 const groups = [...document.querySelectorAll('[data-group]')];
 const fields = [...document.querySelectorAll('main input[id], main textarea[id]')];
 /* 「その他」を選んだときだけ自由記入欄を出す */
@@ -467,12 +493,16 @@ function summary() {
     line('雰囲気', g.mood),
     line('好きな色', g.color),
     line('近い見本', g.sample),
+    line('動きの好み', g.motion),
     line('なしでお願い', ng),
     '',
     '■ 自己紹介',
     line('好きなもの', f.introLike),
     line('どんな配信', f.introStream),
     line('ひとこと', f.introMsg),
+    line('記念日', f.anniv),
+    line('配信の曜日・時間', f.sched),
+    line('おすすめ動画', f.videos),
     '',
     '■ リンク',
     line('X', f.xid ? '@' + f.xid.replace(/^[@＠]/, '') : ''),
@@ -485,8 +515,8 @@ function summary() {
     line('追加したいもの', (g.options || []).map(v => v.replace(/^\S+\s/, ''))),
     line('ほかに欲しい機能', f.optOther),
     line('くじの型', g.kujiType),
+    line('くじの出し方', g.kujiShow),
     line('くじのセリフ', g.kujiLines),
-    line('配信の曜日・時間', f.schedTime),
     line('参考', f.ref),
     line('希望時期', g.when),
     '',
