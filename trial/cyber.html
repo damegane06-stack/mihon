@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="noindex">
+<title>NOCTO // STREAMER PROFILE | 試作</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   サイバー / ゲーム配信者向け 見本サイト(架空の配信者「宵闇ノクト」)
+   軽さのルール: 動かすのは transform と opacity だけ。
+   背景の流れは 1/16 サイズのキャンバスで描いて、拡大して使う。
+   画面に見えていない・タブが裏にあるときは止める。
+   ============================================================ */
+:root{
+  --bg:#06080c;
+  --panel:rgba(12,16,23,.86);
+  --line:rgba(212,255,58,.38);
+  --acc:#d4ff3a;     /* ライム: 主役の色 */
+  --cy:#38e8ff;      /* シアン */
+  --mg:#ff3d7f;      /* マゼンタ: 警告・LIVE */
+  --tx:#e9eef5;
+  --sub:#8792a2;
+  --cut:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--bg);color-scheme:dark;overflow-x:clip;scroll-behavior:smooth}
+body{color:var(--tx);background:var(--bg);font-family:'Zen Kaku Gothic New',sans-serif;font-weight:500;line-height:1.8;letter-spacing:.03em;-webkit-font-smoothing:antialiased}
+.en{font-family:'Chakra Petch',sans-serif;letter-spacing:.08em}
+button{font:inherit;color:inherit}
+
+/* ---------- 背景: 流れるインク(低解像度キャンバスを拡大) ---------- */
+#flow{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.9}
+.scan{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px),
+             radial-gradient(120% 90% at 50% 40%,transparent 55%,rgba(0,0,0,.65));}
+/* 画面のふち: HUDの枠 */
+.frame{position:fixed;inset:10px;z-index:3;pointer-events:none}
+.frame i{position:absolute;width:22px;height:22px;border:2px solid var(--acc);opacity:.75}
+.frame i:nth-child(1){left:0;top:0;border-right:0;border-bottom:0}
+.frame i:nth-child(2){right:0;top:0;border-left:0;border-bottom:0}
+.frame i:nth-child(3){left:0;bottom:0;border-right:0;border-top:0}
+.frame i:nth-child(4){right:0;bottom:0;border-left:0;border-top:0}
+.topbar{position:fixed;top:0;left:0;right:0;padding:14px 42px 22px;background:linear-gradient(rgba(6,8,12,.92) 55%,transparent);z-index:4;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--sub);pointer-events:none}
+.topbar b{color:var(--acc);font-weight:700}
+.topbar .live{color:var(--mg)}
+#soundBtn{pointer-events:auto;cursor:pointer;background:rgba(6,8,12,.8);border:1px solid var(--line);padding:3px 10px;font-size:11px;color:var(--tx)}
+#soundBtn[aria-pressed="true"]{border-color:var(--acc);color:var(--acc)}
+
+main{position:relative;z-index:2;max-width:720px;margin:0 auto;padding:0 18px 120px}
+
+/* ---------- 起動画面 ---------- */
+#boot{position:fixed;inset:0;z-index:50;background:#030406;display:flex;flex-direction:column;justify-content:center;padding:0 10vw;cursor:pointer;
+  font-family:'Chakra Petch',monospace;font-size:13px;color:var(--acc);transition:visibility 0s .9s}
+#boot p{opacity:0;white-space:pre}
+#boot p.on{opacity:1}
+#boot p .ok{color:var(--cy)}
+#boot .bar{margin-top:14px;height:3px;background:rgba(212,255,58,.15);max-width:340px;overflow:hidden}
+#boot .bar i{display:block;height:100%;width:100%;background:var(--acc);transform:scaleX(0);transform-origin:left;transition:transform 1.4s cubic-bezier(.6,0,.2,1)}
+#boot.load .bar i{transform:scaleX(1)}
+#boot .skip{position:absolute;bottom:28px;right:28px;font-size:11px;color:var(--sub)}
+/* 抜けるとき: 上下に割れて開く */
+#boot::before,#boot::after{content:"";position:absolute;left:0;right:0;height:50%;background:#030406;z-index:-1;transition:transform .8s cubic-bezier(.7,0,.2,1)}
+#boot::before{top:0}#boot::after{bottom:0}
+#boot.out{visibility:hidden;background:transparent}
+#boot.out p,#boot.out .bar,#boot.out .skip{opacity:0;transition:opacity .15s}
+#boot.out::before{transform:translateY(-101%)}
+#boot.out::after{transform:translateY(101%)}
+
+/* ---------- パネル(角を切ったHUDの箱) ---------- */
+.panel{position:relative;padding:1px;background:linear-gradient(135deg,var(--acc),rgba(212,255,58,.15) 40%,rgba(56,232,255,.35));
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
+.panel>.in{background:var(--panel);padding:20px 18px;height:100%;
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
+.tag{display:inline-flex;align-items:center;gap:8px;font-family:'Chakra Petch',sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--bg);background:var(--acc);padding:1px 10px 1px 8px}
+.tag.cy{background:var(--cy)}.tag.mg{background:var(--mg);color:#fff}
+
+/* 飛んでくる: 奥から斜めに滑りこむ。見えたら1回だけ */
+.fly{opacity:0;transform:perspective(900px) translate3d(0,70px,-160px) rotateX(24deg) rotateY(-12deg);transition:opacity .7s ease var(--d,0s),transform 1s cubic-bezier(.16,.84,.24,1) var(--d,0s)}
+.fly.r{transform:perspective(900px) translate3d(0,70px,-160px) rotateX(24deg) rotateY(12deg)}
+.fly.in{opacity:1;transform:none}
+/* マウスで少し傾く(PCだけ) */
+.tilt.in{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))}
+.tilt.done{transition:transform .25s ease-out}
+
+/* ---------- 見出し ---------- */
+section{margin-top:110px}
+.head{display:flex;align-items:flex-end;gap:12px;margin-bottom:22px}
+.head .no{font-family:'Chakra Petch',sans-serif;font-size:54px;font-weight:700;line-height:.8;color:transparent;-webkit-text-stroke:1px var(--acc);opacity:.85}
+.head h2{font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:24px;line-height:1.1;letter-spacing:.06em}
+.head h2 small{display:block;font-family:'Chakra Petch',sans-serif;font-size:11px;letter-spacing:.3em;color:var(--acc);margin-bottom:6px}
+.head::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent);margin-bottom:8px}
+
+/* ---------- ヒーロー ---------- */
+.hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;position:relative;padding-top:40px}
+.rings{position:absolute;left:50%;top:46%;width:min(118vw,620px);aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none;opacity:.8}
+.rings svg{width:100%;height:100%;overflow:visible}
+.rings .r1{transform-origin:50% 50%;animation:spin 46s linear infinite}
+.rings .r2{transform-origin:50% 50%;animation:spin 30s linear infinite reverse}
+.rings .r3{transform-origin:50% 50%;animation:spin 70s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hero .kicker{font-size:11px;color:var(--acc);letter-spacing:.4em;text-indent:.4em}
+.glitch{position:relative;font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:clamp(56px,17vw,112px);line-height:1;letter-spacing:.02em;margin:14px 0 4px}
+.glitch::before,.glitch::after{content:attr(data-t);position:absolute;inset:0;pointer-events:none}
+.glitch::before{color:var(--cy);transform:translate(-3px,0);clip-path:inset(0 0 100% 0);animation:g1 5s steps(1) infinite}
+.glitch::after{color:var(--mg);transform:translate(3px,0);clip-path:inset(100% 0 0 0);animation:g2 5s steps(1) infinite}
+@keyframes g1{0%,91%,100%{clip-path:inset(0 0 100% 0)}92%{clip-path:inset(10% 0 62% 0)}94%{clip-path:inset(55% 0 20% 0)}96%{clip-path:inset(30% 0 48% 0)}}
+@keyframes g2{0%,91%,100%{clip-path:inset(100% 0 0 0)}93%{clip-path:inset(70% 0 8% 0)}95%{clip-path:inset(22% 0 60% 0)}97%{clip-path:inset(5% 0 80% 0)}}
+.hero .jp{font-family:'Dela Gothic One',sans-serif;font-size:16px;letter-spacing:.5em;text-indent:.5em}
+.hero .lead{margin-top:18px;font-size:14px;color:#c9d2de}
+.status{margin-top:26px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:min(100%,460px)}
+.status div{border:1px solid rgba(212,255,58,.25);background:rgba(6,8,12,.6);padding:8px 6px;text-align:left}
+.status small{display:block;font-family:'Chakra Petch',sans-serif;font-size:9.5px;letter-spacing:.18em;color:var(--sub)}
+.status b{font-family:'Chakra Petch',sans-serif;font-size:17px;font-weight:700;color:var(--tx)}
+.onair{margin-top:20px;display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:13px;letter-spacing:.16em;color:#fff;background:var(--mg);padding:8px 18px;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%)}
+.onair i{width:8px;height:8px;border-radius:50%;background:#fff;animation:blink 1s steps(2) infinite}
+.offair{margin-top:20px;font-family:'Chakra Petch',sans-serif;font-size:12px;letter-spacing:.2em;color:var(--sub);border:1px solid rgba(135,146,162,.4);padding:6px 16px}
+@keyframes blink{50%{opacity:.2}}
+.cue{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);font-size:10px;letter-spacing:.3em;color:var(--sub)}
+.cue::after{content:"";display:block;width:1px;height:28px;background:var(--acc);margin:6px auto 0;transform-origin:top;animation:cue 1.8s ease-in-out infinite}
+@keyframes cue{0%{transform:scaleY(0)}50%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+
+/* ---------- プレイヤーカード ---------- */
+.card-grid{display:grid;gap:12px}
+.pc{display:flex;gap:16px;align-items:center}
+.avatar{width:92px;height:92px;flex-shrink:0;position:relative;clip-path:polygon(0 0,80% 0,100% 20%,100% 100%,20% 100%,0 80%);background:linear-gradient(135deg,#1b2433,#0b0f16);display:grid;place-items:center}
+.avatar::after{content:"ICON";font-family:'Chakra Petch',sans-serif;font-size:10px;letter-spacing:.3em;color:var(--sub)}
+.avatar::before{content:"";position:absolute;inset:0;border:1px solid var(--acc);clip-path:inherit}
+.pc h3{font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:22px;line-height:1.3}
+.pc .id{font-size:11px;color:var(--acc)}
+.pc p{font-size:13px;color:#c9d2de;margin-top:4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.chips span{font-size:11.5px;font-weight:700;border:1px solid rgba(56,232,255,.45);color:var(--cy);padding:1px 10px;background:rgba(56,232,255,.06)}
+.stats{margin-top:16px;display:grid;gap:9px}
+.stat{display:grid;grid-template-columns:76px 1fr 42px;align-items:center;gap:10px;font-size:12px}
+.stat .en{font-size:11px;color:var(--sub)}
+.stat .bar{height:8px;background:rgba(255,255,255,.06);position:relative;overflow:hidden}
+.stat .bar i{position:absolute;inset:0;background:repeating-linear-gradient(90deg,var(--acc) 0 6px,transparent 6px 8px);transform:scaleX(0);transform-origin:left;transition:transform 1.4s cubic-bezier(.2,.8,.2,1) var(--d,0s)}
+.in .stat .bar i{transform:scaleX(var(--v))}
+.stat b{font-family:'Chakra Petch',sans-serif;text-align:right;color:var(--acc)}
+.stat.over .bar i{background:repeating-linear-gradient(90deg,var(--mg) 0 6px,transparent 6px 8px)}
+.stat.over b{color:var(--mg)}
+.quote{margin-top:16px;padding:12px 14px;border-left:3px solid var(--acc);background:rgba(212,255,58,.06);font-size:13.5px;font-weight:700}
+
+/* ---------- 配信スケジュール ---------- */
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.day{text-align:center;padding:10px 2px 8px;border:1px solid rgba(255,255,255,.08);background:rgba(6,8,12,.5)}
+.day small{display:block;font-family:'Chakra Petch',sans-serif;font-size:10px;letter-spacing:.12em;color:var(--sub)}
+.day b{display:block;font-family:'Chakra Petch',sans-serif;font-size:14px;margin:4px 0}
+.day span{display:block;font-size:10px;line-height:1.5;color:#c9d2de}
+.day.off b{color:var(--sub)}
+.day.today{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.day.today small{color:var(--acc)}
+.note{font-size:11px;color:var(--sub);margin-top:10px}
+
+/* ---------- サプライドロップ(1日1回のボイスくじ) ---------- */
+.drop{text-align:center}
+.drop .lead2{font-size:13px;color:#c9d2de}
+.callbtn{margin-top:18px;width:100%;cursor:pointer;border:none;background:var(--acc);color:var(--bg);font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:16px;letter-spacing:.2em;padding:15px;
+  clip-path:polygon(14px 0,100% 0,calc(100% - 14px) 100%,0 100%);transition:transform .1s}
+.callbtn:active{transform:scale(.98)}
+.callbtn:disabled{background:#2a313c;color:var(--sub);cursor:default}
+.callbtn:focus-visible{outline:2px solid var(--cy);outline-offset:3px}
+.rates{margin-top:10px;font-family:'Chakra Petch',sans-serif;font-size:10.5px;color:var(--sub);letter-spacing:.06em}
+.rates b{color:#ffcf3a}
+.pad{position:relative;overflow:hidden;height:0;margin-top:0;transition:height .4s ease}
+.pad.open{height:250px;margin-top:22px}
+.pad .crate{position:absolute;left:50%;top:0;width:120px;margin-left:-60px;transform:translateY(-320px);opacity:0}
+.pad.fall .crate{animation:fall .75s cubic-bezier(.5,0,.75,0) forwards,land .5s ease-out .75s}
+@keyframes fall{0%{transform:translateY(-320px);opacity:1}100%{transform:translateY(96px);opacity:1}}
+@keyframes land{0%{transform:translateY(96px) scale(1.12,.86)}50%{transform:translateY(92px) scale(.96,1.05)}100%{transform:translateY(96px)}}
+.pad.shake .crate{transform:translateY(96px);opacity:1;animation:rattle .09s linear infinite}
+@keyframes rattle{25%{transform:translate(-2px,96px) rotate(-1.5deg)}75%{transform:translate(2px,96px) rotate(1.5deg)}}
+.pad.opened .crate{transform:translateY(96px);opacity:1}
+.pad .lid{transform-box:fill-box;transform-origin:0 100%;transition:transform .5s cubic-bezier(.3,1.6,.5,1)}
+.pad.opened .lid{transform:translate(-18px,-30px) rotate(-38deg)}
+.pad .shock{position:absolute;left:50%;top:200px;width:220px;height:44px;margin-left:-110px;border:2px solid var(--acc);border-radius:50%;opacity:0;transform:scale(.2)}
+.pad.fall .shock{animation:shock .6s ease-out .75s}
+@keyframes shock{0%{opacity:.9;transform:scale(.2)}100%{opacity:0;transform:scale(1.4)}}
+.beam{position:absolute;left:50%;bottom:52px;width:90px;margin-left:-45px;height:240px;transform-origin:bottom;transform:scaleY(0);opacity:0;
+  background:linear-gradient(0deg,var(--rc),transparent);mix-blend-mode:screen}
+.pad.opened .beam{animation:beam 1.1s ease-out forwards}
+@keyframes beam{0%{transform:scaleY(0);opacity:1}35%{transform:scaleY(1);opacity:1}100%{transform:scaleY(1.1);opacity:0}}
+.result{display:none;margin:18px auto 0;max-width:340px;text-align:left;position:relative}
+.result.show{display:block;animation:flip .7s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes flip{from{opacity:0;transform:perspective(700px) rotateY(-80deg) translateZ(40px)}to{opacity:1;transform:none}}
+.result .panel{background:linear-gradient(135deg,var(--rc),rgba(255,255,255,.08) 50%,var(--rc))}
+.result .rar{font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:12px;letter-spacing:.3em;color:var(--rc)}
+.result .item{font-family:'Dela Gothic One',sans-serif;font-size:22px;line-height:1.4;margin:2px 0 8px}
+.result .line{font-size:13.5px;color:#d6dde7}
+.result .who{display:block;font-size:10.5px;color:var(--sub);letter-spacing:.15em}
+.result.legend .item{color:#ffcf3a;text-shadow:0 0 18px rgba(255,207,58,.6)}
+.after{display:none;margin-top:14px;gap:8px;justify-content:center}
+.after.show{display:flex}
+.ghost{cursor:pointer;background:none;border:1px solid var(--line);color:var(--tx);font-size:12px;font-weight:700;padding:7px 14px}
+.ghost:active{background:rgba(212,255,58,.1)}
+.next{font-size:11.5px;color:var(--sub);margin-top:10px}
+.demo{display:block;margin:10px auto 0;background:none;border:none;color:var(--sub);font-size:11px;text-decoration:underline;cursor:pointer}
+#flash{position:fixed;inset:0;z-index:40;pointer-events:none;background:#fff;opacity:0}
+#flash.go{animation:flashA .6s ease-out}
+@keyframes flashA{0%{opacity:.75}100%{opacity:0}}
+
+/* ---------- クリップ ---------- */
+.clips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.clip{position:relative;aspect-ratio:16/9;cursor:pointer;border:none;padding:0;overflow:hidden;background:linear-gradient(135deg,#141b27,#0a0d13);clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%)}
+.clip:first-child{grid-column:1/-1}
+.clip::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,rgba(212,255,58,.05) 0 2px,transparent 2px 12px)}
+.clip .play{position:absolute;left:50%;top:50%;width:44px;height:44px;margin:-22px 0 0 -22px;border:1px solid var(--acc);display:grid;place-items:center;color:var(--acc);font-size:12px;transform:rotate(45deg);transition:transform .3s}
+.clip .play span{transform:rotate(-45deg)}
+.clip:hover .play{transform:rotate(135deg)}
+.clip .cap{position:absolute;left:0;right:0;bottom:0;padding:16px 10px 6px;text-align:left;font-size:11.5px;font-weight:700;background:linear-gradient(transparent,rgba(0,0,0,.8))}
+.clip .cap small{display:block;font-family:'Chakra Petch',sans-serif;font-size:9.5px;color:var(--acc);letter-spacing:.2em}
+
+/* ---------- 実績 ---------- */
+.ach{list-style:none;display:grid;gap:8px}
+.ach li{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;padding:10px 12px;background:rgba(6,8,12,.55);border:1px solid rgba(255,255,255,.07)}
+.ach .ic{width:44px;height:44px;display:grid;place-items:center;font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:13px;color:var(--bg);background:var(--acc);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.ach li.gold .ic{background:#ffcf3a}
+.ach li.lock{opacity:.45}
+.ach li.lock .ic{background:#2a313c;color:var(--sub)}
+.ach b{display:block;font-size:13.5px}
+.ach small{font-size:11px;color:var(--sub)}
+.ach .dt{font-family:'Chakra Petch',sans-serif;font-size:11px;color:var(--acc)}
+.ach li.lock .dt{color:var(--sub)}
+
+/* ---------- 接続(リンク) ---------- */
+.links{display:grid;gap:10px}
+.links a{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--tx);padding:14px 16px;background:rgba(6,8,12,.65);border:1px solid rgba(255,255,255,.1);position:relative;overflow:hidden;transition:border-color .2s}
+.links a::before{content:"";position:absolute;inset:0;background:var(--acc);transform:scaleX(0);transform-origin:left;transition:transform .35s cubic-bezier(.6,0,.2,1);z-index:-1}
+.links a{z-index:0}
+.links a:hover,.links a:focus-visible{border-color:var(--acc);color:var(--bg);outline:none}
+.links a:hover::before,.links a:focus-visible::before{transform:scaleX(1)}
+.links a .k{font-family:'Chakra Petch',sans-serif;font-size:11px;color:var(--sub);width:30px}
+.links a:hover .k,.links a:hover small{color:var(--bg)}
+.links a b{font-size:15px}
+.links a small{margin-left:auto;font-size:11px;color:var(--sub)}
+.links a.ask{border-color:var(--mg)}
+.links a.ask::before{background:var(--mg)}
+
+footer{margin-top:110px;text-align:center;font-size:11px;color:var(--sub);line-height:2.2}
+footer .logo{font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:16px;letter-spacing:.4em;color:var(--acc)}
+
+@media (min-width:760px){
+  .card-grid{grid-template-columns:1.3fr 1fr}
+  .clips{grid-template-columns:repeat(3,1fr)}
+  .clip:first-child{grid-column:1/3;grid-row:1/3;aspect-ratio:auto}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .fly{opacity:1;transform:none}
+  #boot{display:none}
+  .stat .bar i{transform:scaleX(var(--v))}
+}
+</style>
+</head>
+<body>
+<canvas id="flow" aria-hidden="true"></canvas>
+<div class="scan" aria-hidden="true"></div>
+<div class="frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<div class="topbar en" aria-hidden="false">
+  <span><b>NOCTO</b> // PROFILE <span id="clock">--:--:--</span></span>
+  <button id="soundBtn" aria-pressed="false">SOUND: OFF</button>
+</div>
+<div id="flash" aria-hidden="true"></div>
+
+<div id="boot" role="button" aria-label="タップしてスキップ">
+  <p>&gt; BOOT SEQUENCE ............ <span class="ok">OK</span></p>
+  <p>&gt; LOAD PROFILE: NOCTO ...... <span class="ok">OK</span></p>
+  <p>&gt; SYNC STREAM STATUS ........ <span class="ok" id="bootLive">OK</span></p>
+  <p>&gt; WELCOME, PLAYER.</p>
+  <div class="bar"><i></i></div>
+  <span class="skip">TAP TO SKIP</span>
+</div>
+
+<main>
+  <!-- ===== HERO ===== -->
+  <header class="hero">
+    <div class="rings" aria-hidden="true">
+      <svg viewBox="0 0 600 600">
+        <defs><path id="c1" d="M300 300m-262 0a262 262 0 1 1 524 0a262 262 0 1 1-524 0"/><path id="c2" d="M300 300m-212 0a212 212 0 1 1 424 0a212 212 0 1 1-424 0"/></defs>
+        <g class="r1"><text font-family="Chakra Petch" font-size="13" letter-spacing="6" fill="#d4ff3a" opacity=".55"><textPath href="#c1">STREAMER PROFILE // 01 PLAYER // 02 SCHEDULE // 03 SUPPLY DROP // 04 CLIPS // 05 RECORD // 06 CONNECT // </textPath></text></g>
+        <g class="r2"><circle cx="300" cy="300" r="236" fill="none" stroke="#38e8ff" stroke-width="1" stroke-dasharray="2 10" opacity=".55"/><text font-family="Chakra Petch" font-size="10" letter-spacing="4" fill="#8792a2"><textPath href="#c2">FPS // APEX LEGENDS // VALORANT // OVERWATCH 2 // CHILL TALK // FPS // APEX LEGENDS // VALORANT // </textPath></text></g>
+        <g class="r3"><circle cx="300" cy="300" r="290" fill="none" stroke="#d4ff3a" stroke-width="1" opacity=".25"/><path d="M300 10v24M300 566v24M10 300h24M566 300h24" stroke="#d4ff3a" stroke-width="2"/><circle cx="300" cy="10" r="4" fill="#ff3d7f"/></g>
+      </svg>
+    </div>
+    <p class="kicker en">FPS STREAMER</p>
+    <h1 class="glitch" data-t="NOCTO">NOCTO</h1>
+    <p class="jp">宵闇ノクト</p>
+    <p class="lead">夜更かしFPS配信。勝っても負けても、だいたい笑ってる。</p>
+    <div class="status en">
+      <div><small>FOLLOWERS</small><b data-count="12480">0</b></div>
+      <div><small>STREAMS</small><b data-count="386">0</b></div>
+      <div><small>MAIN</small><b>DUELIST</b></div>
+    </div>
+    <a class="onair" id="onair" href="#" target="_blank" rel="noopener" hidden><i></i>ON AIR — 配信をのぞく</a>
+    <p class="offair en" id="offair">OFFLINE // NEXT: <span id="nextStream">--</span></p>
+    <p class="cue en" aria-hidden="true">SCROLL</p>
+  </header>
+
+  <!-- ===== 01 PLAYER ===== -->
+  <section>
+    <div class="head fly"><span class="no">01</span><h2><small>PLAYER CARD</small>プレイヤー</h2></div>
+    <div class="card-grid">
+      <div class="panel fly tilt" style="--d:.05s"><div class="in">
+        <div class="pc">
+          <div class="avatar" aria-hidden="true"></div>
+          <div><span class="id en">ID: NOCTO_0412</span><h3>宵闇ノクト</h3><p>深夜の撃ち合いと、ゆるい雑談。初見さん大歓迎。</p></div>
+        </div>
+        <div class="chips"><span>APEX</span><span>VALORANT</span><span>OW2</span><span>雑談</span><span>ホラー少し</span></div>
+        <p class="quote">「コメント拾うの遅くても、ちゃんと全部読んでるよ」</p>
+      </div></div>
+      <div class="panel fly r tilt" style="--d:.18s"><div class="in">
+        <span class="tag">STATS</span>
+        <div class="stats">
+          <div class="stat"><span class="en">AIM</span><span class="bar"><i style="--v:.72;--d:.2s"></i></span><b>72</b></div>
+          <div class="stat"><span class="en">GAME IQ</span><span class="bar"><i style="--v:.84;--d:.3s"></i></span><b>84</b></div>
+          <div class="stat"><span class="en">TALK</span><span class="bar"><i style="--v:.9;--d:.4s"></i></span><b>90</b></div>
+          <div class="stat over"><span class="en">LOUD</span><span class="bar"><i style="--v:1;--d:.5s"></i></span><b>MAX</b></div>
+          <div class="stat"><span class="en">SLEEP</span><span class="bar"><i style="--v:.12;--d:.6s"></i></span><b>12</b></div>
+        </div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ===== 02 SCHEDULE ===== -->
+  <section>
+    <div class="head fly"><span class="no">02</span><h2><small>SCHEDULE</small>配信予定</h2></div>
+    <div class="panel fly" style="--d:.08s"><div class="in">
+      <div class="week" id="week"></div>
+      <p class="note">※ 時間は目安です。変更はXでお知らせします。</p>
+    </div></div>
+  </section>
+
+  <!-- ===== 03 SUPPLY DROP ===== -->
+  <section>
+    <div class="head fly"><span class="no">03</span><h2><small>SUPPLY DROP</small>今日の補給物資</h2></div>
+    <div class="panel fly r" style="--d:.08s"><div class="in drop">
+      <p class="lead2">1日1回、ノクトから補給物資が届きます。<br>レジェンダリーが出たら、特別なボイス。</p>
+      <button class="callbtn" id="call">▶ 補給を要請する</button>
+      <p class="rates" id="rates"></p>
+      <div class="pad" id="pad">
+        <div class="beam" aria-hidden="true"></div>
+        <div class="shock" aria-hidden="true"></div>
+        <svg class="crate" viewBox="0 0 120 100" aria-hidden="true">
+          <rect x="8" y="34" width="104" height="60" fill="#1a222e" stroke="#d4ff3a" stroke-width="2"/>
+          <path d="M8 52h104M8 76h104" stroke="#2c3747" stroke-width="2"/>
+          <path d="M20 34l18 60M100 34l-18 60" stroke="#2c3747" stroke-width="3"/>
+          <rect x="44" y="54" width="32" height="20" fill="#06080c" stroke="#d4ff3a" stroke-width="1.5"/>
+          <path d="M50 64h20" style="stroke:var(--rc,#d4ff3a)" stroke-width="3"/>
+          <g class="lid"><rect x="4" y="20" width="112" height="16" fill="#222c3a" stroke="#d4ff3a" stroke-width="2"/><path d="M16 28h88" stroke="#d4ff3a" stroke-width="2" stroke-dasharray="8 6"/></g>
+        </svg>
+      </div>
+      <div class="result" id="result" aria-live="polite">
+        <div class="panel"><div class="in">
+          <span class="rar" id="rar"></span>
+          <p class="item" id="item"></p>
+          <p class="line"><span class="who">NOCTO'S VOICE</span><span id="line"></span></p>
+        </div></div>
+      </div>
+      <div class="after" id="after"><button class="ghost" id="replay">▶ もう一度聞く</button><button class="ghost" id="share">共有する</button></div>
+      <p class="next" id="next"></p>
+      <p class="note">※ 試作のため、声のかわりに文字と効果音です。</p>
+      <button class="demo" id="reset">(試作用)もう一度要請する</button>
+      <button class="demo" id="forceL">(試作用)レジェンダリーを出す</button>
+    </div></div>
+  </section>
+
+  <!-- ===== 04 CLIPS ===== -->
+  <section>
+    <div class="head fly"><span class="no">04</span><h2><small>HIGHLIGHT CLIPS</small>おすすめ切り抜き</h2></div>
+    <div class="clips">
+      <button class="clip fly" style="--d:.05s"><span class="play"><span>▶</span></span><span class="cap"><small>CLIP 01</small>1v3クラッチ、声が裏返る</span></button>
+      <button class="clip fly r" style="--d:.15s"><span class="play"><span>▶</span></span><span class="cap"><small>CLIP 02</small>初ダイヤ到達の瞬間</span></button>
+      <button class="clip fly" style="--d:.25s"><span class="play"><span>▶</span></span><span class="cap"><small>CLIP 03</small>ホラーで3回叫ぶ</span></button>
+    </div>
+    <p class="note">※ 見本です。動画のURLを入れると、ここで再生できます。</p>
+  </section>
+
+  <!-- ===== 05 RECORD ===== -->
+  <section>
+    <div class="head fly"><span class="no">05</span><h2><small>ACHIEVEMENTS</small>これまでの実績</h2></div>
+    <ul class="ach" id="ach"></ul>
+  </section>
+
+  <!-- ===== 06 CONNECT ===== -->
+  <section>
+    <div class="head fly"><span class="no">06</span><h2><small>CONNECT</small>つながる</h2></div>
+    <div class="links">
+      <a class="fly" style="--d:.0s" href="#" target="_blank" rel="noopener"><span class="k">01</span><b>YouTube</b><small>配信・アーカイブ</small></a>
+      <a class="fly" style="--d:.08s" href="#" target="_blank" rel="noopener"><span class="k">02</span><b>Twitch</b><small>深夜はこっち</small></a>
+      <a class="fly" style="--d:.16s" href="#" target="_blank" rel="noopener"><span class="k">03</span><b>X</b><small>配信のお知らせ</small></a>
+      <a class="fly ask" style="--d:.24s" href="#" target="_blank" rel="noopener"><span class="k">04</span><b>マシュマロ</b><small>匿名で質問・リクエスト</small></a>
+    </div>
+  </section>
+
+  <footer>
+    <span class="logo">NOCTO</span>
+    © 2026 damegane — 架空の配信者で作った見本です
+  </footer>
+</main>
+
+<script src="./lib/confetti.browser.js"></script>
+<script>
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = s => document.querySelector(s);
+const store = { get(k, d) { try { return JSON.parse(localStorage.getItem(k) || 'null') ?? d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+
+/* ---------- 音(最初は無音) ---------- */
+let soundOn = store.get('nocto-sound', false), ac = null;
+const audio = () => { if (!ac) ac = new (window.AudioContext || window.webkitAudioContext)(); ac.resume(); return ac; };
+function setSound(on) { soundOn = on; store.set('nocto-sound', on); $('#soundBtn').textContent = 'SOUND: ' + (on ? 'ON' : 'OFF'); $('#soundBtn').setAttribute('aria-pressed', String(on)); }
+$('#soundBtn').onclick = () => setSound(!soundOn); setSound(soundOn);
+function beep(f, t, d, v, type) {
+  if (!soundOn) return;
+  try { const c = audio(), o = c.createOscillator(), g = c.createGain(), s = c.currentTime + (t || 0);
+    o.type = type || 'square'; o.frequency.value = f; g.gain.setValueAtTime(v || .04, s); g.gain.exponentialRampToValueAtTime(.0001, s + d);
+    o.connect(g).connect(c.destination); o.start(s); o.stop(s + d + .05); } catch (e) {}
+}
+
+/* ---------- 背景: 流れるインク ----------
+   80x50 の小さなキャンバスに等高線っぽい模様を描いて、CSSで画面いっぱいに拡大する。
+   1秒に20回だけ描く・見えないときは止める ので、スマホでも軽い。 */
+(() => {
+  const cv = $('#flow'), g = cv.getContext('2d'), W = 112, H = 70;
+  cv.width = W; cv.height = H;
+  const img = g.createImageData(W, H), d = img.data;
+  const P = new Uint8Array(512); { const p = [...Array(256).keys()]; for (let i = 255; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [p[i], p[j]] = [p[j], p[i]]; } for (let i = 0; i < 512; i++) P[i] = p[i & 255]; }
+  const fade = t => t * t * (3 - 2 * t);
+  function noise(x, y) {
+    const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, X = xi & 255, Y = yi & 255;
+    const a = P[P[X] + Y] / 255, b = P[P[X + 1] + Y] / 255, c = P[P[X] + Y + 1] / 255, e = P[P[X + 1] + Y + 1] / 255, u = fade(xf), v = fade(yf);
+    return (a + (b - a) * u) + ((c + (e - c) * u) - (a + (b - a) * u)) * v;
+  }
+  const fbm = (x, y) => noise(x, y) * .6 + noise(x * 2.1, y * 2.1) * .3 + noise(x * 4.3, y * 4.3) * .1;
+  let t = 0, last = 0, run = true;
+  function frame(now) {
+    if (!run) return;
+    requestAnimationFrame(frame);
+    if (now - last < 50) return; last = now; t += .012;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const nx = x / 30, ny = y / 30;
+      const wx = fbm(nx + t, ny - t * .6), wy = fbm(nx - t * .5 + 5.2, ny + t + 1.3);
+      const v = fbm(nx + wx * 1.8, ny + wy * 1.8);
+      const band = Math.abs(Math.sin(v * 18));          // 等高線(インクの筋)
+      const line = Math.pow(1 - band, 16) * .55;        // 細く、控えめに
+      const glow = Math.max(0, v - .55) * 1.4;           // ところどころ青く沈む
+      const i = (y * W + x) * 4;
+      d[i]     = 6 + line * 120 + glow * 8;
+      d[i + 1] = 8 + line * 170 + glow * 30;
+      d[i + 2] = 12 + line * 70 + glow * 55;
+      d[i + 3] = 255;
+    }
+    g.putImageData(img, 0, 0);
+  }
+  const go = () => { const on = !document.hidden && !reduced; if (on && !run) { run = true; requestAnimationFrame(frame); } if (!on) run = false; };
+  document.addEventListener('visibilitychange', go);
+  if (reduced) { run = false; frame(0); } else requestAnimationFrame(frame);
+})();
+
+/* ---------- 時計(場所の情報は使わない。見ている人の端末の時刻だけ) ---------- */
+const pad2 = n => String(n).padStart(2, '0');
+setInterval(() => { const n = new Date(); $('#clock').textContent = `${pad2(n.getHours())}:${pad2(n.getMinutes())}:${pad2(n.getSeconds())}`; }, 1000);
+
+/* ---------- 配信状況(見本: ?onair で配信中表示) ---------- */
+const q = new URLSearchParams(location.search);
+const SCHEDULE = [ // 0=日曜
+  { d: 'SUN', t: '21:00', g: 'APEX' }, { d: 'MON', off: true }, { d: 'TUE', t: '23:00', g: 'VALO' }, { d: 'WED', t: '23:00', g: '雑談' },
+  { d: 'THU', off: true }, { d: 'FRI', t: '24:00', g: 'APEX' }, { d: 'SAT', t: '22:00', g: 'OW2' }
+];
+const order = [1, 2, 3, 4, 5, 6, 0], today = new Date().getDay();
+$('#week').innerHTML = order.map(i => { const s = SCHEDULE[i]; return `<div class="day${s.off ? ' off' : ''}${i === today ? ' today' : ''}"><small>${s.d}</small><b>${s.off ? 'OFF' : s.t}</b><span>${s.off ? 'おやすみ' : s.g}</span></div>`; }).join('');
+const nx = [...Array(7).keys()].map(k => (today + k) % 7).find(i => !SCHEDULE[i].off);
+$('#nextStream').textContent = nx === today ? `TODAY ${SCHEDULE[nx].t}` : `${SCHEDULE[nx].d} ${SCHEDULE[nx].t}`;
+if (q.has('onair')) { $('#onair').hidden = false; $('#offair').hidden = true; $('#bootLive').textContent = 'LIVE'; $('#bootLive').style.color = 'var(--mg)'; }
+
+/* ---------- 起動画面 ---------- */
+const boot = $('#boot'); let booted = false;
+function endBoot() { if (booted) return; booted = true; boot.classList.add('out'); setTimeout(startHero, 350); }
+boot.addEventListener('click', endBoot);
+if (reduced) { boot.classList.add('out'); booted = true; startHero(); }
+else {
+  boot.querySelectorAll('p').forEach((p, i) => setTimeout(() => { p.classList.add('on'); beep(1400 + i * 200, 0, .05, .02); }, 180 + i * 260));
+  setTimeout(() => boot.classList.add('load'), 300);
+  setTimeout(endBoot, 2000);
+}
+function countUp(el) {
+  const to = Number(el.dataset.count), t0 = performance.now();
+  (function f(t) { const p = Math.min(1, (t - t0) / 1400); el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))).toLocaleString(); if (p < 1) requestAnimationFrame(f); })(t0);
+}
+function startHero() { document.querySelectorAll('[data-count]').forEach(reduced ? (el => el.textContent = Number(el.dataset.count).toLocaleString()) : countUp); }
+
+/* ---------- 飛んでくるパネル ---------- */
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .2, rootMargin: '0px 0px -8% 0px' });
+document.querySelectorAll('.fly').forEach(el => io.observe(el));
+/* PCのマウスでだけ傾ける(スマホでは何もしない) */
+if (matchMedia('(hover:hover) and (pointer:fine)').matches && !reduced) {
+  document.querySelectorAll('.tilt').forEach(el => {
+    el.addEventListener('pointermove', e => { const r = el.getBoundingClientRect(); el.style.setProperty('--ry', ((e.clientX - r.left) / r.width - .5) * 8 + 'deg'); el.style.setProperty('--rx', -((e.clientY - r.top) / r.height - .5) * 8 + 'deg'); });
+    el.addEventListener('pointerleave', () => { el.style.setProperty('--rx', '0deg'); el.style.setProperty('--ry', '0deg'); });
+    el.addEventListener('transitionend', e => { if (e.propertyName === 'transform' && el.classList.contains('in')) el.classList.add('done'); });
+  });
+}
+
+/* ---------- 実績 ---------- */
+const ACH = [
+  { ic: '01', t: '配信スタート', s: 'はじめての配信。同接3人', dt: '2024.04' },
+  { ic: '1K', t: 'フォロワー1,000人', s: 'みんなのおかげ', dt: '2024.12' },
+  { ic: 'CUP', t: 'コミュニティ大会 初出場', s: '結果はベスト8', dt: '2025.08', gold: 1 },
+  { ic: 'DIA', t: 'ダイヤ帯 到達', s: '配信中に到達して叫んだ', dt: '2026.03', gold: 1 },
+  { ic: '??', t: '？？？', s: '次の実績を、いっしょに', dt: 'LOCKED', lock: 1 }
+];
+$('#ach').innerHTML = ACH.map((a, i) => `<li class="fly${i % 2 ? ' r' : ''}${a.gold ? ' gold' : ''}${a.lock ? ' lock' : ''}" style="--d:${i * .07}s"><span class="ic">${a.ic}</span><span><b>${a.t}</b><small>${a.s}</small></span><span class="dt">${a.dt}</span></li>`).join('');
+document.querySelectorAll('#ach .fly').forEach(el => io.observe(el));
+
+/* ---------- サプライドロップ ---------- */
+const RAR = [
+  { r: 'COMMON',    c: '#aab4c2', w: 50, item: '弾薬(ライト)',       line: 'はい、弾。……え、それだけ？ ちゃんと拾ってえらい。' },
+  { r: 'RARE',      c: '#38a8ff', w: 30, item: '回復キット',         line: '無理しすぎ。ほら、回復して。待ってるから。' },
+  { r: 'EPIC',      c: '#b46bff', w: 15, item: '深夜のエナドリ',     line: '今日は一緒に夜ふかしね。最後まで付き合う。' },
+  { r: 'LEGENDARY', c: '#ffcf3a', w: 5,  item: 'MVPボイス',          line: '今日のMVPは、きみ。来てくれて、ほんとにありがとう。' }
+];
+$('#rates').innerHTML = RAR.map(x => x.r === 'LEGENDARY' ? `<b>${x.r} ${x.w}%</b>` : `${x.r} ${x.w}%`).join(' / ');
+const KEY = 'nocto-drop', dayKey = () => { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
+const callBtn = $('#call'), padEl = $('#pad'), res = $('#result');
+let current = null, forceL = false;
+const roll = () => { if (forceL) { forceL = false; return RAR[3]; } let r = Math.random() * 100; for (const x of RAR) if ((r -= x.w) < 0) return x; return RAR[0]; };
+const untilTomorrow = () => { const n = new Date(), m = new Date(n); m.setHours(24, 0, 0, 0); const h = Math.floor((m - n) / 36e5), mm = Math.floor((m - n) / 6e4) % 60; return `${h}時間${mm}分`; };
+const wait = ms => new Promise(r => setTimeout(r, ms));
+function fill(x) {
+  current = x;
+  res.style.setProperty('--rc', x.c); padEl.style.setProperty('--rc', x.c);
+  $('#rar').textContent = x.r; $('#item').textContent = x.item; $('#line').textContent = x.line;
+  res.classList.toggle('legend', x.r === 'LEGENDARY');
+  callBtn.disabled = true; callBtn.textContent = '本日の補給は受け取り済み';
+  $('#next').textContent = `次の補給まで あと${untilTomorrow()}`;
+}
+async function drop(x) {
+  fill(x); res.classList.remove('show'); $('#after').classList.remove('show');
+  padEl.className = 'pad open'; void padEl.offsetWidth;
+  if (!reduced) {
+    await wait(350); padEl.classList.add('fall'); beep(220, .7, .25, .08, 'sawtooth');
+    await wait(1300); padEl.classList.replace('fall', 'shake');
+    for (let i = 0; i < 6; i++) beep(900 + i * 120, i * .12, .04, .02);
+    await wait(x.r === 'LEGENDARY' ? 1300 : 800);
+    padEl.classList.replace('shake', 'opened');
+    beep(x.r === 'LEGENDARY' ? 660 : 520, 0, .5, .06, 'triangle'); if (x.r !== 'COMMON') beep(990, .12, .5, .05, 'triangle'); if (x.r === 'LEGENDARY') beep(1320, .24, .8, .05, 'triangle');
+    if (x.r === 'LEGENDARY') { $('#flash').classList.remove('go'); void $('#flash').offsetWidth; $('#flash').classList.add('go'); }
+    await wait(650);
+  } else padEl.classList.add('opened');
+  res.classList.add('show'); $('#after').classList.add('show');
+  if (x.r === 'LEGENDARY' && window.confetti && !reduced) {
+    const r = res.getBoundingClientRect(), o = { x: .5, y: (r.top + 20) / innerHeight };
+    const opt = { colors: ['#ffcf3a', '#d4ff3a', '#ffffff', '#38e8ff'], shapes: ['square'], scalar: .8, disableForReducedMotion: true, zIndex: 45 };
+    confetti({ ...opt, origin: o, particleCount: 90, spread: 80, startVelocity: 42 });
+    confetti({ ...opt, origin: { x: 0, y: .8 }, angle: 60, particleCount: 60, spread: 50, startVelocity: 60 });
+    confetti({ ...opt, origin: { x: 1, y: .8 }, angle: 120, particleCount: 60, spread: 50, startVelocity: 60 });
+  }
+}
+callBtn.onclick = () => { if (callBtn.disabled) return; const x = roll(); store.set(KEY, { day: dayKey(), r: x.r }); drop(x); };
+$('#replay').onclick = () => { if (!soundOn) setSound(true); if (current) beep(current.r === 'LEGENDARY' ? 880 : 660, 0, .4, .05, 'triangle'); };
+$('#share').onclick = () => {
+  if (!current) return;
+  const text = `今日の補給物資は【${current.r}】${current.item}でした #ノクトの補給`, url = location.origin + location.pathname;
+  if (navigator.share) navigator.share({ text, url }).catch(() => {});
+  else window.open('https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url), '_blank', 'noopener');
+};
+function resetDrop() { store.set(KEY, null); current = null; padEl.className = 'pad'; res.classList.remove('show'); $('#after').classList.remove('show'); callBtn.disabled = false; callBtn.textContent = '▶ 補給を要請する'; $('#next').textContent = ''; }
+$('#reset').onclick = resetDrop;
+$('#forceL').onclick = () => { resetDrop(); forceL = true; callBtn.click(); };
+(() => { const s = store.get(KEY, null); if (s && s.day === dayKey()) { const x = RAR.find(r => r.r === s.r); if (x) { fill(x); padEl.className = 'pad'; res.classList.add('show'); $('#after').classList.add('show'); } } })();
+
+/* 切り抜き(見本) */
+document.querySelectorAll('.clip').forEach(b => b.onclick = () => { b.querySelector('.cap small').textContent = 'URLを入れると再生されます'; });
+</script>
+</body>
+</html>
