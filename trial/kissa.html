@@ -99,8 +99,8 @@ main{position:relative;z-index:2;max-width:600px;margin:0 auto;padding:0 20px 11
 #door.swing.open .leaf.r{transform:rotateY(105deg);filter:brightness(.7)}
 #door.swing.open .sign{transition:opacity .25s}
 #door.nt,#door.nt *,#door.nt::after{transition:none!important}
-html.entering main{transform:scale(.94);filter:brightness(1.8) saturate(.5)}
-main{transition:transform 2.2s cubic-bezier(.3,0,.2,1),filter 2.4s ease}
+html.entering main{filter:brightness(1.8) saturate(.5)}
+main{transition:filter 2.4s ease}
 
 /* ---------- 看板 ---------- */
 .hero{min-height:92vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;padding:60px 0 20px}
@@ -592,7 +592,7 @@ html[data-time="night"] .hero .open i{background:var(--red);box-shadow:0 0 10px 
   #door{display:none}
   .meter .fill{width:calc(100% + 18px)}
   .meter .hanko{opacity:.92;transform:rotate(-9deg)}
-  html.entering main{transform:none;filter:none}
+  html.entering main{filter:none}
 }
 </style>
 </head>
