@@ -80,21 +80,26 @@ main{position:relative;z-index:2;max-width:600px;margin:0 auto;padding:0 20px 11
 #door.open .sign{opacity:0}
 /* 扉 B: 手前に開く3Dの扉。すき間から店の灯りがこぼれて、一歩入る */
 #door .glow{display:none}
-#door.swing{perspective:1300px;perspective-origin:50% 45%;transition:visibility 0s 2.6s,opacity 1s ease 1.5s,transform 2s cubic-bezier(.5,0,.25,1) .15s}
-#door.swing .glow{ /* トンネルを抜けたときみたいに、まぶしい光が画面いっぱいに広がる */
-  display:block;position:absolute;left:50%;top:50%;width:40vmax;height:40vmax;margin:-20vmax 0 0 -20vmax;border-radius:50%;z-index:2;
-  opacity:0;transform:scale(.2);transition:transform 1.3s cubic-bezier(.6,0,.3,1) .35s,opacity .5s ease .35s;
-  background:radial-gradient(closest-side,#fff 0%,#fffaf0 55%,rgba(255,250,240,0) 100%);
+/* 開く → 扉のむこうは光だけ(店内はまだ見えない) → まっ白 → 店内がだんだん見えてくる */
+#door.swing{perspective:1300px;perspective-origin:50% 45%;transition:visibility 0s 3s,opacity 1.1s ease 1.8s}
+#door.swing .glow{ /* 扉のむこう: 不透明な光の壁 */
+  display:block;position:absolute;inset:0;z-index:0;
+  background:radial-gradient(70% 60% at 50% 50%,#fff 0%,#fffaf0 35%,#ffe3b8 75%,#ffc98a 100%);
 }
-#door.swing .leaf{z-index:1;transition:transform 1.6s cubic-bezier(.55,0,.2,1),filter 1.6s;box-shadow:inset 0 0 0 10px #7a1d17,0 0 40px rgba(0,0,0,.35)}
+#door.swing::after{ /* まぶしさが画面いっぱいに広がる */
+  content:"";position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0;
+  background:radial-gradient(closest-side,#fff 0%,#fff 60%,#fffaf0 100%);transition:opacity .9s ease .7s;
+}
+#door.swing .leaf{z-index:1;transition:transform 1.5s cubic-bezier(.55,0,.2,1),filter 1.5s;box-shadow:inset 0 0 0 10px #7a1d17,0 0 40px rgba(0,0,0,.35)}
 #door.swing .leaf.l{transform-origin:0 50%}
 #door.swing .leaf.r{transform-origin:100% 50%}
-#door.swing.open{opacity:0;transform:scale(1.25)}
-#door.swing.open .glow{opacity:1;transform:scale(6)}
-#door.swing.open .leaf.l{transform:rotateY(-105deg);filter:brightness(.55)}
-#door.swing.open .leaf.r{transform:rotateY(105deg);filter:brightness(.55)}
+#door.swing.open{opacity:0}
+#door.swing.open::after{opacity:1}
+#door.swing.open .leaf.l{transform:rotateY(-105deg);filter:brightness(.7)}
+#door.swing.open .leaf.r{transform:rotateY(105deg);filter:brightness(.7)}
 #door.swing.open .sign{transition:opacity .25s}
-html.entering main{transform:scale(.94);filter:brightness(1.6) saturate(.6)}
+#door.nt,#door.nt *,#door.nt::after{transition:none!important}
+html.entering main{transform:scale(.94);filter:brightness(1.8) saturate(.5)}
 main{transition:transform 2.2s cubic-bezier(.3,0,.2,1),filter 2.4s ease}
 
 /* ---------- 看板 ---------- */
@@ -942,17 +947,17 @@ function openDoor(withSound) {
   if (opened) return; opened = true; clearTimeout(doorTimer);
   if (withSound) playVoice(VOICES.enter, null); // 声が入るまでは無音
   door.classList.add('open');
-  setTimeout(() => document.documentElement.classList.remove('entering'), LAB.door === 'swing' ? 1300 : 250);
+  setTimeout(() => document.documentElement.classList.remove('entering'), LAB.door === 'swing' ? 1800 : 250);
   // 入ったら、ひとつ前の時間帯から今の時間帯へ
-  setTimeout(() => { arrived = true; applyTime(pinned); }, LAB.door === 'swing' ? 2400 : 1300);
+  setTimeout(() => { arrived = true; applyTime(pinned); }, LAB.door === 'swing' ? 3000 : 1300);
   if (annivToday) setTimeout(() => { burst(innerWidth / 2, innerHeight * .35, 70); }, LAB.door === 'swing' ? 1200 : 900);
 }
 function replayDoor(st) {
   opened = false; arrived = false;
   document.documentElement.classList.add('snap');
-  door.style.transition = 'none'; door.classList.remove('open');
+  door.classList.add('nt'); door.classList.remove('open');
   setDoorStyle(st); applyTime(pinned);
-  void door.offsetWidth; door.style.transition = '';
+  void door.offsetWidth; door.classList.remove('nt');
   requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.remove('snap')));
   scrollTo({ top: 0 });
   doorTimer = setTimeout(() => openDoor(false), 1400);
