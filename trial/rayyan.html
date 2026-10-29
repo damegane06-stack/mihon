@@ -89,6 +89,17 @@ main{position:relative;z-index:1;overflow:hidden}
 
 /* ---------- ヒーロー ---------- */
 .hero{min-height:100svh;position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:90px 0 40px}
+/* 立ち絵: のれんの向こうに、本人がいる。下と左を暗くして文字を読みやすく */
+.hero .kv{position:absolute;inset:0;z-index:0;overflow:hidden;opacity:0;transition:opacity 1.4s ease .1s}
+.hero.on .kv{opacity:1}
+.hero .kv img{width:100%;height:100%;object-fit:cover;object-position:50% 12%}
+.hero .kv::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,13,13,.35) 0%,rgba(13,13,13,0) 22%,rgba(13,13,13,.1) 42%,rgba(13,13,13,.82) 66%,#0d0d0d 92%)}
+.hero .wrap{position:relative;z-index:1}
+@media (min-width:760px){
+  .hero .kv{left:auto;width:min(58vw,640px)}
+  .hero .kv{-webkit-mask:linear-gradient(90deg,transparent 0%,#000 40%);mask:linear-gradient(90deg,transparent 0%,#000 40%)}
+  .hero .kv::after{background:linear-gradient(180deg,rgba(13,13,13,0) 55%,#0d0d0d 100%)}
+}
 .hero .bgword{position:absolute;right:-4vw;top:8vh;font-family:'Bebas Neue',sans-serif;font-size:min(46vw,300px);line-height:.8;color:transparent;-webkit-text-stroke:1px rgba(255,213,0,.22);pointer-events:none;writing-mode:vertical-rl;letter-spacing:-.02em}
 .hero .icon{width:112px;height:112px;border-radius:50%;background:var(--k2);border:3px solid var(--y);display:grid;place-items:center;font-size:11px;color:var(--g);letter-spacing:.2em;margin-bottom:22px;overflow:hidden}
 .hero .icon img{width:100%;height:100%;object-fit:cover}
@@ -286,10 +297,9 @@ footer .logo{display:block;font-family:'Dela Gothic One',sans-serif;font-size:26
 <main>
   <!-- ===== HERO ===== -->
   <header class="hero">
-    <span class="bgword" aria-hidden="true">GORILLA</span>
-    <div class="chochin" aria-hidden="true"><i><b>酒</b></i><i><b>唄</b></i></div>
+    <div class="kv"><img src="./img/rayyan/kv.jpg" alt="巻き舌レイやんの立ち絵" width="900" height="1599" decoding="async"></div>
     <div class="wrap" id="heroIn">
-      <div class="icon rise" style="--d:.1s">ICON</div>
+      <div class="icon rise" style="--d:.1s"><img src="./img/rayyan/icon.jpg" alt="巻き舌レイやんのアイコン" width="320" height="320"></div>
       <span class="tag rise" style="--d:.2s">SPOON / 歌・雑談・お悩み相談</span>
       <p class="maki dg rise" style="--d:.3s">巻き舌</p>
       <h1 data-light>レイやん</h1>
