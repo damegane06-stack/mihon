@@ -472,7 +472,7 @@ function applyTime(t) {
 $('#timebar').onclick = e => { const b = e.target.closest('button'); if (!b) return; pinned = b.dataset.t === 'auto' ? null : b.dataset.t; applyTime(pinned); };
 /* ---------- 誕生日モード: 7/30の1日だけ、お祝い仕様になる ---------- */
 const BIRTHDAY = { m: 7, d: 30 };
-const TODAY = (() => { const q = new URLSearchParams(location.search).get('date'); if (q && /^\d{1,2}\/\d{1,2}$/.test(q)) { const [m, d] = q.split('/').map(Number); const t = new Date(); return new Date(t.getFullYear(), m - 1, d, 12); } return new Date(); })() // DEMOだけ: ?date=7/30 で誕生日を試せる;
+const TODAY = (() => { const q = new URLSearchParams(location.search).get('date'); if (q && /^\d{1,2}\/\d{1,2}$/.test(q)) { const [m, d] = q.split('/').map(Number); const t = new Date(); return new Date(t.getFullYear(), m - 1, d, 12); } const p = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Tokyo', year: 'numeric', month: 'numeric', day: 'numeric' }).formatToParts(new Date()); const g = t => +p.find(x => x.type === t).value; return new Date(g('year'), g('month') - 1, g('day'), 12); })() // DEMOだけ: ?date=7/30 で誕生日を試せる;
 const isBD = TODAY.getMonth() + 1 === BIRTHDAY.m && TODAY.getDate() === BIRTHDAY.d;
 const bdDays = (() => { const t = new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate()); let b = new Date(t.getFullYear(), BIRTHDAY.m - 1, BIRTHDAY.d); if (b < t) b = new Date(t.getFullYear() + 1, BIRTHDAY.m - 1, BIRTHDAY.d); return Math.round((b - t) / 864e5); })();
 function bdConfetti() {
@@ -492,14 +492,14 @@ if (isBD) {
   $('.hero .state').appendChild(b);
   b.onclick = () => {
     bdConfetti(); if (soundOn) { beep(2093, 0, .25, .04, 'sine'); beep(2637, .05, .35, .035, 'sine'); }
-    const text = '巻き舌レイやん、誕生日おめでとう!🍻 #巻き舌レイやん誕生祭', url = location.origin + location.pathname;
-    setTimeout(() => window.open('https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url), '_blank', 'noopener'), 700);
+    const text = '巻き舌レイやん、誕生日おめでとう!🍻', url = location.origin + location.pathname; // ハッシュタグは本人に確認できたら足す
+    window.open('https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url), '_blank', 'noopener'); // タップした瞬間に開く(iPhoneで止められないように)
   };
 } else if (bdDays <= 7) {
   const c = document.createElement('span'); c.className = 'bdsoon'; c.textContent = `🎂 誕生日まで あと${bdDays}日`;
   $('.hero .state').appendChild(c);
 }
-if (isBD) Object.keys(TIMES).forEach(k => { TIMES[k] = { greet: '今日はわたしの誕生日! 来てくれてありがとう、乾杯しよ!', sign: '誕生日営業中' }; });
+if (isBD) Object.keys(TIMES).forEach(k => { TIMES[k] = { greet: '今日はレイやんの誕生日。いっしょに乾杯しよう!', sign: '誕生日営業中' }; });
 applyTime(null); setInterval(() => !pinned && applyTime(null), 60000);
 /* 配信中(見本: URLの最後に ?onair) */
 if (new URLSearchParams(location.search).has('onair')) { $('#onair').hidden = false; $('#sign').hidden = true; }
