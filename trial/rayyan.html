@@ -315,7 +315,7 @@ footer .logo{display:block;font-family:'Dela Gothic One',sans-serif;font-size:26
       <p class="maki dg rise" style="--d:.3s">巻き舌</p>
       <h1 data-light>レイやん</h1>
       <p class="roma bb rise" style="--d:.7s">RAY-YAN</p>
-      <p class="lead rise" style="--d:.85s"><span id="greet">今夜も、歌って飲んでしゃべろう。</span><button class="mini" id="greetVoice" aria-label="あいさつを聞く">▶</button></p>
+      <p class="lead rise" style="--d:.85s"><span id="greet">今夜も、歌って飲んでしゃべろう。</span></p>
       <div class="state rise" style="--d:1s">
         <span class="sign" id="sign"><i></i><span id="signText">営業中</span></span>
         <a class="onair" id="onair" href="https://www.spooncast.net/jp/@lr86xmnq" target="_blank" rel="noopener" hidden><i></i><b>ON AIR</b>いま配信中! のぞきにいく</a>
@@ -465,7 +465,6 @@ function applyTime(t) {
 }
 $('#timebar').onclick = e => { const b = e.target.closest('button'); if (!b) return; pinned = b.dataset.t === 'auto' ? null : b.dataset.t; applyTime(pinned); };
 applyTime(null); setInterval(() => !pinned && applyTime(null), 60000);
-$('#greetVoice').onclick = () => { if (!soundOn) setSound(true); const s = pinned || nowSlot(); playVoice(VOICES.greet[s], () => { beep(2093, 0, .25, .04, 'sine'); beep(2637, .05, .35, .035, 'sine'); }); }; // 声がないあいだは、グラスの「カチン」
 /* 配信中(見本: URLの最後に ?onair) */
 if (new URLSearchParams(location.search).has('onair')) { $('#onair').hidden = false; $('#sign').hidden = true; }
 
@@ -562,8 +561,7 @@ $('#reset').onclick = reset;
 /* (試作用)セリフをえらんで聞く: ▶声だけ聞く / 演出つきでその★を出す */
 let forceS = 0;
 (() => {
-  const rows = MENU.map(m => ({ k: '★' + m.s, t: m.drink + '「' + m.line + '」', src: VOICES.score[m.s], s: m.s }))
-    .concat(Object.keys(TIMES).map(k => ({ k: { morning: '朝', noon: '昼', evening: '夕方', night: '夜' }[k], t: TIMES[k].greet, src: VOICES.greet[k] })));
+  const rows = MENU.map(m => ({ k: '★' + m.s, t: m.drink + '「' + m.line + '」', src: VOICES.score[m.s], s: m.s }));
   $('#vlistUl').innerHTML = rows.map((r, i) => `<li><span class="k">${r.k}</span><span class="t">${r.src ? '' : '<small>未収録</small> '}${r.t}</span><span class="b"><button data-i="${i}" data-a="play"${r.src ? '' : ' disabled'}>▶ 声</button>${r.s ? `<button class="go" data-i="${i}" data-a="show">演出で出す</button>` : ''}</span></li>`).join('');
   $('#vlistUl').onclick = e => {
     const b = e.target.closest('button'); if (!b) return; const r = rows[b.dataset.i];
