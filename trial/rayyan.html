@@ -256,6 +256,17 @@ section{padding:110px 0 0}
 .ghost{cursor:pointer;background:none;border:2px solid var(--w);color:var(--w);font-size:12.5px;font-weight:900;padding:7px 14px}
 .next{font-size:12px;color:var(--g);margin-top:10px}
 .note{font-size:11px;color:var(--g);margin-top:12px}
+.vlist{margin:18px auto 0;max-width:380px;text-align:left;border:2px dashed #444;padding:10px 12px 8px}
+.vlist p{font-size:11px;font-weight:900;letter-spacing:.14em;color:var(--g);margin-bottom:6px}
+.vlist li{list-style:none;display:flex;flex-wrap:wrap;align-items:flex-start;gap:4px 8px;padding:6px 0;border-top:1px solid #2a2a2a;font-size:12.5px}
+.vlist li:first-of-type{border-top:none}
+.vlist li .k{min-width:3.6em;font-weight:900;color:var(--y)}
+.vlist li .t{flex:1 1 calc(100% - 5em);color:#cfcfcf;line-height:1.6;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.vlist li .b{margin-left:auto;display:flex;gap:6px}
+.vlist li .t small{display:inline-block;margin-left:4px;font-size:10px;color:#e8322b;font-weight:900}
+.vlist button{cursor:pointer;background:none;border:1.5px solid var(--w);color:var(--w);font-size:11px;font-weight:900;padding:2px 9px;white-space:nowrap}
+.vlist button.go{border-color:var(--y);color:var(--y)}
+.vlist button:disabled{opacity:.3;cursor:default}
 .demo{display:block;margin:8px auto 0;background:none;border:none;color:var(--g);font-size:11px;text-decoration:underline;cursor:pointer}
 
 /* ---------- リンク ---------- */
@@ -389,7 +400,7 @@ footer .logo{display:block;font-family:'Dela Gothic One',sans-serif;font-size:26
         <p class="next" id="next"></p>
         <p class="note">※ 試作のため、声のかわりに文字と効果音です。</p>
         <button class="demo" id="reset">(試作用)もう一杯たのむ</button>
-        <button class="demo" id="force5">(試作用)★5を出す</button>
+        <div class="vlist" id="vlist"><p>(試作用)セリフをえらんで聞く</p><ul id="vlistUl"></ul></div>
       </div>
     </section>
 
@@ -496,8 +507,8 @@ const mic = $('#mic'), scr = $('#screen'), row = $('#row');
 const level = v => row.style.setProperty('--lv', Math.max(0, Math.min(1, v)).toFixed(3));
 function liquid(m) { row.style.setProperty('--l1', m.l1); row.style.setProperty('--l2', m.l2); row.style.setProperty('--foam', m.foam); }
 function clink(t) { beep(2093, t || 0, .25, .04, 'sine'); beep(2637, (t || 0) + .05, .35, .035, 'sine'); }
-let current = null, force5 = false;
-const pick = () => { if (force5) { force5 = false; return MENU[4]; } let r = Math.random() * 100; for (const m of MENU) if ((r -= m.w) < 0) return m; return MENU[0]; };
+let current = null;
+const pick = () => { if (forceS) { const m = MENU[forceS - 1]; forceS = 0; return m; } let r = Math.random() * 100; for (const m of MENU) if ((r -= m.w) < 0) return m; return MENU[0]; };
 const untilTomorrow = () => { const n = new Date(), m = new Date(n); m.setHours(24, 0, 0, 0); return `${Math.floor((m - n) / 36e5)}時間${Math.floor((m - n) / 6e4) % 60}分`; };
 function fill(m) {
   current = m; liquid(m); level(m.lv); row.classList.toggle('sake', m.s === 5);
@@ -548,7 +559,18 @@ $('#share').onclick = () => {
 };
 function reset() { store.set(KEY, null); current = null; scr.className = 'screen'; row.classList.remove('sake', 'omen'); $('#after').classList.remove('show'); mic.disabled = false; mic.textContent = '🍺 今夜の一杯をたのむ'; $('#next').textContent = ''; }
 $('#reset').onclick = reset;
-$('#force5').onclick = () => { reset(); force5 = true; mic.click(); };
+/* (試作用)セリフをえらんで聞く: ▶声だけ聞く / 演出つきでその★を出す */
+let forceS = 0;
+(() => {
+  const rows = MENU.map(m => ({ k: '★' + m.s, t: m.drink + '「' + m.line + '」', src: VOICES.score[m.s], s: m.s }))
+    .concat(Object.keys(TIMES).map(k => ({ k: { morning: '朝', noon: '昼', evening: '夕方', night: '夜' }[k], t: TIMES[k].greet, src: VOICES.greet[k] })));
+  $('#vlistUl').innerHTML = rows.map((r, i) => `<li><span class="k">${r.k}</span><span class="t">${r.src ? '' : '<small>未収録</small> '}${r.t}</span><span class="b"><button data-i="${i}" data-a="play"${r.src ? '' : ' disabled'}>▶ 声</button>${r.s ? `<button class="go" data-i="${i}" data-a="show">演出で出す</button>` : ''}</span></li>`).join('');
+  $('#vlistUl').onclick = e => {
+    const b = e.target.closest('button'); if (!b) return; const r = rows[b.dataset.i];
+    if (b.dataset.a === 'play') { if (!soundOn) setSound(true); playVoice(r.src, null); }
+    else { reset(); forceS = r.s; mic.click(); }
+  };
+})();
 (() => { const s = store.get(KEY, null); if (s && s.day === dayKey()) { const m = MENU.find(x => x.s === s.s); if (m) { fill(m); scr.className = 'screen show done' + (m.s === 5 ? ' perfect' : ''); $('#after').classList.add('show'); } } })();
 </script>
 </body>
