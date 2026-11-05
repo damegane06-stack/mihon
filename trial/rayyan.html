@@ -538,6 +538,7 @@ function serve(m) {
     if (!SE.pour && t - tick > 70) { tick = t; beep(420 + Math.random() * 380, 0, .04, .015, 'sine'); } // 音ファイルがないあいだの仮の音
     if (p < 1) return requestAnimationFrame(f);
     fill(m); scr.classList.remove('rolling'); scr.classList.add('done');
+    if (seNow) { seNow.pause(); seNow = null; } // 注ぐ音は、注ぎ終わったら止める
     if (m.s >= 4) clink(.05);
     if (m.s === 5) {
       scr.classList.add('perfect'); clink(.4);
@@ -545,7 +546,9 @@ function serve(m) {
       const opt = { colors: ['#ffd500', '#0d0d0d', '#f5f3ee'], shapes: ['square'], disableForReducedMotion: true, zIndex: 80 };
       if (window.confetti) { confetti({ ...opt, origin: o, particleCount: 110, spread: 90, startVelocity: 45 }); confetti({ ...opt, origin: { x: 0, y: .9 }, angle: 60, particleCount: 50, spread: 50, startVelocity: 60 }); confetti({ ...opt, origin: { x: 1, y: .9 }, angle: 120, particleCount: 50, spread: 50, startVelocity: 60 }); }
     }
-    playVoice(VOICES.score[m.s], () => { [523, 659, 784, 1047].slice(0, m.s >= 4 ? 4 : m.s >= 2 ? 3 : 2).forEach((fq, i) => beep(fq, i * .1, .35, .05, 'triangle')); });
+    // 声は、乾杯の音が鳴り終わってから(★5は「カチン」2回のあと)
+    const vWait = VOICES.score[m.s] ? (m.s === 5 ? 1100 : m.s === 4 ? 600 : 250) : 0;
+    setTimeout(() => playVoice(VOICES.score[m.s], () => { [523, 659, 784, 1047].slice(0, m.s >= 4 ? 4 : m.s >= 2 ? 3 : 2).forEach((fq, i) => beep(fq, i * .1, .35, .05, 'triangle')); }), vWait);
     setTimeout(() => $('#after').classList.add('show'), 500);
   })(t0);
 }
