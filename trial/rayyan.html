@@ -5,12 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="dark">
 <meta name="robots" content="noindex">
-<title>巻き舌レイやん | 歌って飲んでしゃべる夜 | 試作</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="巻き舌レイやん | 歌って飲んでしゃべる夜">
+<meta property="og:description" content="Spoonで歌・酒飲み雑談・お悩み相談。1日1回「今夜の一杯」で、レイやんがひとこと。">
+<meta property="og:image" content="https://damegane06-stack.github.io/mihon/trial/img/rayyan/icon.jpg">
+<meta name="twitter:card" content="summary">
+<title>巻き舌レイやん | 歌って飲んでしゃべる夜</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   レイやん 試作: 深夜のカラオケ酒場
+   巻き舌レイやん: 深夜のカラオケ酒場(公開用。確認用の試作は rayyan-demo.html)
    色: 黄色 × 黒 × 白。キラキラ・子どもっぽさはなし
    動き: ふだんは止まっていて、出てくる瞬間だけ「カチッ」と動く。跳ねない。
    にぎやかさは、帯の文字の流れと「今夜の一杯」の盛り上がりで出す
@@ -195,6 +200,7 @@ section{padding:110px 0 0}
 .mic:active{transform:translateY(6px);box-shadow:0 0 0 #b39500}
 .mic:disabled{background:#3a3a3a;color:#888;box-shadow:0 6px 0 #222;cursor:default}
 .mic:focus-visible{outline:3px solid var(--w);outline-offset:3px}
+.shint{margin-top:8px;font-size:12px;font-weight:700;color:var(--y)}
 .rates{margin-top:10px;font-size:11px;color:var(--g)}
 .rates b{color:var(--y)}
 /* 採点画面 */
@@ -256,18 +262,6 @@ section{padding:110px 0 0}
 .ghost{cursor:pointer;background:none;border:2px solid var(--w);color:var(--w);font-size:12.5px;font-weight:900;padding:7px 14px}
 .next{font-size:12px;color:var(--g);margin-top:10px}
 .note{font-size:11px;color:var(--g);margin-top:12px}
-.vlist{margin:18px auto 0;max-width:380px;text-align:left;border:2px dashed #444;padding:10px 12px 8px}
-.vlist p{font-size:11px;font-weight:900;letter-spacing:.14em;color:var(--g);margin-bottom:6px}
-.vlist li{list-style:none;display:flex;flex-wrap:wrap;align-items:flex-start;gap:4px 8px;padding:6px 0;border-top:1px solid #2a2a2a;font-size:12.5px}
-.vlist li:first-of-type{border-top:none}
-.vlist li .k{min-width:3.6em;font-weight:900;color:var(--y)}
-.vlist li .t{flex:1 1 calc(100% - 5em);color:#cfcfcf;line-height:1.6;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.vlist li .b{margin-left:auto;display:flex;gap:6px}
-.vlist li .t small{display:inline-block;margin-left:4px;font-size:10px;color:#e8322b;font-weight:900}
-.vlist button{cursor:pointer;background:none;border:1.5px solid var(--w);color:var(--w);font-size:11px;font-weight:900;padding:2px 9px;white-space:nowrap}
-.vlist button.go{border-color:var(--y);color:var(--y)}
-.vlist button:disabled{opacity:.3;cursor:default}
-.demo{display:block;margin:8px auto 0;background:none;border:none;color:var(--g);font-size:11px;text-decoration:underline;cursor:pointer}
 
 /* ---------- リンク ---------- */
 .links{display:grid;gap:12px}
@@ -282,9 +276,6 @@ section{padding:110px 0 0}
 
 footer{margin-top:120px;background:var(--y);color:var(--k);text-align:center;padding:30px 20px 34px;font-size:11.5px;font-weight:700}
 footer .logo{display:block;font-family:'Dela Gothic One',sans-serif;font-size:26px;margin-bottom:4px}
-.timebar{margin-top:14px;display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
-.timebar button{cursor:pointer;background:none;border:2px solid var(--k);padding:1px 12px;font-size:11px;font-weight:900}
-.timebar button[aria-pressed="true"]{background:var(--k);color:var(--y)}
 
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
@@ -344,7 +335,7 @@ footer .logo{display:block;font-family:'Dela Gothic One',sans-serif;font-size:26
     <section class="sec">
       <div class="head"><span class="en" data-light>MENU</span><h2 class="rise" style="--d:.4s">今夜のお品書き</h2></div>
       <ul class="fuda">
-        <li class="big rise" style="--d:.45s"><b>カラオケ</b><em>一曲 〇円</em></li>
+        <li class="big rise" style="--d:.45s"><b>カラオケ</b><em>一曲 0円</em></li>
         <li class="rise" style="--d:.55s"><b>酒飲み雑談</b><em>飲み放題</em></li>
         <li class="rise" style="--d:.65s"><b>お悩み相談</b><em>時価</em></li>
       </ul>
@@ -364,6 +355,7 @@ footer .logo{display:block;font-family:'Dela Gothic One',sans-serif;font-size:26
       <div class="score rise" style="--d:.55s">
         <p class="lead2">1日1回、レイやんが一杯出してくれます。<br>★5が出たら、とっておきのひとこと。</p>
         <button class="mic" id="mic">🍺 今夜の一杯をたのむ</button>
+        <p class="shint" id="shint">🔈 右上の「音をつける」で、レイやんの声が聞けます</p>
         <p class="rates" id="rates"></p>
         <div class="screen" id="screen" aria-live="polite">
           <div class="kakutei" aria-hidden="true">確定!!</div>
@@ -398,9 +390,6 @@ footer .logo{display:block;font-family:'Dela Gothic One',sans-serif;font-size:26
         </div>
         <div class="after" id="after"><button class="ghost" id="replay">▶ もう一度聞く</button><button class="ghost" id="share">結果をシェア</button></div>
         <p class="next" id="next"></p>
-        <p class="note">※ 試作のため、声のかわりに文字と効果音です。</p>
-        <button class="demo" id="reset">(試作用)もう一杯たのむ</button>
-        <div class="vlist" id="vlist"><p>(試作用)セリフをえらんで聞く</p><ul id="vlistUl"></ul></div>
       </div>
     </section>
 
@@ -416,10 +405,7 @@ footer .logo{display:block;font-family:'Dela Gothic One',sans-serif;font-size:26
 
   <footer>
     <span class="logo">巻き舌レイやん</span>
-    © 2026 巻き舌レイやん / site by damegane　この頁は試作です<br>効果音：<a href="https://soundeffect-lab.info/" target="_blank" rel="noopener" style="color:inherit">効果音ラボ</a>
-    <div class="timebar" id="timebar" aria-label="時間帯をためす(試作用)">
-      <button data-t="auto">いまの時間</button><button data-t="morning">朝</button><button data-t="noon">昼</button><button data-t="evening">夕方</button><button data-t="night">夜</button>
-    </div>
+    © 2026 巻き舌レイやん / site by damegane<br>効果音：<a href="https://soundeffect-lab.info/" target="_blank" rel="noopener" style="color:inherit">効果音ラボ</a>
   </footer>
 </main>
 
@@ -432,7 +418,7 @@ const store = { get(k, d) { try { return JSON.parse(localStorage.getItem(k) || '
 /* ---------- 音(最初は無音) ---------- */
 let soundOn = store.get('rayyan-sound', false), ac = null;
 const audio = () => { if (!ac) ac = new (window.AudioContext || window.webkitAudioContext)(); ac.resume(); return ac; };
-function setSound(on) { soundOn = on; store.set('rayyan-sound', on); $('#soundBtn').textContent = on ? '🔊 音あり' : '🔈 音をつける'; $('#soundBtn').setAttribute('aria-pressed', String(on)); }
+function setSound(on) { const h = document.getElementById('shint'); if (h) h.hidden = on; soundOn = on; store.set('rayyan-sound', on); $('#soundBtn').textContent = on ? '🔊 音あり' : '🔈 音をつける'; $('#soundBtn').setAttribute('aria-pressed', String(on)); }
 $('#soundBtn').onclick = () => setSound(!soundOn); setSound(soundOn);
 function beep(f, t, d, v, type) {
   if (!soundOn) return;
@@ -461,12 +447,9 @@ let pinned = null;
 function applyTime(t) {
   const s = t || nowSlot();
   $('#greet').textContent = TIMES[s].greet; $('#signText').textContent = TIMES[s].sign;
-  document.querySelectorAll('#timebar button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === (t || 'auto'))));
 }
-$('#timebar').onclick = e => { const b = e.target.closest('button'); if (!b) return; pinned = b.dataset.t === 'auto' ? null : b.dataset.t; applyTime(pinned); };
 applyTime(null); setInterval(() => !pinned && applyTime(null), 60000);
 /* 配信中(見本: URLの最後に ?onair) */
-if (new URLSearchParams(location.search).has('onair')) { $('#onair').hidden = false; $('#sign').hidden = true; }
 
 /* ---------- 見出し: ちょうちんが端から順にともるように ---------- */
 document.querySelectorAll('[data-light]').forEach(el => { el.innerHTML = [...el.textContent].map((c, i) => `<span style="--i:${i}">${c === ' ' ? '&nbsp;' : c}</span>`).join(''); });
@@ -506,7 +489,7 @@ const mic = $('#mic'), scr = $('#screen'), row = $('#row');
 const level = v => row.style.setProperty('--lv', Math.max(0, Math.min(1, v)).toFixed(3));
 function liquid(m) { row.style.setProperty('--l1', m.l1); row.style.setProperty('--l2', m.l2); row.style.setProperty('--foam', m.foam); }
 function clink(t) { beep(2093, t || 0, .25, .04, 'sine'); beep(2637, (t || 0) + .05, .35, .035, 'sine'); }
-let current = null;
+let current = null, forceS = 0;
 const pick = () => { if (forceS) { const m = MENU[forceS - 1]; forceS = 0; return m; } let r = Math.random() * 100; for (const m of MENU) if ((r -= m.w) < 0) return m; return MENU[0]; };
 const untilTomorrow = () => { const n = new Date(), m = new Date(n); m.setHours(24, 0, 0, 0); return `${Math.floor((m - n) / 36e5)}時間${Math.floor((m - n) / 6e4) % 60}分`; };
 function fill(m) {
@@ -560,18 +543,6 @@ $('#share').onclick = () => {
   if (navigator.share) navigator.share({ text, url }).catch(() => {}); else window.open('https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url), '_blank', 'noopener');
 };
 function reset() { store.set(KEY, null); current = null; scr.className = 'screen'; row.classList.remove('sake', 'omen'); $('#after').classList.remove('show'); mic.disabled = false; mic.textContent = '🍺 今夜の一杯をたのむ'; $('#next').textContent = ''; }
-$('#reset').onclick = reset;
-/* (試作用)セリフをえらんで聞く: ▶声だけ聞く / 演出つきでその★を出す */
-let forceS = 0;
-(() => {
-  const rows = MENU.map(m => ({ k: '★' + m.s, t: m.drink + '「' + m.line + '」', src: VOICES.score[m.s], s: m.s }));
-  $('#vlistUl').innerHTML = rows.map((r, i) => `<li><span class="k">${r.k}</span><span class="t">${r.src ? '' : '<small>未収録</small> '}${r.t}</span><span class="b"><button data-i="${i}" data-a="play"${r.src ? '' : ' disabled'}>▶ 声</button>${r.s ? `<button class="go" data-i="${i}" data-a="show">演出で出す</button>` : ''}</span></li>`).join('');
-  $('#vlistUl').onclick = e => {
-    const b = e.target.closest('button'); if (!b) return; const r = rows[b.dataset.i];
-    if (b.dataset.a === 'play') { if (!soundOn) setSound(true); playVoice(r.src, null); }
-    else { reset(); forceS = r.s; mic.click(); }
-  };
-})();
 (() => { const s = store.get(KEY, null); if (s && s.day === dayKey()) { const m = MENU.find(x => x.s === s.s); if (m) { fill(m); scr.className = 'screen show done' + (m.s === 5 ? ' perfect' : ''); $('#after').classList.add('show'); } } })();
 </script>
 </body>
