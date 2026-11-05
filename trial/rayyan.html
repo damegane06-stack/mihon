@@ -434,7 +434,7 @@ const SE = { pour: './se/pour.mp3', water: './se/water.mp3', sake: './se/sake.mp
 let seNow = null;
 function playSE(src) { if (!soundOn || !src) return; try { if (seNow) seNow.pause(); seNow = new Audio(src); seNow.volume = .8; seNow.play().catch(() => {}); } catch (e) {} }
 /* 録音した声を置けば鳴る(空なら効果音) */
-const VOICES = { greet: { morning: '', noon: '', evening: '', night: '' }, score: { 1: '', 2: '', 3: '', 4: '', 5: '' } };
+const VOICES = { greet: { morning: '', noon: '', evening: '', night: '' }, score: { 1: './voice/rayyan/kuji1.m4a', 2: '', 3: '', 4: '', 5: '' } };
 let player = null;
 function playVoice(src, fb) { if (!soundOn) return; if (player) player.pause(); if (src) { player = new Audio(src); player.play().catch(() => fb && fb()); } else if (fb) fb(); }
 
