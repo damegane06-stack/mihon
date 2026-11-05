@@ -403,7 +403,7 @@ footer .logo{display:block;font-family:'Dela Gothic One',sans-serif;font-size:26
           <p class="rank" id="rank"></p>
           <p class="line"><small>レイやんのひとこと</small><span id="line"></span></p>
         </div>
-        <div class="after" id="after"><button class="ghost" id="replay">▶ もう一度聞く</button><button class="ghost" id="share">結果をシェア</button></div>
+        <div class="after" id="after"><button class="ghost" id="replay">▶ もう一度聞く</button><button class="ghost" id="share">Xでシェア</button></div>
         <p class="next" id="next"></p>
         <button class="demo" id="reset">(試作用)もう一杯たのむ</button>
         <div class="vlist" id="vlist"><p>(試作用)セリフをえらんで聞く</p><ul id="vlistUl"></ul></div>
@@ -492,7 +492,7 @@ if (isBD) {
   $('.hero .state').appendChild(b);
   b.onclick = () => {
     bdConfetti(); if (soundOn) { beep(2093, 0, .25, .04, 'sine'); beep(2637, .05, .35, .035, 'sine'); }
-    const text = '巻き舌レイやん、誕生日おめでとう!🍻', url = location.origin + location.pathname; // ハッシュタグは本人に確認できたら足す
+    const text = '巻き舌レイやん、誕生日おめでとう!🍻\n#巻き舌レイやん', url = location.origin + location.pathname;
     window.open('https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url), '_blank', 'noopener'); // タップした瞬間に開く(iPhoneで止められないように)
   };
 } else if (bdDays <= 7) {
@@ -590,10 +590,19 @@ function serve(m) {
 }
 mic.onclick = () => { if (mic.disabled) return; const m = pick(); store.set(KEY, { day: dayKey(), s: m.s }); serve(m); };
 $('#replay').onclick = () => { if (!soundOn) setSound(true); if (current) playVoice(VOICES.score[current.s], () => clink(0)); };
+/* シェアの文: ★の数で変わる。★5だけはセリフを伏せて「自分で引いて」にする */
+const SHARE = {
+  1: '🧊今夜のレイやんは「お冷」から。\n「来てくれてありがとう。ゆっくりしていってね。」',
+  2: '🍋レイやんと「レモンチューハイ」で乾杯!\n「好きなお酒何? わたしはチューハイが好きなんだよね。君のも飲ませてよ。」',
+  3: '🥃「いつもの」が出てきた。常連認定かも。\n「今日も来てくれたんだ。嬉しいな。いつものでいい?」',
+  4: '🍺となりの席で「生ビール」!\n「なんか遠くない? そんなに遠いと寂しいな。こっちおいで?」',
+  5: '🍶★5「とっておき」引いた……!\nレイやんの“とっておきのひとこと”は、自分で引いて確かめて🤫'
+};
 $('#share').onclick = () => {
   if (!current) return;
-  const text = `レイやんの今夜の一杯は「${current.drink}」(★${current.s})でした🍻 #レイやんの今夜の一杯`, url = location.origin + location.pathname;
-  if (navigator.share) navigator.share({ text, url }).catch(() => {}); else window.open('https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url), '_blank', 'noopener');
+  // Xの投稿画面を直接ひらく(共有メニューを通すと、アプリによってはハッシュタグが消えるため)
+  const text = SHARE[current.s] + '\n#レイやんの今夜の一杯 #巻き舌レイやん', url = location.origin + location.pathname;
+  window.open('https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url), '_blank', 'noopener');
 };
 function reset() { store.set(KEY, null); current = null; scr.className = 'screen'; row.classList.remove('sake', 'omen'); $('#after').classList.remove('show'); mic.disabled = false; mic.textContent = '🍺 今夜の一杯をたのむ'; $('#next').textContent = ''; }
 $('#reset').onclick = reset;
